@@ -5,6 +5,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 
@@ -56,10 +57,11 @@ public class Mk2SwerveModuleBuilder {
      * Default constants for angle pid running on a Spark MAX using NEOs.
      */
     private static final PidConstants DEFAULT_CAN_SPARK_MAX_ANGLE_CONSTANTS = new PidConstants(0.5, 0.0, 0.1);
-    
+
     private final Vector2 modulePosition;
     private final SwerveModulePosition modulePos;
 
+    public SparkMaxConfig config;
     private DoubleSupplier angleSupplier;
     private DoubleSupplier currentDrawSupplier;
     private DoubleSupplier distanceSupplier;
@@ -138,24 +140,19 @@ public class Mk2SwerveModuleBuilder {
      */
 
     public Mk2SwerveModuleBuilder angleMotor(MotorController motor, PidConstants constants, double reduction) {
+        //2025 code
         SparkMaxConfig config = new SparkMaxConfig();
         RelativeEncoder encoder = ((SparkMax) motor).getEncoder();
-        config.encoder
-            .positionConversionFactor(2.0 * Math.PI / reduction)
-            .velocityConversionFactor(1000);
-        config.closedLoop
-            .pid(1.0, 0.0, 0.0);
-        
-    motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        RelativeEncoder encoder = ((SparkMax) motor).getEncoder();
-        //double positionFactor= motor.configAccessor.encoder.getPositionConversionFactor(2.0 * Math.PI / reduction);
-
         SparkClosedLoopController controller = ((SparkMax) motor).getPIDController();
-
+        config.closedLoop
+            .pid(constants.p, constants.i, constants.d);
+        //2024 code below
+        //double positionFactor= motor.configAccessor.encoder.getPositionConversionFactor(2.0 * Math.PI / reduction);
+        /* 
         controller.setP(constants.p);
         controller.setI(constants.i);
         controller.setD(constants.d);
-
+        */
 
         //Turns Wheels
         targetAngleConsumer = targetAngle -> {
@@ -273,9 +270,15 @@ public class Mk2SwerveModuleBuilder {
      */
     public Mk2SwerveModuleBuilder driveMotor(SparkMax motor, double reduction, double wheelDiameter) {
         RelativeEncoder encoder = ((SparkMax) motor).getEncoder();
+        config.encoder
+            .positionConversionFactor(wheelDiameter * Math.PI / reduction)
+            .velocityConversionFactor(wheelDiameter * Math.PI / reduction * (1.0 / 60.0)); // RPM to units per second);
+        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        //2024 code below
+        /*
         encoder.setPositionConversionFactor(wheelDiameter * Math.PI / reduction);
         encoder.setVelocityConversionFactor(wheelDiameter * Math.PI / reduction * (1.0 / 60.0)); // RPM to units per second
-
+         */
         currentDrawSupplier = motor::getOutputCurrent;
         distanceSupplier = encoder::getPosition;
         velocitySupplier = encoder::getVelocity;

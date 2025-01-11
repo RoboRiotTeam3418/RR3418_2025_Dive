@@ -92,11 +92,4 @@ public class Setup {
   public static final int DrivetrainSubsystem_FRONT_RIGHT_DRIVE_MOTOR = 6; 
   public static final int DrivetrainSubsystem_FRONT_RIGHT_ANGLE_MOTOR = 7; 
   
-  public static final HolonomicPathFollowerConfig pathFollowConfig = new HolonomicPathFollowerConfig(
-      new PIDConstants(0.5, 0.0, 0.1), 
-      new PIDConstants(0.5, 0.0, 0.1), 
-      maxSpeeds, 
-      new Translation2d(0.6 / 2.0, 0.6 / 2.0).getNorm(), 
-      new ReplanningConfig());
-  
 }

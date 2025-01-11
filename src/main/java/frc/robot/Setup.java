@@ -72,6 +72,10 @@ public class Setup {
   public Joystick getSecondaryJoystick() {
     return secondaryJoystick;
   }
+//---------------------------------------------------------Hardware------------------------------------------------------------------------
+
+  //Gyroscope
+  public final Gyroscope gyroscope = NavX.getInstance();
 //-----------------------------------------------------------IDs CHANGE ALLLL RAAAHHHHHHHHH------------------------------------------------------------------------------
 
   //Swerve Drive

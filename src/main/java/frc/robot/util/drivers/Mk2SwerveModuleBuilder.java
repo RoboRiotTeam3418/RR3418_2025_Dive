@@ -143,7 +143,7 @@ public class Mk2SwerveModuleBuilder {
         //2025 code
         SparkMaxConfig config = new SparkMaxConfig();
         RelativeEncoder encoder = ((SparkMax) motor).getEncoder();
-        SparkClosedLoopController controller = ((SparkMax) motor).getPIDController();
+        SparkClosedLoopController controller = ((SparkMax) motor).configAccessor.encoder.getPIDController();
         config.closedLoop
             .pid(constants.p, constants.i, constants.d);
         //2024 code below

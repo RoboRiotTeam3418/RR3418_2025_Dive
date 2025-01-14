@@ -1,9 +1,12 @@
 package frc.robot.util.drivers;
 
-import com.kauailabs.navx.frc.AHRS;
+import com.studica.frc.AHRS;
+import com.studica.frc.AHRS.NavXComType;
+
 import frc.robot.util.math.Rotation2;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.SerialPort;
+import frc.robot.Setup;
 
 public final class NavX extends Gyroscope {
     public final AHRS navX;
@@ -17,13 +20,13 @@ public final class NavX extends Gyroscope {
     }
 
     public NavX(edu.wpi.first.wpilibj.SerialPort.Port kmxp) {
-        navX = new AHRS(kmxp);
+        navX = new AHRS(NavXComType.kUSB2);
     }
-
+/* 
     public NavX(edu.wpi.first.wpilibj.SerialPort.Port kmxp, byte updateRate) {
         navX = new AHRS(kmxp, AHRS.SerialDataType.kProcessedData, updateRate);
     }
-
+*/
     public float getX(){
 
        return navX.getDisplacementX();

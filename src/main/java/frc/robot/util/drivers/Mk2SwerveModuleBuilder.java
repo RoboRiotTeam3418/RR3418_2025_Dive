@@ -8,6 +8,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 
 import com.revrobotics.spark.SparkBase.ControlType;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
+import frc.robot.Setup;
 
 public class Mk2SwerveModuleBuilder {
     /**
@@ -143,9 +145,13 @@ public class Mk2SwerveModuleBuilder {
         //2025 code
         SparkMaxConfig config = new SparkMaxConfig();
         RelativeEncoder encoder = ((SparkMax) motor).getEncoder();
-        SparkClosedLoopController controller = ((SparkMax) motor).configAccessor.encoder.getPIDController();
+        SparkClosedLoopController controller = ((SparkMax) motor).getClosedLoopController();
         config.closedLoop
             .pid(constants.p, constants.i, constants.d);
+        config.closedLoop.maxMotion
+            .maxVelocity(Setup.maxVel)
+            .maxAcceleration(Setup.maxAccel);
+
         //2024 code below
         //double positionFactor= motor.configAccessor.encoder.getPositionConversionFactor(2.0 * Math.PI / reduction);
         /* 

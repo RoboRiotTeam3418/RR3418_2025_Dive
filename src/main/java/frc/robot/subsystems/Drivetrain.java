@@ -6,6 +6,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkAnalogSensor;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -37,7 +38,8 @@ public class Drivetrain extends SubsystemBase{
                 }
                 return instance;
         }
-
+        
+        private RobotConfig config;
         //Establish motor variables
         private double frontLeftMotor = 0;
         private double fronttRightMotor = 0;
@@ -91,10 +93,15 @@ public class Drivetrain extends SubsystemBase{
                          blMotDri = new SparkMax(Setup.DrivetrainSubsystem_BACK_LEFT_DRIVE_MOTOR, SparkLowLevel.MotorType.kBrushless);
                          brMotDri = new SparkMax(Setup.DrivetrainSubsystem_BACK_RIGHT_DRIVE_MOTOR, SparkLowLevel.MotorType.kBrushless);
                         
-                         flSens = flMotAng.getAnalog(SparkAnalogSensor.Mode.kAbsolute);
-                         frSens = frMotAng.getAnalog(SparkAnalogSensor.Mode.kAbsolute);
-                         blSens = blMotAng.getAnalog(SparkAnalogSensor.Mode.kAbsolute);
-                         brSens = brMotAng.getAnalog(SparkAnalogSensor.Mode.kAbsolute);
+                        // flSens = flMotAng.getAnalog(SparkAnalogSensor.Mode.kAbsolute);
+                         //frSens = frMotAng.getAnalog(SparkAnalogSensor.Mode.kAbsolute);
+                         //blSens = blMotAng.getAnalog(SparkAnalogSensor.Mode.kAbsolute);
+                         //brSens = brMotAng.getAnalog(SparkAnalogSensor.Mode.kAbsolute);
+
+                         flSens = flMotAng.getAnalog();
+                         frSens = frMotAng.getAnalog();
+                         blSens = blMotAng.getAnalog();
+                         brSens = brMotAng.getAnalog();
 
                         //Backup for Roborio
                         //brSens = new AnalogInput(2);
@@ -147,7 +154,7 @@ public class Drivetrain extends SubsystemBase{
                 NavX.getInstance().getRotation2d(), getPositions());
                 // Load the RobotConfig from the GUI settings. You should probably
                 // store this in your Constants file
-                RobotConfig config;
+                
                 try{
                 config = RobotConfig.fromGUISettings();
                 } catch (Exception e) {
@@ -339,6 +346,7 @@ public class Drivetrain extends SubsystemBase{
                 }
         }
         //determine which speed setting the driver sets
+        /* 
         public String getSpeedSetting(){
                 if(Setup.getInstance().getDeathButton()){
                         speedSetting = "death";
@@ -354,6 +362,7 @@ public class Drivetrain extends SubsystemBase{
                 return speedSetting;
     
         }
+        */
 
         //set the speed based on the current speed setting
         public double getSpeed(String speedSetting) {

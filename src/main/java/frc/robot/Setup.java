@@ -1,9 +1,5 @@
 package frc.robot;
 
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.Joystick;
@@ -41,6 +37,11 @@ public class Setup {
     new Translation2d(TRACKWIDTH / 2.0, -WHEELBASE / 2.0),
     new Translation2d(TRACKWIDTH / 2.0, WHEELBASE / 2.0)
   );
+
+  //Acceleration and velocity max for pid config VALUES CURRENTLY BASED ON NOTHING
+  public static final double maxVel = 0.5;
+  public static final double maxAccel = 0.2;
+
 
  //----------------------------------------------------------Primary----------------------------------------------------------------------
 

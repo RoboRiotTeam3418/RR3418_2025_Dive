@@ -34,13 +34,13 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Elevator m_elevator = new Elevator();
   private final Climber m_climber = new Climber();
-  private final Drivetrain m_drivetrain = new Drivetrain();
+  //private final SwerveSubsystem m_drivetrain = new SwerveSubsystem();
 
   //commands
   private final Command m_climb = new ClimberMove(m_climber);
   private final Command m_snap = new ElevatorSnap(m_elevator);
   private final Command m_manual = new ElevatorManual(m_elevator);
-  private final Command m_simpDrive = new simpleDriveCommand(m_drivetrain);
+  //private final Command m_simpDrive = new simpleDriveCommand(m_drivetrain);
 
 
 
@@ -48,6 +48,9 @@ public class RobotContainer {
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
+
+  private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+                                                                                "swerve/neo"));
 
    /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.

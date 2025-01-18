@@ -4,21 +4,26 @@
 
 package frc.robot.commands;
 
+import frc.robot.Setup;
+import frc.robot.Constants;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Example_Subsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class ExampleCommand extends Command {
+public class ElevatorManual extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final Example_Subsystem m_subsystem;
+  private final Elevator m_subsystem;
+  private final double speed = Constants.getInstance().ElevatorSpeed;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ExampleCommand(Example_Subsystem subsystem) {
+  public ElevatorManual(Elevator subsystem) {
     m_subsystem = subsystem;
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -29,7 +34,13 @@ public class ExampleCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if(Setup.getInstance().getSecondaryLY()>0.1 || Setup.getInstance().getSecondaryLY()<-0.1){
+      m_subsystem.mot1.set(speed*Setup.getInstance().getSecondaryLY());
+    }else{
+      m_subsystem.mot1.set(0);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override

@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Setup;
 
 public class CoralIntake extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -24,6 +25,15 @@ public class CoralIntake extends SubsystemBase {
           /* one-time action goes here */
         });
   }
+   // get instance
+   static CoralIntake mInstance = new CoralIntake();
+
+   public static CoralIntake getInstance() {
+    if (mInstance == null) {
+      mInstance = new CoralIntake();
+    }
+       return mInstance;
+   }
 
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).

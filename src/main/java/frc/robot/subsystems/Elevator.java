@@ -4,12 +4,47 @@
 
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.config.RobotConfig;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Setup;
+import com.revrobotics.spark.SparkLowLevel.MotorType;;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Elevator extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public Elevator() {}
+  public SparkMax mot2;
+  public SparkMax mot1;
+  public RelativeEncoder enc2;
+  public RelativeEncoder enc1;
+  public PIDController elevController;
+  public boolean higher;
+  public AnalogPotentiometer pot;
+  private RobotConfig config;
+  
+
+  public Elevator() {
+    config = new RobotConfig(null, null, null, null)//get from Cad  team
+    config.idleMode(IdleMode.kBrake);
+    config.enc2.positionConversionFactor(1000);
+
+    mot2 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
+    mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
+    enc2 = mot2.getEncoder();
+    enc1 = mot1.getEncoder();
+    mot2.configure(config, ResetMode.kResetParameters);
+    mot1.configure(config, ResetMode.kResetParameters);
+    higher = Setup.getInstance().getSecondaryAasBool();
+    pot =  new AnalogPotentiometer(0, 936, 30); //max height in inches is ~ 936
+
+
+  }
 
   /**
    * Example command factory method.
@@ -23,6 +58,9 @@ public class Elevator extends SubsystemBase {
         () -> {
           /* one-time action goes here */
         });
+  }
+  public double getElevPosition(){
+    return enc1.getPosition();
   }
 
   /**

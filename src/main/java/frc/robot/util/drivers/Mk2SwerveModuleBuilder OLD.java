@@ -1,4 +1,4 @@
-package frc.robot.util.drivers;
+/*package frc.robot.util.drivers;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -27,43 +27,43 @@ import frc.robot.Setup;
 public class Mk2SwerveModuleBuilder {
     /**
      /* The gear ratio of the angle motor that ships with the standard kit.
-     */
+     //WAS END OF MULTI COMMENT
     private static final double DEFAULT_ANGLE_REDUCTION = 12.8;
 
     /**
      * The gear ratio of the drive motor that ships with the standard kit.
-     */
+     //WAS END OF MULTI COMMENT
     private static final double DEFAULT_DRIVE_REDUCTION = 6.75;
 
     /**
      * The diameter of the standard wheel in inches.
-     */
+     //WAS END OF MULTI COMMENT
     private static final double DEFAULT_WHEEL_DIAMETER = 4.0;
 
     /**
      * Default constants for angle pid running on-board with NEOs.
-     */
+     //WAS END OF MULTI COMMENT
     private static final PidConstants DEFAULT_ONBOARD_NEO_ANGLE_CONSTANTS = new PidConstants(0.5, 0.0, 0.0001);
 
     /**
      * Default constants for angle pid running on-board with CIMs.
-     */
+     //WAS END OF MULTI COMMENT
     private static final PidConstants DEFAULT_ONBOARD_CIM_ANGLE_CONSTANTS = new PidConstants(0.5, 0.0, 0.0001);
 
     /**
      * Default constants for angle pid running on-board with Mini CIMs
-     */
+     //WAS END OF MULTI COMMENT
     private static final PidConstants DEFAULT_ONBOARD_MINI_CIM_ANGLE_CONSTANTS = new PidConstants(0.5, 0.0, 0.0001);
 
     /**
      * Default constants for angle pid running on a Spark MAX using NEOs.
-     */
+     //WAS END OF MULTI COMMENT
     private static final PidConstants DEFAULT_CAN_SPARK_MAX_ANGLE_CONSTANTS = new PidConstants(0.5, 0.0, 0.1);
 
+    public SparkMaxConfig config = Setup.getInstance().config;
     private final Vector2 modulePosition;
     private final SwerveModulePosition modulePos;
 
-    public SparkMaxConfig config;
     private DoubleSupplier angleSupplier;
     private DoubleSupplier currentDrawSupplier;
     private DoubleSupplier distanceSupplier;
@@ -87,7 +87,7 @@ public class Mk2SwerveModuleBuilder {
      * @param offset  The offset of the encoder in radians. This value is added to the analog encoder reading to obtain
      *                the true module angle.
      * @return The builder.
-     */
+     //WAS END OF MULTI COMMENT
     public Mk2SwerveModuleBuilder angleEncoder(double encoder, double offset) {
         angleSupplier = () -> {
             double angle = encoder;
@@ -114,7 +114,7 @@ public class Mk2SwerveModuleBuilder {
      * @param motor The CAN Spark MAX to use as the angle motor. The NEO's encoder is set to output the module's angle
      *              in radians.
      * @return The builder.
-     */
+     //WAS END OF MULTI COMMENT
     public Mk2SwerveModuleBuilder angleMotor(SparkMax motor) {
         return angleMotor(motor, DEFAULT_CAN_SPARK_MAX_ANGLE_CONSTANTS, DEFAULT_ANGLE_REDUCTION);
     }
@@ -139,18 +139,14 @@ public class Mk2SwerveModuleBuilder {
      * @param reduction The reduction of the angle motor. It should be specified so the number is greater than 1.
      *                  For example, an 18:1 ratio should be specified by {@code 18.0 / 1.0}.
      * @return The builder.
-     */
+     //WAS END OF MULTI COMMENT
 
     public Mk2SwerveModuleBuilder angleMotor(MotorController motor, PidConstants constants, double reduction) {
         //2025 code
-        SparkMaxConfig config = new SparkMaxConfig();
         RelativeEncoder encoder = ((SparkMax) motor).getEncoder();
         SparkClosedLoopController controller = ((SparkMax) motor).getClosedLoopController();
-        config.closedLoop
-            .pid(constants.p, constants.i, constants.d);
-        config.closedLoop.maxMotion
-            .maxVelocity(Setup.maxVel)
-            .maxAcceleration(Setup.maxAccel);
+        //motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        
 
         //2024 code below
         //double positionFactor= motor.configAccessor.encoder.getPositionConversionFactor(2.0 * Math.PI / reduction);
@@ -158,7 +154,7 @@ public class Mk2SwerveModuleBuilder {
         controller.setP(constants.p);
         controller.setI(constants.i);
         controller.setD(constants.d);
-        */
+        //WAS END OF MULTI COMMENT
 
         //Turns Wheels
         targetAngleConsumer = targetAngle -> {
@@ -192,7 +188,7 @@ public class Mk2SwerveModuleBuilder {
      *
      * @param motor The PWM Spark MAX to use as the angle motor.
      * @return The builder.
-     */
+     //WAS END OF MULTI COMMENT
     public Mk2SwerveModuleBuilder angleMotor(MotorController motor) {
         return angleMotor(motor, MotorType.NEO);
     }
@@ -229,7 +225,7 @@ public class Mk2SwerveModuleBuilder {
      * @param motor     The speed controller to use as the angle motor.
      * @param constants The PID constants to use to control the module's angle (units are in radians).
      * @return The builder.
-     */
+     //WAS END OF MULTI COMMENT
     public Mk2SwerveModuleBuilder angleMotor(MotorController motor, PidConstants constants) {
         PidController controller = new PidController(constants);
         controller.setInputRange(0.0, 2.0 * Math.PI);
@@ -250,7 +246,7 @@ public class Mk2SwerveModuleBuilder {
      * @param motor The CAN Spark MAX to use as the drive motor. The NEO's encoder is set to output the module's driven
      *              distance and current velocity in inches and inches per second.
      * @return The builder.
-     */
+     //WAS END OF MULTI COMMENT
     public Mk2SwerveModuleBuilder driveMotor(SparkMax motor) {
         return driveMotor(motor, MotorType.NEO);
     }
@@ -273,18 +269,16 @@ public class Mk2SwerveModuleBuilder {
      * @param wheelDiameter The diameter of the module's wheel. By default this is {@value DEFAULT_WHEEL_DIAMETER}
      *                      inches.
      * @return The builder.
-     */
+     //WAS END OF MULTI COMMENT
     public Mk2SwerveModuleBuilder driveMotor(SparkMax motor, double reduction, double wheelDiameter) {
         RelativeEncoder encoder = ((SparkMax) motor).getEncoder();
-        config.encoder
-            .positionConversionFactor(wheelDiameter * Math.PI / reduction)
-            .velocityConversionFactor(wheelDiameter * Math.PI / reduction * (1.0 / 60.0)); // RPM to units per second);
+        
         motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         //2024 code below
         /*
         encoder.setPositionConversionFactor(wheelDiameter * Math.PI / reduction);
         encoder.setVelocityConversionFactor(wheelDiameter * Math.PI / reduction * (1.0 / 60.0)); // RPM to units per second
-         */
+         //WAS END OF MULTI COMMENT
         currentDrawSupplier = motor::getOutputCurrent;
         distanceSupplier = encoder::getPosition;
         velocitySupplier = encoder::getVelocity;
@@ -300,7 +294,7 @@ public class Mk2SwerveModuleBuilder {
      * @param motor     The speed controller to use.
      * @param motorType The type of motor used.
      * @return The builder.
-     */
+     //WAS END OF MULTI COMMENT
     public Mk2SwerveModuleBuilder driveMotor(MotorController motor, MotorType motorType) {
         // Spark MAXs are special and drive brushed motors in the opposite direction of every other motor controller
         if (motorType != MotorType.NEO && (motor instanceof Spark || motor instanceof SparkMax)) {
@@ -316,7 +310,7 @@ public class Mk2SwerveModuleBuilder {
      * Builds and returns a configured swerve module.
      *
      * @return The built swerve module.
-     */
+     //WAS END OF MULTI COMMENT
     public SwerveModule build() {
         // Verify everything is populated
         if (angleSupplier == null) {
@@ -427,4 +421,4 @@ public class Mk2SwerveModuleBuilder {
         NEO,
         FALCON_500
     }
-}
+}*/

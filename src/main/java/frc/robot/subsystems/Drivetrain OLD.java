@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+/*package frc.robot.subsystems;
 
 import com.revrobotics.spark.SparkMax;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -81,7 +81,7 @@ public class Drivetrain extends SubsystemBase{
 
         public Drivetrain() {
                 /*sets up the swerve modules for bus, sets a frame rate limit to prevent errors, establishes a center point for vector math, 
-                *gets encoder position, makes motor objects for rotation and translation, the compiles into one object.*/
+                *gets encoder position, makes motor objects for rotation and translation, the compiles into one object.//WAS END OF MULTI COMMENT
 
                          flMotAng = new SparkMax(Setup.DrivetrainSubsystem_FRONT_LEFT_ANGLE_MOTOR, SparkLowLevel.MotorType.kBrushless);
                          frMotAng = new SparkMax(Setup.DrivetrainSubsystem_FRONT_RIGHT_ANGLE_MOTOR, SparkLowLevel.MotorType.kBrushless);
@@ -311,7 +311,7 @@ public class Drivetrain extends SubsystemBase{
                         backRightModule.setTargetVelocity(0, 0);
                         //System.out.println("it's supposed to be STOPPED");
                 }
-        }*/
+        }//WAS END OF MULTI COMMENT
         public void driveForAuto(ChassisSpeeds moveSpeeds) {
                 speedChanger=.25;
                 double rotation = moveSpeeds.omegaRadiansPerSecond *=-12 /
@@ -362,7 +362,7 @@ public class Drivetrain extends SubsystemBase{
                 return speedSetting;
     
         }
-        */
+        //WAS END OF MULTI COMMENT
 
         //set the speed based on the current speed setting
         public double getSpeed(String speedSetting) {
@@ -433,4 +433,4 @@ public class Drivetrain extends SubsystemBase{
         public ChassisSpeeds getSpeeds() {
                 return Setup.getInstance().kinematics.toChassisSpeeds(states);
         }
-}
+}*/

@@ -1,11 +1,15 @@
 package frc.robot;
 
+import com.revrobotics.spark.config.SparkMaxConfig;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.util.drivers.Gyroscope;
 import frc.robot.util.drivers.NavX;
-
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 public class Setup {
     
   public static Setup instance = new Setup();
@@ -17,12 +21,30 @@ public class Setup {
 	  return instance;
   }   
 
+//---------------------------------------------------------Driver Config------------------------------------------------------------------
+/* OLD AND BROKEN
+  public SparkMaxConfig config = new SparkMaxConfig();
+  config
+    .inverted(false)
+    .idleMode(IdleMode.kBrake);
+  config.closedLoop
+    .pid(constants.p, constants.i, constants.d);
+  config.closedLoop.maxMotion
+    .maxVelocity(Setup.maxVel)
+    .maxAcceleration(Setup.maxAccel);
+  config.encoder
+    .positionConversionFactor(wheelDiameter * Math.PI / reduction)
+    .velocityConversionFactor(wheelDiameter * Math.PI / reduction * (1.0 / 60.0)); // RPM to units per second);
+  public SparkMaxConfig getinstance() {
+    return config;
+  }*/
+
 
  //---------------------------------------------------------Swerve Drive------------------------------------------------------------------
 
-  //measurments of robot in meters from center of wheel (19.25 inches squared, 39.37 inches in a meter)
-  public double TRACKWIDTH = 0.607;
-  public double WHEELBASE = 0.597;
+  //measurments of robot in meters from center of wheel (23 inches squared, 39.37 inches in a meter)
+  public double TRACKWIDTH = 39.37/23;
+  public double WHEELBASE = TRACKWIDTH;
     
   //offset of wheels sets the angle to start - CHANGE DIS BRO
   public double FRONT_RIGHT_ANGLE_OFFSET = -Math.toRadians(123.579545);
@@ -44,34 +66,48 @@ public class Setup {
 
 
  //----------------------------------------------------------Primary----------------------------------------------------------------------
+//FOR COMMAND JOYSTICKS MAKE BUTTONS HERE AND PUBLIC, MAKE DOUBLES PUBLIC METHODS SO IT GETS EACH TIME IT'S CALLED THIS WAY YOU DON"T HAVE 
+//TO REFERENCE THE JOYSTICK OBJECT ITSELF EACH TIME
 
   //Flight Stick (Primary)
-  private static Joystick primaryJoystick = new Joystick(0);
+  private static CommandJoystick primaryJoystick = new CommandJoystick(0);
 
-  public Joystick getPrimaryJoystick() {
+  public CommandJoystick getPrimaryJoystick() {
     return primaryJoystick;
   }
   
-
   //movement
   public double getPrimaryX(){
-    return primaryJoystick.getRawAxis(0);
+    return primaryJoystick.getX();
   }
   
   public double getPrimaryY(){
-    return primaryJoystick.getRawAxis(1);
+    return primaryJoystick.getY();
   }
   
   public double getPrimaryZ(){
-    return primaryJoystick.getRawAxis(5);
+    return primaryJoystick.getZ();
   }
    //-----------------------------------------------------secondary--------------------------------------------------------------------
   
   //Xbox Controller (Secondary)
-  private static Joystick secondaryJoystick = new Joystick(1);
+  private static CommandXboxController secondaryJoystick = new CommandXboxController(1);
+  public final Trigger toggleClimber = secondaryJoystick.start();
+  public final Trigger toggleElevator = secondaryJoystick.back();
 
-  public Joystick getSecondaryJoystick() {
+  public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;
+  }
+  public boolean getSecondaryAasBool(){
+    return secondaryJoystick.getHID().getAButtonPressed();
+  }
+
+  public boolean getSecondaryMoveElev(){
+    return secondaryJoystick.getHID().getLeftStickButtonPressed();
+  }
+
+  public Double getSecondaryLY(){
+    return secondaryJoystick.getLeftY();
   }
 //---------------------------------------------------------Hardware------------------------------------------------------------------------
 
@@ -91,6 +127,13 @@ public class Setup {
   public static final int DrivetrainSubsystem_BACK_RIGHT_ANGLE_MOTOR = 4; 
 
   public static final int DrivetrainSubsystem_FRONT_RIGHT_DRIVE_MOTOR = 6; 
-  public static final int DrivetrainSubsystem_FRONT_RIGHT_ANGLE_MOTOR = 7; 
+  public static final int DrivetrainSubsystem_FRONT_RIGHT_ANGLE_MOTOR = 7;
+
+  public static final int ELEVMOT1ID = 7; 
+  public static final int ELEVMOT2ID = 7; 
+
+  public static final int CLIMB_ID = 7; 
+  public static final int INTAKE_TOP_ID = 7; 
+  public static final int INTAKE_BOT_ID = 7; 
   
 }

@@ -22,6 +22,8 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 import java.io.File;
+import java.util.function.BooleanSupplier;
+
 import swervelib.SwerveInputStream;
 
 /**
@@ -127,6 +129,24 @@ public class RobotContainer {
     Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleSim);
 
+    //create triggers for primary buttons
+    BooleanSupplier fullStop = () ->Setup.getInstance().getFullStop(); 
+    Trigger fullStopTrig = new Trigger(fullStop);
+    BooleanSupplier zeroGyro = () ->Setup.getInstance().getZeroGyro(); 
+    Trigger zeroGyroTrig = new Trigger(zeroGyro);
+    BooleanSupplier primaryStart = () ->Setup.getInstance().getPrimaryStart(); 
+    Trigger primaryStartTrig = new Trigger(primaryStart);
+    BooleanSupplier primaryBack = () ->Setup.getInstance().getPrimaryBack(); 
+    Trigger primaryBackTrig = new Trigger(primaryBack);
+    BooleanSupplier backIsPos = () ->Setup.getInstance().getBackIsPos();
+    Trigger backIsPosTrig = new Trigger(backIsPos);
+    BooleanSupplier backIsNeg = () ->Setup.getInstance().getBackIsNeg();
+    Trigger backIsNegTrig = new Trigger(backIsNeg);
+    BooleanSupplier driveSetDistance = () ->Setup.getInstance().getDriveSetDistance();
+    Trigger driveSetDistanceTrig = new Trigger(driveSetDistance);
+    BooleanSupplier fakeVision = () ->Setup.getInstance().getFakeVision();
+    Trigger fakeVisionTrig = new Trigger(fakeVision);
+
     if (RobotBase.isSimulation())
     {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
@@ -137,7 +157,7 @@ public class RobotContainer {
 
     if (Robot.isSimulation())
     {
-      m_primaryJoystick.start().onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+     primaryStartTrig.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
       m_primaryJoystick.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
 
     }
@@ -145,24 +165,24 @@ public class RobotContainer {
     {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
-      m_primaryJoystick.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      m_primaryJoystick.y().whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      m_primaryJoystick.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      m_primaryJoystick.back().whileTrue(drivebase.centerModulesCommand());
-      m_primaryJoystick.leftBumper().onTrue(Commands.none());
-      m_primaryJoystick.rightBumper().onTrue(Commands.none());
+      fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driveSetDistanceTrig.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      primaryBackTrig.whileTrue(drivebase.centerModulesCommand());
+      backIsNegTrig.onTrue(Commands.none());
+      backIsPosTrig.onTrue(Commands.none());
     } else
     {
-      m_primaryJoystick.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      m_primaryJoystick.x().onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      m_primaryJoystick.b().whileTrue(
+      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      fakeVisionTrig.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      driveSetDistanceTrig.whileTrue(
           drivebase.driveToPose(
               new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
                               );
-      m_primaryJoystick.start().whileTrue(Commands.none());
-      m_primaryJoystick.back().whileTrue(Commands.none());
-      m_primaryJoystick.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      m_primaryJoystick.rightBumper().onTrue(Commands.none());
+      primaryStartTrig.whileTrue(Commands.none());
+      primaryBackTrig.whileTrue(Commands.none());
+      backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      backIsPosTrig.onTrue(Commands.none());
     }
   }
 
@@ -173,6 +193,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
+    //return Autos.exampleAuto(m_exampleSubsystem);
+  }
+  public void setMotorBrake(boolean brake)
+  {
+    drivebase.setMotorBrake(brake);
   }
 }

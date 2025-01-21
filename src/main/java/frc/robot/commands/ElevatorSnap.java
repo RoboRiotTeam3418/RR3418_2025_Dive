@@ -18,8 +18,9 @@ public class ElevatorSnap extends Command {
   public PIDController shooterController;
   public int height = 0;
   public int goalheight = 0; //in teirs
-  public int levelstoTravel=0;
-  public int direction=1;
+  //public int levelstoTravel=0;
+  //public int direction=1;
+  public double setval;
   public double speed = Constants.getInstance().ElevatorSpeed;
   public double kP = Constants.getInstance().ElevatorP,kI = Constants.getInstance().ElevatorI,kD = Constants.getInstance().ElevatorD;
   public PIDController pid;
@@ -30,7 +31,7 @@ public class ElevatorSnap extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorSnap(Elevator subsystem, double stopval) {
+  public ElevatorSnap(Elevator subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -47,7 +48,7 @@ public class ElevatorSnap extends Command {
   @Override
   public void execute() {
     if (m_subsystem.higher){
-      if (goalheight<=4){
+      if (goalheight<4){
         goalheight++;
       }else{
         goalheight = 0;
@@ -55,10 +56,11 @@ public class ElevatorSnap extends Command {
       m_subsystem.higher=false;
     }
     if (goalheight!= height &&  Setup.getInstance().getSecondaryMoveElev()){
-      levelstoTravel = goalheight-height;
+      //levelstoTravel = goalheight-height;
       switch(goalheight) {
         case 0:
           // very small, home state
+          pid.setSetpoint(1);
           break;
         case 1:
           // trough
@@ -80,8 +82,9 @@ public class ElevatorSnap extends Command {
           break;
   
       }
-      m_subsystem.mot1.set(pid.calculate(pot.get(), pid.getSetpoint()));
-      m_subsystem.mot2.set(pid.calculate(pot.get(), pid.getSetpoint()));
+      setval = pid.calculate(pot.get(), pid.getSetpoint())
+      m_subsystem.mot1.set(setval);
+      m_subsystem.mot2.set(setval);
     }
     
   }

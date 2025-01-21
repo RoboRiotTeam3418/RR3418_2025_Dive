@@ -108,8 +108,40 @@ public class Setup {
   public boolean getPrimaryDriverYButton(){
     return getPrimaryHID().getRawButton(8);
   }
-
-
+  //field oriented
+  public boolean getFieldOriented(){
+    return getPrimaryHID().getRawButtonPressed(4);
+  }
+  //other drivy things
+  public boolean getFullStop(){
+    return getPrimaryHID().getRawButtonPressed(3);
+  }
+  public boolean getZeroGyro(){
+    return getPrimaryHID().getRawButtonPressed(2);
+  }
+  public boolean getPrimaryBack(){
+    //center modules in test, nothing in Teleop
+    return getPrimaryHID().getRawButtonPressed(11);
+  }
+  public boolean getPrimaryStart(){
+    //reset odometry in simulation, nothing in teleop
+    return getPrimaryHID().getRawButtonPressed(12);
+  }
+  public boolean getBackIsPos(){
+    //clears command
+    return getPrimaryHID().getRawAxis(6)>0.1;
+  }
+  public boolean getBackIsNeg(){
+    //stops driver, clears command
+    return getPrimaryHID().getRawAxis(6)<-0.1;
+  }
+  public boolean getDriveSetDistance(){
+    return getPrimaryHID().getRawButtonPressed(15);
+  }
+  public boolean getFakeVision(){
+    return getPrimaryHID().getRawButtonPressed(10);
+  }
+  
   //ground intake
   public boolean getPrimaryGroundIntake(){
     return getPrimaryHID().getRawButton(1);
@@ -118,10 +150,8 @@ public class Setup {
   public boolean getPrimaryOuttake(){
     return getPrimaryHID().getRawButton(9);
   }
-  //field oriented
-  public boolean getFieldOriented(){
-    return getPrimaryHID().getRawButtonPressed(4);
-  }
+
+  
 
    //-----------------------------------------------------secondary--------------------------------------------------------------------
   

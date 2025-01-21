@@ -75,6 +75,9 @@ public class Setup {
   public CommandJoystick getPrimaryJoystick() {
     return primaryJoystick;
   }
+  public Joystick getPrimaryHID(){
+    return primaryJoystick.getHID();
+  }
   
   //movement
   public double getPrimaryX(){
@@ -88,6 +91,38 @@ public class Setup {
   public double getPrimaryZ(){
     return primaryJoystick.getZ();
   }
+
+  //speed
+  public boolean getPrimaryDriverXButton(){
+    return getPrimaryHID().getRawButton(5);
+  }
+
+  public boolean getPrimaryDriverAButton(){
+    return getPrimaryHID().getRawButton(6);
+  }
+
+  public boolean getPrimaryDriverBButton(){
+    return getPrimaryHID().getRawButton(7);
+  }
+
+  public boolean getPrimaryDriverYButton(){
+    return getPrimaryHID().getRawButton(8);
+  }
+
+
+  //ground intake
+  public boolean getPrimaryGroundIntake(){
+    return getPrimaryHID().getRawButton(1);
+  }
+
+  public boolean getPrimaryOuttake(){
+    return getPrimaryHID().getRawButton(9);
+  }
+  //field oriented
+  public boolean getFieldOriented(){
+    return getPrimaryHID().getRawButtonPressed(4);
+  }
+
    //-----------------------------------------------------secondary--------------------------------------------------------------------
   
   //Xbox Controller (Secondary)
@@ -113,27 +148,27 @@ public class Setup {
 
   //Gyroscope
   public final Gyroscope gyroscope = NavX.getInstance();
-//-----------------------------------------------------------IDs CHANGE ALLLL RAAAHHHHHHHHH------------------------------------------------------------------------------
+//-----------------------------------------------------------IDs CHANGE RAAAHHHHHHHHH------------------------------------------------------------------------------
 
   //Swerve Drive
-  public static final int DrivetrainSubsystem_FRONT_LEFT_DRIVE_MOTOR = 0; 
-  public static final int DrivetrainSubsystem_FRONT_LEFT_ANGLE_MOTOR = 1; 
+  public static final int DrivetrainSubsystem_FRONT_LEFT_DRIVE_MOTOR = 10; 
+  public static final int DrivetrainSubsystem_FRONT_LEFT_ANGLE_MOTOR = 11; 
 
-  public static final int DrivetrainSubsystem_BACK_LEFT_DRIVE_MOTOR = 2; 
-  public static final int DrivetrainSubsystem_BACK_LEFT_ANGLE_MOTOR = 3; 
+  public static final int DrivetrainSubsystem_BACK_LEFT_DRIVE_MOTOR = 12; 
+  public static final int DrivetrainSubsystem_BACK_LEFT_ANGLE_MOTOR = 13; 
 
   //wired wrong so bad
-  public static final int DrivetrainSubsystem_BACK_RIGHT_DRIVE_MOTOR = 5; 
-  public static final int DrivetrainSubsystem_BACK_RIGHT_ANGLE_MOTOR = 4; 
+  public static final int DrivetrainSubsystem_BACK_RIGHT_DRIVE_MOTOR = 14; 
+  public static final int DrivetrainSubsystem_BACK_RIGHT_ANGLE_MOTOR = 15; 
 
-  public static final int DrivetrainSubsystem_FRONT_RIGHT_DRIVE_MOTOR = 6; 
-  public static final int DrivetrainSubsystem_FRONT_RIGHT_ANGLE_MOTOR = 7;
+  public static final int DrivetrainSubsystem_FRONT_RIGHT_DRIVE_MOTOR = 16; 
+  public static final int DrivetrainSubsystem_FRONT_RIGHT_ANGLE_MOTOR = 17;
 
   public static final int ELEVMOT1ID = 7; 
   public static final int ELEVMOT2ID = 7; 
 
   public static final int CLIMB_ID = 7; 
-  public static final int INTAKE_TOP_ID = 7; 
-  public static final int INTAKE_BOT_ID = 7; 
+  public static final int INTAKE_END_ID = 7; 
+  public static final int INTAKE_MOVE_ID = 7; 
   
 }

@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Setup;
-import com.revrobotics.spark.SparkLowLevel.MotorType;;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Elevator extends SubsystemBase {
@@ -30,18 +30,12 @@ public class Elevator extends SubsystemBase {
   
 
   public Elevator() {
-    config = new RobotConfig(null, null, null, null)//get from Cad  team
-    config.idleMode(IdleMode.kBrake);
-    config.enc2.positionConversionFactor(1000);
-
     mot2 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
     mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
     enc2 = mot2.getEncoder();
     enc1 = mot1.getEncoder();
-    mot2.configure(config, ResetMode.kResetParameters);
-    mot1.configure(config, ResetMode.kResetParameters);
     higher = Setup.getInstance().getSecondaryAasBool();
-    pot =  new AnalogPotentiometer(0, 936, 30); //max height in inches is ~ 936
+    pot =  new AnalogPotentiometer(0, 78, 0); //max height in inches is ~ 78
 
 
   }
@@ -60,7 +54,7 @@ public class Elevator extends SubsystemBase {
         });
   }
   public double getElevPosition(){
-    return enc1.getPosition();
+    return pot.get();
   }
 
   /**

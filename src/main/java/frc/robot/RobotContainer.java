@@ -56,9 +56,9 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> m_primaryJoystick.getLeftY() * -1,
-                                                                () -> m_primaryJoystick.getLeftX() * -1)
-                                                            .withControllerRotationAxis(m_primaryJoystick::getRightX)
+                                                                () -> m_primaryJoystick.getY() * -1,// CHECK FUNCTION
+                                                                () -> m_primaryJoystick.getX() * -1)// CHECK FUNCTION
+                                                            .withControllerRotationAxis(m_primaryJoystick::getZ)// CHECK FUNCTION
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -66,14 +66,12 @@ public class RobotContainer {
   /**
    * Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
    */
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_primaryJoystick::getRightX,
-                                                                                             m_primaryJoystick::getRightY)
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_primaryJoystick::getZ)
                                                            .headingWhile(true);
 
-
   SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                   () -> -m_primaryJoystick.getLeftY(),
-                                                                   () -> -m_primaryJoystick.getLeftX())
+                                                                   () -> -m_primaryJoystick.getY(),
+                                                                   () -> -m_primaryJoystick.getX())
                                                                .withControllerRotationAxis(() -> m_primaryJoystick.getRawAxis(2))
                                                                .deadband(OperatorConstants.DEADBAND)
                                                                .scaleTranslation(0.8)
@@ -118,7 +116,7 @@ public class RobotContainer {
     Setup.getInstance().toggleClimber.toggleOnTrue(m_climb);
     Setup.getInstance().toggleElevator.toggleOnTrue(m_snap);
     Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
-    m_drivetrain.setDefaultCommand(m_simpDrive);
+    //m_drivetrain.setDefaultCommand(m_simpDrive);
 
 
     Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);

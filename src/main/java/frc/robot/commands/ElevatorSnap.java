@@ -8,6 +8,7 @@ import frc.robot.Constants;
 import frc.robot.Setup;
 import frc.robot.subsystems.Elevator;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -22,6 +23,7 @@ public class ElevatorSnap extends Command {
   public double speed = Constants.getInstance().ElevatorSpeed;
   public double kP = Constants.getInstance().ElevatorP,kI = Constants.getInstance().ElevatorI,kD = Constants.getInstance().ElevatorD;
   public PIDController pid;
+   public AnalogPotentiometer pot;
 
   /**
    * qCreates a new ExampleCommand.
@@ -60,25 +62,26 @@ public class ElevatorSnap extends Command {
           break;
         case 1:
           // trough
-          setpoint =
+          pid.setSetpoint(21);
           break;
         case 2:
           // pole 1
-          setpoint = 
+          pid.setSetpoint(32);
           break;
         case 3:
           // pole 2
-          setpoint = 
+          pid.setSetpoint(48);
           break;
         case 4:
           // pole 3
+          pid.setSetpoint(75);
           break;
         default:
           break;
   
       }
-      m_subsystem.mot1.set(pid.calculate(m_subsystem.enc1.getPosition(), setpoint));
-      m_subsystem.mot2.set(pid.calculate(m_subsystem.enc2.getPosition(), setpoint));
+      m_subsystem.mot1.set(pid.calculate(pot.get(), pid.getSetpoint()));
+      m_subsystem.mot2.set(pid.calculate(pot.get(), pid.getSetpoint()));
     }
     
   }

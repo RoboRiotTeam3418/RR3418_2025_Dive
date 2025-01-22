@@ -24,7 +24,7 @@ public class CoralIntake extends SubsystemBase {
 
     public CoralIntake(){
         intakeMotor = new SparkMax(Setup.INTAKE_END_ID, MotorType.kBrushed);
-        gamePieceSensor = new DigitalInput(Setup.GamePieceSensorID);
+        //gamePieceSensor = new DigitalInput(Setup.GamePieceSensorID);
     }
 
     public void Intake(double intakeSpeed){

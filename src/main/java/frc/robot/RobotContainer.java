@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 import java.io.File;
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import swervelib.SwerveInputStream;
 
@@ -36,6 +37,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Elevator m_elevator = new Elevator();
   private final Climber m_climber = new Climber();
+  private final Example_Subsystem m_exampleSubsystem = new Example_Subsystem();
   //private final SwerveSubsystem m_drivetrain = new SwerveSubsystem();
 
   //commands
@@ -68,7 +70,8 @@ public class RobotContainer {
   /**
    * Clones the angular velocity input stream and converts it to a fieldRelative input stream.
    */
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_primaryJoystick::getX, m_primaryJoystick::getY)
+  public DoubleSupplier getNegZ = ()-> m_primaryJoystick.getZ()*-1;
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_primaryJoystick::getZ, getNegZ)//checkfunction
                                                            .headingWhile(true);
 
   SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
@@ -193,7 +196,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    //return Autos.exampleAuto(m_exampleSubsystem);
+    return Autos.exampleAuto(drivebase);
   }
   public void setMotorBrake(boolean brake)
   {

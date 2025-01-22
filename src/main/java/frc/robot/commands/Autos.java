@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.commands.drivebase.AbsoluteDrive;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,7 +15,7 @@ public final class Autos {
   public static double autodistance= 6;
   public static double autospeed = 0.4;
   public static Command exampleAuto(SwerveSubsystem drive) {
-    return Commands.sequence(drive.driveToDistanceCommand(autodistance,autospeed), new ExampleCommand(drive));
+    return Commands.sequence(drive.driveToDistanceCommand(autodistance,autospeed) /*, placeholder command*/);
   }
 
   private Autos() {

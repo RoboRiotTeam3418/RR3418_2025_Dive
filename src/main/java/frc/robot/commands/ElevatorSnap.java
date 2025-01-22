@@ -82,7 +82,7 @@ public class ElevatorSnap extends Command {
           break;
   
       }
-      setval = pid.calculate(pot.get(), pid.getSetpoint())
+      setval = pid.calculate(pot.get(), pid.getSetpoint());
       m_subsystem.mot1.set(setval);
       m_subsystem.mot2.set(setval);
     }

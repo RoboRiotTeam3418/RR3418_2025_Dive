@@ -36,6 +36,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.Setup;
+
 //import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
 import java.io.IOException;
@@ -57,12 +59,12 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase
-{
+{ 
 
   /**
    * Swerve drive object.
    */
-  private final SwerveDrive         swerveDrive;
+  public final SwerveDrive         swerveDrive;
   /**
    * AprilTag field layout.
    */
@@ -75,7 +77,6 @@ public class SwerveSubsystem extends SubsystemBase
    * PhotonVision class to keep an accurate odometry.
    */
 //  private       Vision              vision;
-
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -83,6 +84,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public SwerveSubsystem(File directory)
   {
+    
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try
@@ -505,6 +507,13 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.drive(velocity);
   }
 
+  public Command drive(Supplier<ChassisSpeeds> velocity)
+  {
+    return run(() -> {
+      swerveDrive.drive(velocity.get());
+    });
+  }
+
 
   /**
    * Get the swerve drive kinematics object.
@@ -625,7 +634,7 @@ public class SwerveSubsystem extends SubsystemBase
    * @param headingX X joystick which controls the angle of the robot.
    * @param headingY Y joystick which controls the angle of the robot.
    * @return {@link ChassisSpeeds} which can be sent to the Swerve Drive.
-   */
+   
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY)
   {
     Translation2d scaledInputs = SwerveMath.cubeTranslation(new Translation2d(xInput, yInput));
@@ -635,7 +644,7 @@ public class SwerveSubsystem extends SubsystemBase
                                                         headingY,
                                                         getHeading().getRadians(),
                                                         Constants.MAX_SPEED);
-  }
+  }*/
 
   /**
    * Get the chassis speeds based on controller input of 1 joystick and one angle. Control the robot at an offset of
@@ -732,4 +741,8 @@ public class SwerveSubsystem extends SubsystemBase
   {
     return swerveDrive;
   }
+  public ChassisSpeeds getDeath(){
+    return new ChassisSpeeds(0,0, getSwerveDrive().getMaximumChassisAngularVelocity());
+  }
+
 }

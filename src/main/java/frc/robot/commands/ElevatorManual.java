@@ -30,7 +30,9 @@ public class ElevatorManual extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    Elevator.getInstance().isManual = true;
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -49,6 +51,9 @@ public class ElevatorManual extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(!Elevator.getInstance().isManual){
+      return true;
+    }
     return false;
   }
 }

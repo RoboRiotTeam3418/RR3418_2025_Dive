@@ -8,7 +8,11 @@ import frc.robot.Constants;
 import frc.robot.Setup;
 import frc.robot.subsystems.Elevator;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -25,6 +29,10 @@ public class ElevatorSnap extends Command {
   public double kP = Constants.getInstance().ElevatorP,kI = Constants.getInstance().ElevatorI,kD = Constants.getInstance().ElevatorD;
   public PIDController pid;
    public AnalogPotentiometer pot;
+   public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
+  private GenericEntry goalheightEntry =
+      tab.add("Goal Height Level", 0)
+         .getEntry();
 
   /**
    * qCreates a new ExampleCommand.
@@ -40,6 +48,7 @@ public class ElevatorSnap extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Elevator.getInstance().isManual = false;
     pid = new PIDController(kP, kI, kD);
     pid.setTolerance(5, 10);//values suggested by wpilib documentation
   }
@@ -53,6 +62,7 @@ public class ElevatorSnap extends Command {
       }else{
         goalheight = 0;
       }
+      goalheightEntry.setDouble(goalheight);
       m_subsystem.higher=false;
     }
     if (goalheight!= height &&  Setup.getInstance().getSecondaryMoveElev()){
@@ -97,6 +107,7 @@ public class ElevatorSnap extends Command {
   @Override
   public boolean isFinished() {
     if (pid.atSetpoint()){
+      Elevator.getInstance().isManual = true;
       return true;
     }
     return false;

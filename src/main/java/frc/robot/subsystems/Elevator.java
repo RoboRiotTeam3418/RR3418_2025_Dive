@@ -4,10 +4,8 @@
 
 package frc.robot.subsystems;
 
-import com.pathplanner.lib.config.RobotConfig;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
@@ -26,7 +24,7 @@ public class Elevator extends SubsystemBase {
   public PIDController elevController;
   public boolean higher;
   public AnalogPotentiometer pot;
-  private RobotConfig config;
+  public boolean isManual = true;
   
 
   public Elevator() {
@@ -36,10 +34,14 @@ public class Elevator extends SubsystemBase {
     enc1 = mot1.getEncoder();
     higher = Setup.getInstance().getSecondaryAasBool();
     pot =  new AnalogPotentiometer(0, 78, 0); //max height in inches is ~ 78
-
-
   }
-
+  public static Elevator instance = new Elevator();
+  public static Elevator getInstance() {
+    if (instance == null) {
+      instance = new Elevator();
+    }
+    return instance;
+  }  
   /**
    * Example command factory method.
    *

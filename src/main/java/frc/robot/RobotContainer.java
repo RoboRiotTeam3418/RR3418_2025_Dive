@@ -16,6 +16,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -24,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import java.io.File;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import swervelib.SwerveInputStream;
 
@@ -53,15 +55,48 @@ public class RobotContainer {
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
 
+  //Driver speeds
+  public Double getSpeedSetting(){
+    //determine which speed setting the driver sets
+      if(Setup.getInstance().getDeathMode()){
+              speedSetting = "death";
+      } else if(Setup.getInstance().getPrimaryDriverXButton()){
+              speedSetting = "fast";
+      } else if(Setup.getInstance().getPrimaryDriverAButton()){
+              speedSetting = "medium";
+      } else if(Setup.getInstance().getPrimaryDriverBButton()){
+              speedSetting = "slow";
+      } else if(Setup.getInstance().getPrimaryDriverYButton()){
+              speedSetting = "reallySlow";
+      }
+  //set the speed based on the current speed setting
+      String whichSpeed = speedSetting;
+      if(whichSpeed == "death"){
+              speed =Constants.MAX_SPEED;
+      } else if(whichSpeed == "fast"){
+              speed=-.825;
+      } else if(whichSpeed == "medium"){
+              speed=0;
+      } else if(whichSpeed == "slow"){
+              speed=0.325;
+      } else if(whichSpeed == "reallySlow"){
+              speed = .5;
+      }
+      return speed;
+    }
+    public String speedSetting = "medium";
+    public double speed = 0;
+
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
 
    /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
+  
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> m_primaryJoystick.getY() * -1,// CHECK FUNCTION
-                                                                () -> m_primaryJoystick.getX() * -1)// CHECK FUNCTION
+                                                                () -> m_primaryJoystick.getY() * -1*speed,// CHECK FUNCTION
+                                                                () -> m_primaryJoystick.getX() * -1*speed)// CHECK FUNCTION
                                                             .withControllerRotationAxis(m_primaryJoystick::getZ)// CHECK FUNCTION
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
@@ -131,6 +166,8 @@ public class RobotContainer {
     Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
     Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleSim);
+    final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> new ChassisSpeeds(0,0, drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
+    Command death = drivebase.drive(DEATH_SPEEDS);
 
     //create triggers for primary buttons
     BooleanSupplier fullStop = () ->Setup.getInstance().getFullStop(); 
@@ -149,6 +186,8 @@ public class RobotContainer {
     Trigger driveSetDistanceTrig = new Trigger(driveSetDistance);
     BooleanSupplier fakeVision = () ->Setup.getInstance().getFakeVision();
     Trigger fakeVisionTrig = new Trigger(fakeVision);
+    BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
+    Trigger deathModeTrig = new Trigger(deathMode);
 
     if (RobotBase.isSimulation())
     {
@@ -186,6 +225,8 @@ public class RobotContainer {
       primaryBackTrig.whileTrue(Commands.none());
       backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       backIsPosTrig.onTrue(Commands.none());
+      deathModeTrig.whileTrue(death);
+
     }
   }
 

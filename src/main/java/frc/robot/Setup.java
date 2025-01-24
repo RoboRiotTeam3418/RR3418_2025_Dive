@@ -48,11 +48,12 @@ public class Setup {
   public double TRACKWIDTH = 39.37/23;
   public double WHEELBASE = TRACKWIDTH;
     
-  //offset of wheels sets the angle to start - CHANGE DIS BRO
+  /*offset of wheels sets the angle to start - CHANGE DIS BRO
   public double FRONT_RIGHT_ANGLE_OFFSET = -Math.toRadians(123.579545);
   public double FRONT_LEFT_ANGLE_OFFSET = -Math.toRadians(260.795455);
   public double BACK_RIGHT_ANGLE_OFFSET = -Math.toRadians(-4.303369);
   public double BACK_LEFT_ANGLE_OFFSET = -Math.toRadians(18.579545);
+  */
 
   //finds position of the wheels based on the position of the center
   public final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
@@ -110,6 +111,9 @@ public class Setup {
   public boolean getPrimaryDriverYButton(){
     return getPrimaryHID().getRawButton(8);
   }
+  public boolean getDeathMode(){
+    return getPrimaryHID().getRawButton(10);
+  }
   //field oriented
   public boolean getFieldOriented(){
     return getPrimaryHID().getRawButtonPressed(4);
@@ -141,7 +145,7 @@ public class Setup {
     return getPrimaryHID().getRawButtonPressed(15);
   }
   public boolean getFakeVision(){
-    return getPrimaryHID().getRawButtonPressed(10);
+    return getPrimaryHID().getRawButtonPressed(13);
   }
   
   //ground intake
@@ -152,7 +156,6 @@ public class Setup {
   public boolean getPrimaryOuttake(){
     return getPrimaryHID().getRawButton(9);
   }
-
   
 
    //-----------------------------------------------------secondary--------------------------------------------------------------------

@@ -6,23 +6,72 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Setup;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.AbsoluteEncoder;
+import edu.wpi.first.wpilibj.DigitalInput;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class CoralEndEffector extends SubsystemBase {
+  // get instance
+  static CoralEndEffector mInstance = new CoralEndEffector();
+
+  public static CoralEndEffector getInstance() {
+      return mInstance;
+  }
+  //variables
+  public SparkMax spinMotor;
+  public AbsoluteEncoder spinEncoder;
+  public DigitalInput gamePieceSensor;
+
+  public double spinSpeed = 0.1; //placeholder value
+  public boolean isClockwise, isCounterClockwise;
+
   /** Creates a new ExampleSubsystem. */
-  public CoralEndEffector() {}
+  public CoralEndEffector() {
+    spinMotor = new SparkMax(Setup.getInstance().SPIN_ID, MotorType.kBrushless);
+    spinEncoder = spinMotor.getAbsoluteEncoder();
+  }  
 
   /**
    * Example command factory method.
    *
    * @return a command
    */
-  public Command exampleMethodCommand() {
+  public Command spinClockwise() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
+    return run(
         () -> {
-          /* one-time action goes here */
+          spinMotor.set(spinSpeed);
         });
+  }
+  public Command spinCounterClockwise() {
+    // Inline construction of command goes here.
+    // Subsystem::RunOnce implicitly requires `this` subsystem.
+    return run(
+        () -> {
+          spinMotor.set(-spinSpeed);
+        });
+  }
+  public Command to35() {
+    // Inline construction of command goes here.
+    // Subsystem::RunOnce implicitly requires `this` subsystem.
+    if (spinEncoder.getPosition()>210){
+      return run(
+        () -> {
+          while (spinEncoder.getPosition() >36){
+            spinMotor.set(spinSpeed);
+          }
+        });
+    }else{
+      return run(
+        () -> {
+          while (spinEncoder.getPosition() <34){
+            spinMotor.set(-spinSpeed);
+          }
+        });
+    }
   }
 
   /**

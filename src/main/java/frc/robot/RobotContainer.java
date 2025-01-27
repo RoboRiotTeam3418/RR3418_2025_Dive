@@ -38,6 +38,7 @@ import swervelib.SwerveInputStream;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Elevator m_elevator = new Elevator();
+  private final CoralEndEffector m_endeff = new CoralEndEffector();
   private final Climber m_climber = new Climber();
   private final Example_Subsystem m_exampleSubsystem = new Example_Subsystem();
   //private final SwerveSubsystem m_drivetrain = new SwerveSubsystem();
@@ -132,6 +133,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     m_elevator.setDefaultCommand(m_manual);
+    m_endeff.setDefaultCommand(Commands.none());
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
@@ -188,6 +190,10 @@ public class RobotContainer {
     Trigger fakeVisionTrig = new Trigger(fakeVision);
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
+
+    m_secondary.leftBumper().whileTrue(m_endeff.spinCounterClockwise());
+    m_secondary.rightBumper().whileTrue(m_endeff.spinClockwise());
+    m_secondary.b().onTrue(m_endeff.to35());
 
     if (RobotBase.isSimulation())
     {

@@ -23,12 +23,10 @@ public class intakeCommand extends Command {
     }
     @Override
     public boolean isFinished(){
-        return false;
+        return intake.getNoteInShooter();
     }
     @Override
     public void end(boolean interrupted) {
-        if (interrupted) {
             intake.Intake(0);
-        }
     }
 }

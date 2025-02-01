@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import java.io.File;
 import java.util.function.BooleanSupplier;
@@ -39,12 +40,13 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Elevator m_elevator = new Elevator();
   private final Climber m_climber = new Climber();
+  private final CoralIntake m_Intake = new CoralIntake();
   private final Example_Subsystem m_exampleSubsystem = new Example_Subsystem();
   //private final SwerveSubsystem m_drivetrain = new SwerveSubsystem();
 
   //commands
   private final Command m_climb = new ClimberMove(m_climber);
-  private final Command m_snap = new ElevatorSnap(m_elevator);
+  //private final Command m_snap = new ElevatorSnap(m_elevator);
   private final Command m_manual = new ElevatorManual(m_elevator);
   //private final Command m_simpDrive = new simpleDriveCommand(m_drivetrain);
 
@@ -131,7 +133,14 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+    //defaults are overridable so there doesn't need to be anything that toggles between them
     m_elevator.setDefaultCommand(m_manual);
+    //allows cycling to be done without effecting manual movement
+    m_secondary.a().onTrue(new SetSnapCommand(m_elevator)).onTrue(m_manual);
+    m_secondary.leftStick().whileTrue(new ElevatorSnap(m_elevator, m_elevator.goalheight));
+
+    //the below command makes elevator move to grabbing position, runs the intake, and opens grabby bit (we're using some sort of grabber right?)
+    m_primaryJoystick.trigger().whileTrue(new ParallelCommandGroup(new ElevatorSnap(m_elevator, 0),new intakeCommand(.7/*placeholder*/, m_Intake, true),new ExampleCommand(m_exampleSubsystem)));//last one is for CoralEndEffector but uses a placeholder
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
@@ -153,9 +162,10 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    Setup.getInstance().toggleClimber.toggleOnTrue(m_climb);
-    Setup.getInstance().toggleElevator.toggleOnTrue(m_snap);
-    Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
+    //Setup.getInstance().toggleClimber.toggleOnTrue(m_climb);
+    
+    /*Setup.getInstance().toggleElevator.toggleOnTrue(m_snap);
+    Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);*/
     //m_drivetrain.setDefaultCommand(m_simpDrive);
 
 
@@ -170,23 +180,23 @@ public class RobotContainer {
     Command death = drivebase.drive(DEATH_SPEEDS);
 
     //create triggers for primary buttons
-    BooleanSupplier fullStop = () ->Setup.getInstance().getFullStop(); 
+    BooleanSupplier fullStop = () ->Setup.getInstance().getFullStop(); //3
     Trigger fullStopTrig = new Trigger(fullStop);
-    BooleanSupplier zeroGyro = () ->Setup.getInstance().getZeroGyro(); 
+    BooleanSupplier zeroGyro = () ->Setup.getInstance().getZeroGyro(); //2
     Trigger zeroGyroTrig = new Trigger(zeroGyro);
-    BooleanSupplier primaryStart = () ->Setup.getInstance().getPrimaryStart(); 
+    BooleanSupplier primaryStart = () ->Setup.getInstance().getPrimaryStart(); //11 (the two sqares)
     Trigger primaryStartTrig = new Trigger(primaryStart);
-    BooleanSupplier primaryBack = () ->Setup.getInstance().getPrimaryBack(); 
+    BooleanSupplier primaryBack = () ->Setup.getInstance().getPrimaryBack(); //12 (the three lines)
     Trigger primaryBackTrig = new Trigger(primaryBack);
-    BooleanSupplier backIsPos = () ->Setup.getInstance().getBackIsPos();
+    BooleanSupplier backIsPos = () ->Setup.getInstance().getBackIsPos(); //slider
     Trigger backIsPosTrig = new Trigger(backIsPos);
-    BooleanSupplier backIsNeg = () ->Setup.getInstance().getBackIsNeg();
+    BooleanSupplier backIsNeg = () ->Setup.getInstance().getBackIsNeg(); //slider
     Trigger backIsNegTrig = new Trigger(backIsNeg);
-    BooleanSupplier driveSetDistance = () ->Setup.getInstance().getDriveSetDistance();
+    BooleanSupplier driveSetDistance = () ->Setup.getInstance().getDriveSetDistance(); //15
     Trigger driveSetDistanceTrig = new Trigger(driveSetDistance);
-    BooleanSupplier fakeVision = () ->Setup.getInstance().getFakeVision();
+    BooleanSupplier fakeVision = () ->Setup.getInstance().getFakeVision(); //15
     Trigger fakeVisionTrig = new Trigger(fakeVision);
-    BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
+    BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode(); //10
     Trigger deathModeTrig = new Trigger(deathMode);
 
     if (RobotBase.isSimulation())
@@ -226,7 +236,7 @@ public class RobotContainer {
       backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       backIsPosTrig.onTrue(Commands.none());
       deathModeTrig.whileTrue(death);
-
+      
     }
   }
 

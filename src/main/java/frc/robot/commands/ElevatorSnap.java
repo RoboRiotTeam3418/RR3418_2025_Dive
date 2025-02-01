@@ -20,27 +20,26 @@ public class ElevatorSnap extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Elevator m_subsystem;
   public PIDController shooterController;
-  public int height = 0;
-  public int goalheight = 0; //in teirs
+  public int height = 0;//nothing changes height?
+  public int goalheight = 0; //in tiers
   //public int levelstoTravel=0;
   //public int direction=1;
   public double setval;
   public double speed = Constants.getInstance().ElevatorSpeed;
   public double kP = Constants.getInstance().ElevatorP,kI = Constants.getInstance().ElevatorI,kD = Constants.getInstance().ElevatorD;
   public PIDController pid;
+  private int target;
    public AnalogPotentiometer pot;
-   public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
-  private GenericEntry goalheightEntry =
-      tab.add("Goal Height Level", 0)
-         .getEntry();
+   
 
   /**
    * qCreates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorSnap(Elevator subsystem) {
+  public ElevatorSnap(Elevator subsystem, int targetPoint) {
     m_subsystem = subsystem;
+    target=targetPoint;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -56,18 +55,9 @@ public class ElevatorSnap extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_subsystem.higher){
-      if (goalheight<4){
-        goalheight++;
-      }else{
-        goalheight = 0;
-      }
-      goalheightEntry.setDouble(goalheight);
-      m_subsystem.higher=false;
-    }
-    if (goalheight!= height &&  Setup.getInstance().getSecondaryMoveElev()){
+    //if (goalheight!= height &&  Setup.getInstance().getSecondaryMoveElev()){
       //levelstoTravel = goalheight-height;
-      switch(goalheight) {
+      switch(target) {
         case 0:
           // very small, home state
           pid.setSetpoint(1);
@@ -90,12 +80,11 @@ public class ElevatorSnap extends Command {
           break;
         default:
           break;
-  
+        //could default be the 0 value?
       }
       setval = pid.calculate(pot.get(), pid.getSetpoint());
       m_subsystem.mot1.set(setval);
       m_subsystem.mot2.set(setval);
-    }
     
   }
 
@@ -111,5 +100,6 @@ public class ElevatorSnap extends Command {
       return true;
     }
     return false;
+    //return pid.atSetpoint()
   }
 }

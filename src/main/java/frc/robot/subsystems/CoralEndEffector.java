@@ -4,13 +4,19 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class CoralEndEffector extends SubsystemBase {
+  public Solenoid piston;
   /** Creates a new ExampleSubsystem. */
-  public CoralEndEffector() {}
+  public CoralEndEffector() {
+    piston = new Solenoid(0, null, 0);
+  }
 
+  
   /**
    * Example command factory method.
    *

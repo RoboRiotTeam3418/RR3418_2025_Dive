@@ -51,9 +51,9 @@ public class ElevatorManual extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(!Elevator.getInstance().isManual){
+    /*if(!Elevator.getInstance().isManual){
       return true;
-    }
+    }*/
     return false;
   }
 }

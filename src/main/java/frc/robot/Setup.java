@@ -185,9 +185,9 @@ public class Setup {
   public static final int ELEVMOT1ID = 18; 
   public static final int ELEVMOT2ID = 19; 
 
-  public static final int CLIMB_ID = 20; 
+  public static final int CLIMB_ID = 20;*/ 
   public static final int INTAKE_END_ID = 21; 
   public static final int INTAKE_MOVE_ID = 22; 
-  public static final int SPIN_ID = 23; 
-  */
+  //public static final int SPIN_ID = 23; 
+  
 }

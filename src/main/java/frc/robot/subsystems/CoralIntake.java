@@ -1,4 +1,4 @@
-/*package frc.robot.subsystems;
+package frc.robot.subsystems;
 
 import frc.robot.Setup;
 import com.revrobotics.spark.SparkMax;
@@ -39,4 +39,4 @@ public class CoralIntake extends SubsystemBase {
     public boolean getNoteInShooter(){
         return gamePieceSensor.get();
     }
-  }*/
+  }

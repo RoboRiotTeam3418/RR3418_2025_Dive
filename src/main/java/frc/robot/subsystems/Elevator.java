@@ -29,6 +29,13 @@ public class Elevator extends SubsystemBase {
   public boolean higher;
   public AnalogPotentiometer pot;
   public boolean isManual = true;
+<<<<<<< Updated upstream
+=======
+  public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
+  private GenericEntry goalheightEntry =
+      tab.add("Goal Height Level", 0)
+         .getEntry();
+>>>>>>> Stashed changes
 
   
 
@@ -52,12 +59,17 @@ public class Elevator extends SubsystemBase {
    *
    * @return a command
    */
-  public Command exampleMethodCommand() {
+  public Command setSnap() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
-          /* one-time action goes here */
+          if (goalheight<4){
+            goalheight++;
+          }else{
+            goalheight = 0;
+          }
+          goalheightEntry.setDouble(goalheight);
         });
   }
   public double getElevPosition(){

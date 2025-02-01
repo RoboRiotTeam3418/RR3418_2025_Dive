@@ -8,15 +8,6 @@ import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-<<<<<<< Updated upstream
-
-public class CoralEndEffector extends SubsystemBase {
-  public Solenoid piston;
-  /** Creates a new ExampleSubsystem. */
-  public CoralEndEffector() {
-    piston = new Solenoid(0, null, 0);
-  }
-=======
 import frc.robot.Setup;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.AbsoluteEncoder;
@@ -47,7 +38,6 @@ public class CoralEndEffector extends SubsystemBase {
     piston = new Solenoid(0, null, 0);
     spinEncoder = spinMotor.getAbsoluteEncoder();
   }  
->>>>>>> Stashed changes
 
   
   /**
@@ -55,58 +45,13 @@ public class CoralEndEffector extends SubsystemBase {
    *
    * @return a command
    */
-<<<<<<< Updated upstream
-  public Command exampleMethodCommand() {
-=======
   public Command spin(int clockwise) {
->>>>>>> Stashed changes
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
-<<<<<<< Updated upstream
-          /* one-time action goes here */
-        });
-  }
-=======
           spinMotor.set(Math.copySign(spinSpeed, clockwise));
         });
-  }
-  public Command to35() {
-    if (spinEncoder.getPosition()>210){
-      return run(
-        () -> {
-          while (spinEncoder.getPosition() >36){
-            spinMotor.set(spinSpeed);
-          }
-        });
-    }else{
-      return run(
-        () -> {
-          while (spinEncoder.getPosition() <34){
-            spinMotor.set(-spinSpeed);
-          }
-        });
-    }
-  }
->>>>>>> Stashed changes
-
-  public Command to0() {
-    if (spinEncoder.getPosition()>210){
-      return run(
-        () -> {
-          while (spinEncoder.getPosition() >1){
-            spinMotor.set(spinSpeed);
-          }
-        });
-    }else{
-      return run(
-        () -> {
-          while (spinEncoder.getPosition() <359){
-            spinMotor.set(-spinSpeed);
-          }
-        });
-    }
   }
   public Command stop() {
     return run(

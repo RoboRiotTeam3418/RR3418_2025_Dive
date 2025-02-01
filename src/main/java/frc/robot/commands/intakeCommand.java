@@ -23,7 +23,7 @@ public class intakeCommand extends Command {
     }
     @Override
     public boolean isFinished(){
-        return intake.getNoteInShooter();
+        return intake.getCoralInClaw();
     }
     @Override
     public void end(boolean interrupted) {

@@ -29,13 +29,10 @@ public class Elevator extends SubsystemBase {
   public boolean higher;
   public AnalogPotentiometer pot;
   public boolean isManual = true;
-<<<<<<< Updated upstream
-=======
   public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
   private GenericEntry goalheightEntry =
       tab.add("Goal Height Level", 0)
          .getEntry();
->>>>>>> Stashed changes
 
   
 

@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -22,10 +24,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-<<<<<<< Updated upstream
-=======
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
->>>>>>> Stashed changes
 
 import java.io.File;
 import java.util.function.BooleanSupplier;
@@ -58,7 +57,7 @@ public class RobotContainer {
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
     new ParallelCommandGroup(
       new ElevatorSnap(m_elevator,0),
-      m_endEffect.to0(),
+      new SetArmCommand(m_endEffect, 0, 10),
       m_endEffect.pistonMove(true)
     ),
     new intakeCommand(.7, m_Intake, true));
@@ -147,16 +146,6 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-<<<<<<< Updated upstream
-    //defaults are overridable so there doesn't need to be anything that toggles between them
-    m_elevator.setDefaultCommand(m_manual);
-    //allows cycling to be done without effecting manual movement
-    m_secondary.a().onTrue(new SetSnapCommand(m_elevator)).onTrue(m_manual);
-    m_secondary.leftStick().whileTrue(new ElevatorSnap(m_elevator, m_elevator.goalheight));
-
-    //the below command makes elevator move to grabbing position, runs the intake, and opens grabby bit (we're using some sort of grabber right?)
-    m_primaryJoystick.trigger().whileTrue(new ParallelCommandGroup(new ElevatorSnap(m_elevator, 0),new intakeCommand(.7/*placeholder*/, m_Intake, true),new ExampleCommand(m_exampleSubsystem)));//last one is for CoralEndEffector but uses a placeholder
-=======
 
     //default commands
     m_elevator.setDefaultCommand(m_manual);
@@ -166,10 +155,10 @@ public class RobotContainer {
     ));//stops movement of motors and closes claw by default
 
     //end effector commands
-    m_secondary.y().whileTrue(m_endEffect.to0());
+    m_secondary.y().whileTrue(new SetArmCommand(m_endEffect, 0, 10));
     m_secondary.leftBumper().whileTrue(m_endEffect.spin(-1));
     m_secondary.rightBumper().whileTrue(m_endEffect.spin(1));
-    m_secondary.b().whileTrue(m_endEffect.to35());
+    m_secondary.b().whileTrue(new SetArmCommand(m_endEffect, 35, 10));
     m_secondary.rightTrigger().whileTrue(m_endEffect.pistonMove(true));
 
     //elevator commands
@@ -179,13 +168,12 @@ public class RobotContainer {
     //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle, runs the intake, and opens grabby bit (we're using some sort of grabber right?)
     m_primaryJoystick.trigger().whileTrue(m_pickup);
 
->>>>>>> Stashed changes
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     NamedCommands.registerCommand("Place", new SequentialCommandGroup(
       new ElevatorSnap(m_elevator, 3), 
-      m_endEffect.to35(), 
+      new SetArmCommand(m_endEffect, 35, 10), 
       m_endEffect.pistonMove(true)
     ));
     NamedCommands.registerCommand("pickup", m_pickup);
@@ -292,7 +280,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(drivebase);
+    return new PathPlannerAuto("New Auto");
   }
   public void setMotorBrake(boolean brake)
   {

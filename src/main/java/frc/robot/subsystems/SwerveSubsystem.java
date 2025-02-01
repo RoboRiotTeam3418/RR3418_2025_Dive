@@ -28,9 +28,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -138,7 +141,22 @@ public class SwerveSubsystem extends SubsystemBase
 //  {
 //    vision = new Vision(swerveDrive::getPose, swerveDrive.field);
 //  }
-
+/* 
+  optional output code
+  public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
+  private GenericEntry frontLeftEnc =
+      tab.add("FL encoder", Constants.getInstance().FROFFSET)
+        .getEntry();
+  private GenericEntry frontRightEnc =
+      tab.add("FR encoder", Constants.getInstance().FROFFSET)
+         .getEntry();
+  private GenericEntry backLeftEnc =
+      tab.add("BL encoder", )
+         .getEntry();
+  private GenericEntry backRightEnc =
+      tab.add("BR encoder", Constants.getInstance().FROFFSET)
+         .getEntry();
+  */
   @Override
   public void periodic()
   {
@@ -148,6 +166,9 @@ public class SwerveSubsystem extends SubsystemBase
       swerveDrive.updateOdometry();
 //      vision.updatePoseEstimation(swerveDrive);
     }
+    //output encoder readings
+    //frontRightEnc.setDouble(FRENC.getPosition());
+
   }
 
   @Override

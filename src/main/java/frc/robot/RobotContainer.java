@@ -37,6 +37,7 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  /* 
   private final Elevator m_elevator = new Elevator();
   private final CoralEndEffector m_endeff = new CoralEndEffector();
   private final Climber m_climber = new Climber();
@@ -46,7 +47,7 @@ public class RobotContainer {
   //commands
   private final Command m_climb = new ClimberMove(m_climber);
   private final Command m_snap = new ElevatorSnap(m_elevator);
-  private final Command m_manual = new ElevatorManual(m_elevator);
+  private final Command m_manual = new ElevatorManual(m_elevator);*/
   //private final Command m_simpDrive = new simpleDriveCommand(m_drivetrain);
 
 
@@ -54,10 +55,12 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
-  CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
-
+  //CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
+  public double speed = 0;
   //Driver speeds
+  /* 
   public Double getSpeedSetting(){
+  public String speedSetting = "medium";
     //determine which speed setting the driver sets
       if(Setup.getInstance().getDeathMode()){
               speedSetting = "death";
@@ -69,24 +72,52 @@ public class RobotContainer {
               speedSetting = "slow";
       } else if(Setup.getInstance().getPrimaryDriverYButton()){
               speedSetting = "reallySlow";
-      }
+      }*/
+  public Double getXSpeedSetting(){
   //set the speed based on the current speed setting
-      String whichSpeed = speedSetting;
-      if(whichSpeed == "death"){
+     double sign = 1;
+      //String whichSpeed = speedSetting;
+      if(Setup.getInstance().getDeathMode()){
               speed =Constants.MAX_SPEED;
-      } else if(whichSpeed == "fast"){
-              speed=-.825;
-      } else if(whichSpeed == "medium"){
-              speed=0;
-      } else if(whichSpeed == "slow"){
-              speed=0.325;
-      } else if(whichSpeed == "reallySlow"){
-              speed = .5;
+      } else if(Setup.getInstance().getPrimaryDriverXButton()){
+              speed=-0.325;
+      } else if(Setup.getInstance().getPrimaryDriverAButton()){
+              speed=-0.5;
+      } else if(Setup.getInstance().getPrimaryDriverBButton()){
+              speed=-0.825;
+      } else if(Setup.getInstance().getPrimaryDriverYButton()){
+              speed = -.999;
       }
-      return speed;
+      if (m_primaryJoystick.getX()>0.1){
+        sign = -1;
+      }else if(m_primaryJoystick.getX()<0.1){
+        sign = 1;
+      }
+      return speed*sign;
+  }
+  public Double getYSpeedSetting(){
+    //set the speed based on the current speed setting
+       double sign = 1;
+        //String whichSpeed = speedSetting;
+        if(Setup.getInstance().getDeathMode()){
+                speed =Constants.MAX_SPEED;
+        } else if(Setup.getInstance().getPrimaryDriverXButton()){
+                speed=-0.325;
+        } else if(Setup.getInstance().getPrimaryDriverAButton()){
+                speed=-0.5;
+        } else if(Setup.getInstance().getPrimaryDriverBButton()){
+                speed=-0.825;
+        } else if(Setup.getInstance().getPrimaryDriverYButton()){
+                speed = -.999;
+        }
+        if (m_primaryJoystick.getY()>0.1){
+          sign = 1;
+        }else if(m_primaryJoystick.getY()<0.1){
+          sign = -1;
+        }
+        return speed*sign;
     }
-    public String speedSetting = "medium";
-    public double speed = 0;
+  
 
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
@@ -96,9 +127,9 @@ public class RobotContainer {
    */
   
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> m_primaryJoystick.getY() * -1*speed,// CHECK FUNCTION
-                                                                () -> m_primaryJoystick.getX() * -1*speed)// CHECK FUNCTION
-                                                            .withControllerRotationAxis(m_primaryJoystick::getZ)// CHECK FUNCTION
+                                                                () -> m_primaryJoystick.getY() + getXSpeedSetting(),// CHECK FUNCTION
+                                                                () -> m_primaryJoystick.getX() + getYSpeedSetting())// CHECK FUNCTION
+                                                            .withControllerRotationAxis(m_primaryJoystick::getTwist)// CHECK FUNCTION
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -106,8 +137,8 @@ public class RobotContainer {
   /**
    * Clones the angular velocity input stream and converts it to a fieldRelative input stream.
    */
-  public DoubleSupplier getNegZ = ()-> m_primaryJoystick.getZ()*-1;
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_primaryJoystick::getZ, getNegZ)//checkfunction
+  public DoubleSupplier getNegTwist = ()-> m_primaryJoystick.getTwist()*-1;
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_primaryJoystick::getTwist, getNegTwist)//checkfunction
                                                            .headingWhile(true);
 
   SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
@@ -132,8 +163,8 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    m_elevator.setDefaultCommand(m_manual);
-    m_endeff.setDefaultCommand(Commands.none());
+    //m_elevator.setDefaultCommand(m_manual);
+    //m_endeff.setDefaultCommand(Commands.none());
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
@@ -155,9 +186,9 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    Setup.getInstance().toggleClimber.toggleOnTrue(m_climb);
-    Setup.getInstance().toggleElevator.toggleOnTrue(m_snap);
-    Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
+    //Setup.getInstance().toggleClimber.toggleOnTrue(m_climb);
+    //Setup.getInstance().toggleElevator.toggleOnTrue(m_snap);
+    //Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
     //m_drivetrain.setDefaultCommand(m_simpDrive);
 
 
@@ -191,9 +222,9 @@ public class RobotContainer {
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
 
-    m_secondary.leftBumper().whileTrue(m_endeff.spinCounterClockwise());
-    m_secondary.rightBumper().whileTrue(m_endeff.spinClockwise());
-    m_secondary.b().onTrue(m_endeff.to35());
+    //m_secondary.leftBumper().whileTrue(m_endeff.spinCounterClockwise());
+    //m_secondary.rightBumper().whileTrue(m_endeff.spinClockwise());
+    //m_secondary.b().onTrue(m_endeff.to35());
 
     if (RobotBase.isSimulation())
     {
@@ -234,6 +265,8 @@ public class RobotContainer {
       deathModeTrig.whileTrue(death);
 
     }
+    zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    deathModeTrig.whileTrue(death);
   }
 
   /**

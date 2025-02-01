@@ -23,23 +23,6 @@ public class Setup {
 	  return instance;
   }   
 
-//---------------------------------------------------------Driver Config------------------------------------------------------------------
-/* OLD AND BROKEN
-  public SparkMaxConfig config = new SparkMaxConfig();
-  config
-    .inverted(false)
-    .idleMode(IdleMode.kBrake);
-  config.closedLoop
-    .pid(constants.p, constants.i, constants.d);
-  config.closedLoop.maxMotion
-    .maxVelocity(Setup.maxVel)
-    .maxAcceleration(Setup.maxAccel);
-  config.encoder
-    .positionConversionFactor(wheelDiameter * Math.PI / reduction)
-    .velocityConversionFactor(wheelDiameter * Math.PI / reduction * (1.0 / 60.0)); // RPM to units per second);
-  public SparkMaxConfig getinstance() {
-    return config;
-  }*/
 
 
  //---------------------------------------------------------Swerve Drive------------------------------------------------------------------
@@ -73,7 +56,7 @@ public class Setup {
 //TO REFERENCE THE JOYSTICK OBJECT ITSELF EACH TIME
 
   //Flight Stick (Primary)
-  private static CommandJoystick primaryJoystick = new CommandJoystick(0);
+  private static CommandJoystick primaryJoystick = new CommandJoystick(1);
 
   public CommandJoystick getPrimaryJoystick() {
     return primaryJoystick;
@@ -159,9 +142,9 @@ public class Setup {
   
 
    //-----------------------------------------------------secondary--------------------------------------------------------------------
-  
+  /*
   //Xbox Controller (Secondary)
-  private static CommandXboxController secondaryJoystick = new CommandXboxController(1);
+  private static CommandXboxController secondaryJoystick = new CommandXboxController(0);
   public final Trigger toggleClimber = secondaryJoystick.start();
   public final Trigger toggleElevator = secondaryJoystick.back();
 
@@ -178,7 +161,7 @@ public class Setup {
 
   public Double getSecondaryLY(){
     return secondaryJoystick.getLeftY();
-  }
+  }*/
 //---------------------------------------------------------Hardware------------------------------------------------------------------------
 
   //Gyroscope
@@ -198,13 +181,13 @@ public class Setup {
 
   public static final int DrivetrainSubsystem_FRONT_RIGHT_DRIVE_MOTOR = 16; 
   public static final int DrivetrainSubsystem_FRONT_RIGHT_ANGLE_MOTOR = 17;
+  /* 
+  public static final int ELEVMOT1ID = 18; 
+  public static final int ELEVMOT2ID = 19; 
 
-  public static final int ELEVMOT1ID = 7; 
-  public static final int ELEVMOT2ID = 7; 
-
-  public static final int CLIMB_ID = 7; 
-  public static final int INTAKE_END_ID = 7; 
-  public static final int INTAKE_MOVE_ID = 7; 
-  public static final int SPIN_ID = 7; 
-  
+  public static final int CLIMB_ID = 20; 
+  public static final int INTAKE_END_ID = 21; 
+  public static final int INTAKE_MOVE_ID = 22; 
+  public static final int SPIN_ID = 23; 
+  */
 }

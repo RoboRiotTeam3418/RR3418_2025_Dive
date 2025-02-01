@@ -7,7 +7,6 @@ package frc.robot.commands;
 import frc.robot.Setup;
 import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Example_Subsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */

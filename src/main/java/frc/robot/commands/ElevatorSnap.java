@@ -56,13 +56,15 @@ public class ElevatorSnap extends Command {
   public void execute() {    
     if (m_subsystem.goalheight!= m_subsystem.height &&  Setup.getInstance().getSecondaryMoveElev()){
       //levelstoTravel = goalheight-height;
+
+      //ACCOUNT FOR CHASSIS HEIGHT LATER
       switch(m_subsystem.goalheight) {
         case 0:
           // very small, home state
           pid.setSetpoint(1);
           break;
         case 1:
-          // trough
+          // trough + 3in
           pid.setSetpoint(21);
           break;
         case 2:
@@ -74,7 +76,7 @@ public class ElevatorSnap extends Command {
           pid.setSetpoint(48);
           break;
         case 4:
-          // pole 3
+          // pole 3 + 3in
           pid.setSetpoint(75);
           break;
         default:

@@ -37,20 +37,9 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  /* 
-  private final Elevator m_elevator = new Elevator();
-  private final CoralEndEffector m_endeff = new CoralEndEffector();
+  
   private final Climber m_climber = new Climber();
-  private final Example_Subsystem m_exampleSubsystem = new Example_Subsystem();
   //private final SwerveSubsystem m_drivetrain = new SwerveSubsystem();
-
-  //commands
-  private final Command m_climb = new ClimberMove(m_climber);
-  private final Command m_snap = new ElevatorSnap(m_elevator);
-  private final Command m_manual = new ElevatorManual(m_elevator);*/
-  //private final Command m_simpDrive = new simpleDriveCommand(m_drivetrain);
-
-
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -222,6 +211,14 @@ public class RobotContainer {
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
 
+    //secondary triggers
+    BooleanSupplier climbSelf = ()->Setup.getInstance().getClimbasBool();
+    Trigger climbSelfTrig = new Trigger(climbSelf);
+    BooleanSupplier climbManUp = ()->Setup.getInstance().getRightJoyIsPos();
+    Trigger climbManUpTrig = new Trigger(climbManUp);
+    BooleanSupplier climbManDown = ()->Setup.getInstance().getRightJoyIsNeg();
+    Trigger climbManDownTrig = new Trigger(climbManDown);
+
     //m_secondary.leftBumper().whileTrue(m_endeff.spinCounterClockwise());
     //m_secondary.rightBumper().whileTrue(m_endeff.spinClockwise());
     //m_secondary.b().onTrue(m_endeff.to35());
@@ -267,6 +264,11 @@ public class RobotContainer {
     }
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
     deathModeTrig.whileTrue(death);
+
+    climbSelfTrig.onTrue(m_climber.ClimbSelf());
+    climbManUpTrig.whileTrue(m_climber.ClimbMan(climbManUp.getAsBoolean()));
+    climbManDownTrig.whileTrue(m_climber.ClimbMan(climbManDown.getAsBoolean()));
+
   }
 
   /**

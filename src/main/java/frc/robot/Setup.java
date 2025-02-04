@@ -142,7 +142,7 @@ public class Setup {
   
 
    //-----------------------------------------------------secondary--------------------------------------------------------------------
-  /*
+  
   //Xbox Controller (Secondary)
   private static CommandXboxController secondaryJoystick = new CommandXboxController(0);
   public final Trigger toggleClimber = secondaryJoystick.start();
@@ -161,7 +161,19 @@ public class Setup {
 
   public Double getSecondaryLY(){
     return secondaryJoystick.getLeftY();
-  }*/
+  }
+  
+  public boolean getClimbasBool(){
+    return secondaryJoystick.getHID().getRightStickButtonPressed();
+  }
+
+  public boolean getRightJoyIsPos(){
+    return secondaryJoystick.getRightTriggerAxis()>0.1;
+  }
+
+  public boolean getRightJoyIsNeg(){
+    return secondaryJoystick.getRightTriggerAxis()<-0.1;
+  }
 //---------------------------------------------------------Hardware------------------------------------------------------------------------
 
   //Gyroscope
@@ -181,13 +193,8 @@ public class Setup {
 
   public static final int DrivetrainSubsystem_FRONT_RIGHT_DRIVE_MOTOR = 16; 
   public static final int DrivetrainSubsystem_FRONT_RIGHT_ANGLE_MOTOR = 17;
-  /* 
-  public static final int ELEVMOT1ID = 18; 
-  public static final int ELEVMOT2ID = 19; 
+  
+  public static final int CLIMB1_ID = 20;
+  public static final int CLIMB2_ID = 20;
 
-  public static final int CLIMB_ID = 20; 
-  public static final int INTAKE_END_ID = 21; 
-  public static final int INTAKE_MOVE_ID = 22; 
-  public static final int SPIN_ID = 23; 
-  */
 }

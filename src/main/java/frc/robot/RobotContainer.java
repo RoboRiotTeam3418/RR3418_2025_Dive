@@ -42,7 +42,7 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
-  //CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
+  CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
   public double speed = 0;
   //Driver speeds
   /* 
@@ -252,6 +252,11 @@ public class RobotContainer {
 
     spinPosTrig.whileTrue(m_endeff.spinClockwise());
     spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
+
+    m_secondary.a().onTrue(m_endeff.toAngle(0.0));
+    m_secondary.b().onTrue(m_endeff.toAngle(35.0));
+    m_secondary.x().onTrue(m_endeff.toAngle(35.0));
+    m_secondary.y().onTrue(m_endeff.toAngle(180.0));
   }
 
   /**

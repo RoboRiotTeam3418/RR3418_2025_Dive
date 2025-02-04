@@ -37,17 +37,13 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  /* 
+  
   private final Elevator m_elevator = new Elevator();
-  private final CoralEndEffector m_endeff = new CoralEndEffector();
-  private final Climber m_climber = new Climber();
-  private final Example_Subsystem m_exampleSubsystem = new Example_Subsystem();
   //private final SwerveSubsystem m_drivetrain = new SwerveSubsystem();
 
   //commands
-  private final Command m_climb = new ClimberMove(m_climber);
   private final Command m_snap = new ElevatorSnap(m_elevator);
-  private final Command m_manual = new ElevatorManual(m_elevator);*/
+  private final Command m_manual = new ElevatorManual(m_elevator);
   //private final Command m_simpDrive = new simpleDriveCommand(m_drivetrain);
 
 
@@ -186,10 +182,8 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    //Setup.getInstance().toggleClimber.toggleOnTrue(m_climb);
-    //Setup.getInstance().toggleElevator.toggleOnTrue(m_snap);
-    //Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
-    //m_drivetrain.setDefaultCommand(m_simpDrive);
+    Setup.getInstance().toggleElevator.toggleOnTrue(m_snap);
+    Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
 
 
     Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);

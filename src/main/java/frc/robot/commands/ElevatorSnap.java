@@ -20,8 +20,6 @@ public class ElevatorSnap extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Elevator m_subsystem;
   public PIDController shooterController;
-  public int height = 0;
-  public int goalheight = 0; //in teirs
   //public int levelstoTravel=0;
   //public int direction=1;
   public double setval;
@@ -55,19 +53,10 @@ public class ElevatorSnap extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if (m_subsystem.higher){
-      if (goalheight<4){
-        goalheight++;
-      }else{
-        goalheight = 0;
-      }
-      goalheightEntry.setDouble(goalheight);
-      m_subsystem.higher=false;
-    }
-    if (goalheight!= height &&  Setup.getInstance().getSecondaryMoveElev()){
+  public void execute() {    
+    if (m_subsystem.goalheight!= m_subsystem.height &&  Setup.getInstance().getSecondaryMoveElev()){
       //levelstoTravel = goalheight-height;
-      switch(goalheight) {
+      switch(m_subsystem.goalheight) {
         case 0:
           // very small, home state
           pid.setSetpoint(1);

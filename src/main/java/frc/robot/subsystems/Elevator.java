@@ -8,7 +8,10 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Setup;
@@ -22,9 +25,15 @@ public class Elevator extends SubsystemBase {
   public RelativeEncoder enc2;
   public RelativeEncoder enc1;
   public PIDController elevController;
-  public boolean higher;
+  public boolean higher,lower;
   public AnalogPotentiometer pot;
   public boolean isManual = true;
+  public int height = 0;
+  public int goalheight = 0; //in teirs
+  public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
+  private GenericEntry goalheightEntry =
+      tab.add("Goal Height Level", 0)
+         .getEntry();
   
 
   public Elevator() {
@@ -32,8 +41,10 @@ public class Elevator extends SubsystemBase {
     mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
     enc2 = mot2.getEncoder();
     enc1 = mot1.getEncoder();
-    higher = Setup.getInstance().getSecondaryAasBool();
+    higher = Setup.getInstance().getSecondaryPOVUpasBool();
+    lower = Setup.getInstance().getSecondaryPOVDownasBool();
     pot =  new AnalogPotentiometer(0, 78, 0); //max height in inches is ~ 78
+    
   }
   public static Elevator instance = new Elevator();
   public static Elevator getInstance() {
@@ -72,6 +83,24 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if (higher){
+      if (goalheight<4){
+        goalheight++;
+      }else{
+        goalheight = 0;
+      }
+      goalheightEntry.setDouble(goalheight);
+      higher=false;
+    }
+    if (lower){
+      if (goalheight>0){
+        goalheight--;
+      }else{
+        goalheight = 4;
+      }
+      goalheightEntry.setDouble(goalheight);
+      higher=false;
+    }
   }
 
   @Override

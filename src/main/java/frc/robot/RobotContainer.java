@@ -37,21 +37,8 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  /* 
-  private final Elevator m_elevator = new Elevator();
+  
   private final CoralEndEffector m_endeff = new CoralEndEffector();
-  private final Climber m_climber = new Climber();
-  private final Example_Subsystem m_exampleSubsystem = new Example_Subsystem();
-  //private final SwerveSubsystem m_drivetrain = new SwerveSubsystem();
-
-  //commands
-  private final Command m_climb = new ClimberMove(m_climber);
-  private final Command m_snap = new ElevatorSnap(m_elevator);
-  private final Command m_manual = new ElevatorManual(m_elevator);*/
-  //private final Command m_simpDrive = new simpleDriveCommand(m_drivetrain);
-
-
-
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
@@ -180,17 +167,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    /*new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));*/
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    //Setup.getInstance().toggleClimber.toggleOnTrue(m_climb);
-    //Setup.getInstance().toggleElevator.toggleOnTrue(m_snap);
-    //Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
-    //m_drivetrain.setDefaultCommand(m_simpDrive);
-
 
     Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);
@@ -221,6 +197,12 @@ public class RobotContainer {
     Trigger fakeVisionTrig = new Trigger(fakeVision);
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
+
+    //create secondary triggers
+    BooleanSupplier spinIsPos = () -> Setup.getInstance().getSecondaryRX() >0.1;
+    Trigger spinPosTrig = new Trigger(spinIsPos);
+    BooleanSupplier spinIsNeg = () -> Setup.getInstance().getSecondaryRX() <-0.1;
+    Trigger spinNegTrig = new Trigger(spinIsNeg);
 
     //m_secondary.leftBumper().whileTrue(m_endeff.spinCounterClockwise());
     //m_secondary.rightBumper().whileTrue(m_endeff.spinClockwise());
@@ -267,6 +249,9 @@ public class RobotContainer {
     }
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
     deathModeTrig.whileTrue(death);
+
+    spinPosTrig.whileTrue(m_endeff.spinClockwise());
+    spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
   }
 
   /**

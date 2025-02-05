@@ -66,6 +66,7 @@ public class CoralEndEffector extends SubsystemBase {
           while (spinEncoder.getPosition() > angle+1){
             spinMotor.set(spinSpeed);
           }
+          isFinished = true;
         });
     }else{
       return run(

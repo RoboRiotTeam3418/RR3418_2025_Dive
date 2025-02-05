@@ -76,9 +76,10 @@ public class RobotContainer {
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
     new ParallelCommandGroup(
       new ElevatorSnap(m_elevator,0),
-      m_endeff.toAngle(0.0)),
-    m_endeff.pistonMove(true),
-    m_intake.Intake());
+      m_endeff.toAngle(0.0)).withTimeout(5),
+    m_intake.Pivot(true),
+    m_intake.Intake().withTimeout(10),
+    m_endeff.pistonMove(true));
   public Double getXSpeedSetting(){
   //set the speed based on the current speed setting
      double sign = 1;
@@ -227,10 +228,11 @@ public class RobotContainer {
     Trigger fakeVisionTrig = new Trigger(fakeVision);
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
+    BooleanSupplier intake = () -> Setup.getInstance().getPrimaryGroundIntake();
+    Trigger intakeTrig = new Trigger(intake);
+    BooleanSupplier outtake = () -> Setup.getInstance().getPrimaryOuttake();
+    Trigger outtakeTrig = new Trigger(outtake);
 
-    //m_secondary.leftBumper().whileTrue(m_endeff.spinCounterClockwise());
-    //m_secondary.rightBumper().whileTrue(m_endeff.spinClockwise());
-    //m_secondary.b().onTrue(m_endeff.to35());
 
     if (RobotBase.isSimulation())
     {
@@ -273,6 +275,10 @@ public class RobotContainer {
     }
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
     deathModeTrig.whileTrue(death);
+    intakeTrig.onTrue(m_intake.Pivot(true));
+    intakeTrig.whileTrue(m_intake.Intake());
+    outtakeTrig.whileTrue(m_intake.Outtake());
+
   }
 
   /**

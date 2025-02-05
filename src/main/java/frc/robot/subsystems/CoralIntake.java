@@ -20,12 +20,12 @@ public class CoralIntake extends SubsystemBase {
     public SparkMax intakeMotor;
     public DigitalInput gamePieceSensor;
 
-    public double outtakeSpeed = -0.7, intakeSpeed=0.6; //placeholder values
+    public double outtakeSpeed = -0.7, intakeSpeed = 0.6; //placeholder values
     public boolean intake, outtake;
 
     public CoralIntake(){
         intakeMotor = new SparkMax(Setup.INTAKE_END_ID, MotorType.kBrushed);
-        //gamePieceSensor = new DigitalInput(Setup.GamePieceSensorID);
+        gamePieceSensor = new DigitalInput(Setup.GamePieceSensorID);
     }
 
     public void Intake(){

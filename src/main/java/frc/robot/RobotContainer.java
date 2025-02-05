@@ -40,15 +40,17 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  private final CoralIntake m_intake = new CoralIntake();
   private final Elevator m_elevator = new Elevator();
   private final CoralEndEffector m_endeff = new CoralEndEffector();
   private final Climber m_climber = new Climber();
-  private final CoralIntake m_intake = new CoralIntake();
 
   //commands
   private final Command m_climb = new ClimberMove(m_climber);
-  private final Command m_snap = new ElevatorSnap(m_elevator, m_elevator.goalheight);
+  private final Command m_snap = new ElevatorSnap(m_elevator);
   private final Command m_manual = new ElevatorManual(m_elevator);
+
+
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 

@@ -10,6 +10,8 @@ import frc.robot.Setup;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.AbsoluteEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Solenoid;
+
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class CoralEndEffector extends SubsystemBase {
@@ -23,6 +25,7 @@ public class CoralEndEffector extends SubsystemBase {
   public SparkMax spinMotor;
   public AbsoluteEncoder spinEncoder;
   public DigitalInput gamePieceSensor;
+  public Solenoid claw;
 
   public double spinSpeed = 0.1; //placeholder value
   public boolean isClockwise, isCounterClockwise;
@@ -30,6 +33,7 @@ public class CoralEndEffector extends SubsystemBase {
   public CoralEndEffector() {
     spinMotor = new SparkMax(Setup.getInstance().SPIN_ID, MotorType.kBrushless);
     spinEncoder = spinMotor.getAbsoluteEncoder();
+    claw = new Solenoid(0, null, 0);
   }  
 
   /**
@@ -71,6 +75,14 @@ public class CoralEndEffector extends SubsystemBase {
           }
         });
     }
+  }
+
+  public Command pistonMove(boolean state) {
+    return runOnce(
+      ()-> {
+        claw.set(state);
+      }
+    );
   }
 
   /**

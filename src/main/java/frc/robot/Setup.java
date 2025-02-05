@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.util.drivers.Gyroscope;
 import frc.robot.util.drivers.NavX;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 public class Setup {
@@ -142,11 +143,13 @@ public class Setup {
   
 
    //-----------------------------------------------------secondary--------------------------------------------------------------------
-  /*
+  
   //Xbox Controller (Secondary)
   private static CommandXboxController secondaryJoystick = new CommandXboxController(0);
   public final Trigger toggleClimber = secondaryJoystick.start();
   public final Trigger toggleElevator = secondaryJoystick.back();
+  public final Trigger POVUp = new POVButton(secondaryJoystick.getHID(), 0);
+  public final Trigger POVDown = new POVButton(secondaryJoystick.getHID(), 180);
 
   public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;
@@ -161,7 +164,13 @@ public class Setup {
 
   public Double getSecondaryLY(){
     return secondaryJoystick.getLeftY();
-  }*/
+  }
+  public boolean getSecondaryPOVUpasBool(){
+    return POVUp.getAsBoolean();
+  }
+  public boolean getSecondaryPOVDownasBool(){
+    return POVDown.getAsBoolean();
+  }
 //---------------------------------------------------------Hardware------------------------------------------------------------------------
 
   //Gyroscope
@@ -181,7 +190,7 @@ public class Setup {
 
   public static final int DrivetrainSubsystem_FRONT_RIGHT_DRIVE_MOTOR = 16; 
   public static final int DrivetrainSubsystem_FRONT_RIGHT_ANGLE_MOTOR = 17;
-  /* 
+  
   public static final int ELEVMOT1ID = 18; 
   public static final int ELEVMOT2ID = 19; 
 
@@ -189,5 +198,5 @@ public class Setup {
   public static final int INTAKE_END_ID = 21; 
   public static final int INTAKE_MOVE_ID = 22; 
   public static final int SPIN_ID = 23; 
-  */
+  
 }

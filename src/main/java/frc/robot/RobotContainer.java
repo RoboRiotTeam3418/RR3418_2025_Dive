@@ -22,6 +22,9 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+
 import java.io.File;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -37,20 +40,15 @@ import swervelib.SwerveInputStream;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  /* 
   private final Elevator m_elevator = new Elevator();
   private final CoralEndEffector m_endeff = new CoralEndEffector();
   private final Climber m_climber = new Climber();
-  private final Example_Subsystem m_exampleSubsystem = new Example_Subsystem();
-  //private final SwerveSubsystem m_drivetrain = new SwerveSubsystem();
+  private final CoralIntake m_intake = new CoralIntake();
 
   //commands
   private final Command m_climb = new ClimberMove(m_climber);
-  private final Command m_snap = new ElevatorSnap(m_elevator);
-  private final Command m_manual = new ElevatorManual(m_elevator);*/
-  //private final Command m_simpDrive = new simpleDriveCommand(m_drivetrain);
-
-
+  private final Command m_snap = new ElevatorSnap(m_elevator, m_elevator.goalheight);
+  private final Command m_manual = new ElevatorManual(m_elevator);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
@@ -73,6 +71,13 @@ public class RobotContainer {
       } else if(Setup.getInstance().getPrimaryDriverYButton()){
               speedSetting = "reallySlow";
       }*/
+  //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle, runs the intake, and opens grabby bit (we're using some sort of grabber right?)
+  private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
+    new ParallelCommandGroup(
+      new ElevatorSnap(m_elevator,0),
+      m_endeff.toAngle(0.0)),
+    m_endeff.pistonMove(true),
+    m_intake.Intake(m_intake.intakeSpeed));
   public Double getXSpeedSetting(){
   //set the speed based on the current speed setting
      double sign = 1;

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.Solenoid;
 
 public class CoralIntake extends SubsystemBase {
 
@@ -23,12 +24,20 @@ public class CoralIntake extends SubsystemBase {
 
     public double outtakeSpeed = -0.7, intakeSpeed = 0.6; //placeholder values
     public boolean intake, outtake;
+    public Solenoid pivot;
 
     public CoralIntake(){
         intakeMotor = new SparkMax(Setup.INTAKE_END_ID, MotorType.kBrushed);
         gamePieceSensor = new DigitalInput(Setup.GamePieceSensorID);
+        pivot = new Solenoid(1, null, 1);
     }
 
+    public Command Pivot(Boolean goingUp){
+        return runOnce(
+            () -> {
+                pivot.set(goingUp);
+            });
+    }
     public Command Intake(){
         return run(
             () -> {

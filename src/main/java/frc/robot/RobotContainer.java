@@ -47,7 +47,6 @@ public class RobotContainer {
 
   //commands
   private final Command m_climb = new ClimberMove(m_climber);
-  private final Command m_snap = new ElevatorSnap(m_elevator);
   private final Command m_manual = new ElevatorManual(m_elevator);
 
 
@@ -79,7 +78,7 @@ public class RobotContainer {
       new ElevatorSnap(m_elevator,0),
       m_endeff.toAngle(0.0)),
     m_endeff.pistonMove(true),
-    m_intake.Intake(m_intake.intakeSpeed));
+    m_intake.Intake());
   public Double getXSpeedSetting(){
   //set the speed based on the current speed setting
      double sign = 1;

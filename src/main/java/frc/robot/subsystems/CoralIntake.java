@@ -6,6 +6,7 @@ import com.revrobotics.AbsoluteEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Command;
 
 public class CoralIntake extends SubsystemBase {
 
@@ -28,12 +29,18 @@ public class CoralIntake extends SubsystemBase {
         gamePieceSensor = new DigitalInput(Setup.GamePieceSensorID);
     }
 
-    public void Intake(){
-        intakeMotor.set(intakeSpeed);
+    public Command Intake(){
+        return run(
+            () -> {
+                intakeMotor.set(intakeSpeed);
+            });
     }
 
-    public void Outtake(){
-        intakeMotor.set(outtakeSpeed);
+    public Command Outtake(){
+        return run(
+            () -> {
+                intakeMotor.set(outtakeSpeed);
+            });
     }
 
     public boolean getNoteInShooter(){

@@ -261,6 +261,8 @@ public class RobotContainer {
     }
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
     deathModeTrig.whileTrue(death);
+
+    m_elevator.setDefaultCommand(m_manual);
   }
 
   /**

@@ -27,10 +27,6 @@ public class ElevatorSnap extends Command {
   public double kP = Constants.getInstance().ElevatorP,kI = Constants.getInstance().ElevatorI,kD = Constants.getInstance().ElevatorD;
   public PIDController pid;
    public AnalogPotentiometer pot;
-   public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
-  private GenericEntry goalheightEntry =
-      tab.add("Goal Height Level", 0)
-         .getEntry();
 
   /**
    * qCreates a new ExampleCommand.
@@ -92,15 +88,17 @@ public class ElevatorSnap extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_subsystem.mot1.set(0);
+    m_subsystem.mot2.set(0);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     if (pid.atSetpoint()){
       Elevator.getInstance().isManual = true;
-      return true;
     }
-    return false;
+    return pid.atSetpoint();
   }
 }

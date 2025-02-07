@@ -169,6 +169,11 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    //default commands
+    m_endeff.setDefaultCommand(new ParallelCommandGroup(
+      m_endeff.stop(),
+      m_endeff.pistonMove(false)
+    ));//stops movement of motors and closes claw by default
 
     Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);

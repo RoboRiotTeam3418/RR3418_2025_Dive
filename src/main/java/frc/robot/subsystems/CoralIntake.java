@@ -36,7 +36,7 @@ public class CoralIntake extends SubsystemBase {
         intakeMotor.set(outtakeSpeed);
     }
 
-    public boolean getNoteInShooter(){
+    public boolean getCoralInHold(){
         return gamePieceSensor.get();
     }
   }

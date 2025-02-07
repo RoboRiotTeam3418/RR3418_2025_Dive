@@ -23,7 +23,7 @@ public class intakeCommand extends Command {
     }
     @Override
     public boolean isFinished(){
-        return false;
+        return intake.getCoralInHold();
     }
     @Override
     public void end(boolean interrupted) {

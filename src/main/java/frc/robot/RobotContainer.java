@@ -260,10 +260,10 @@ public class RobotContainer {
     spinPosTrig.whileTrue(m_endeff.spinClockwise());
     spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
 
-    m_secondary.a().onTrue(m_endeff.toAngle(0.0));
-    m_secondary.b().onTrue(m_endeff.toAngle(35.0));
-    m_secondary.x().onTrue(m_endeff.toAngle(35.0));
-    m_secondary.y().onTrue(m_endeff.toAngle(180.0));
+    m_secondary.a().onTrue(new EndToAngle(m_endeff,0.0));
+    m_secondary.b().onTrue(new EndToAngle(m_endeff,35.0));
+    m_secondary.x().onTrue(new EndToAngle(m_endeff,35.0));
+    m_secondary.y().onTrue(new EndToAngle(m_endeff,179.0));
   }
 
   /**

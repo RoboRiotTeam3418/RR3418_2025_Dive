@@ -157,7 +157,7 @@ public class Setup {
   }
 
   public boolean getSecondaryMoveElev(){
-    return secondaryJoystick.getHID().getLeftStickButtonPressed();
+    return secondaryJoystick.rightBumper().getAsBoolean();
   }
 
   public Double getSecondaryLY(){

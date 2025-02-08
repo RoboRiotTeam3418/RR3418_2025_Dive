@@ -19,22 +19,27 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ElevatorSnap extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Elevator m_subsystem;
+  private boolean m_inAuto, m_override;
   public PIDController shooterController;
   //public int levelstoTravel=0;
   //public int direction=1;
-  public double setval;
+  public double setval, m_setheight;
   public double speed = Constants.getInstance().ElevatorSpeed;
   public double kP = Constants.getInstance().ElevatorP,kI = Constants.getInstance().ElevatorI,kD = Constants.getInstance().ElevatorD;
   public PIDController pid;
    public AnalogPotentiometer pot;
 
   /**
-   * qCreates a new ExampleCommand.
+   * 
    *
    * @param subsystem The subsystem used by this command.
+   * @param Override True if we don't need to push the button to make the elevator move (ie autonomous or one button start position)
+   * @param setheight only matters if override is true, else please put -1 for clarity
    */
-  public ElevatorSnap(Elevator subsystem) {
+  public ElevatorSnap(Elevator subsystem, boolean Override, double setheight) {
     m_subsystem = subsystem;
+    m_setheight =setheight;
+    m_override = Override;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -49,8 +54,9 @@ public class ElevatorSnap extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {    
-    if (m_subsystem.goalheight!= m_subsystem.height &&  Setup.getInstance().getSecondaryMoveElev()){
+  public void execute() {   
+
+    if ((m_subsystem.goalheight!= m_subsystem.height &&  Setup.getInstance().getSecondaryMoveElev())||m_override){
       //levelstoTravel = goalheight-height;
 
       //ACCOUNT FOR CHASSIS HEIGHT LATER
@@ -78,6 +84,9 @@ public class ElevatorSnap extends Command {
         default:
           break;
   
+      }
+      if(m_override){
+        pid.setSetpoint(m_setheight);
       }
       setval = pid.calculate(pot.get(), pid.getSetpoint());
       m_subsystem.mot1.set(setval);

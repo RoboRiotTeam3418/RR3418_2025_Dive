@@ -25,6 +25,7 @@ public class EndToAngle extends Command {
   public AbsoluteEncoder spinEncoder;
   public DigitalInput gamePieceSensor;
   public Solenoid claw;
+  public double allowance = 1.5;
 
   public double spinSpeed; //placeholder value
   public boolean isClockwise, isCounterClockwise;
@@ -54,10 +55,10 @@ public class EndToAngle extends Command {
   @Override
   public void execute() {
     if (spinEncoder.getPosition()> (m_angle+180)%360){
-      while (spinEncoder.getPosition() > m_angle+1){
+      while (spinEncoder.getPosition() > m_angle+allowance){
         spinMotor.set(spinSpeed);}
     }else{
-      while (spinEncoder.getPosition() <m_angle-1){
+      while (spinEncoder.getPosition() <m_angle-allowance){
        spinMotor.set(-spinSpeed);
       }
     }
@@ -72,6 +73,6 @@ public class EndToAngle extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return spinEncoder.getPosition() > m_angle - 1 && spinEncoder.getPosition() < m_angle + 1;
+    return spinEncoder.getPosition() > m_angle - allowance && spinEncoder.getPosition() < m_angle + allowance;
   }
 }

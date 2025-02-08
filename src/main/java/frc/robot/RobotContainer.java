@@ -54,7 +54,7 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
-  //CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
+  CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
   public double speed = 0;
   //Driver speeds
   /* 
@@ -185,15 +185,13 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    /*new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));*/
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    //m_drivetrain.setDefaultCommand(m_simpDrive);
+    //default commands
+    m_endeff.setDefaultCommand(new ParallelCommandGroup(
+      m_endeff.stop(),
+      m_endeff.pistonMove(false)
+    ));//stops movement of motors and closes claw by default
+    
     m_elevator.setDefaultCommand(m_manual);
-    m_endeff.setDefaultCommand(Commands.none());
 
 
     Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
@@ -225,6 +223,12 @@ public class RobotContainer {
     Trigger fakeVisionTrig = new Trigger(fakeVision);
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
+
+    //create secondary triggers
+    BooleanSupplier spinIsPos = () -> Setup.getInstance().getSecondaryRX() >0.1;
+    Trigger spinPosTrig = new Trigger(spinIsPos);
+    BooleanSupplier spinIsNeg = () -> Setup.getInstance().getSecondaryRX() <-0.1;
+    Trigger spinNegTrig = new Trigger(spinIsNeg);
     BooleanSupplier intake = () -> Setup.getInstance().getPrimaryGroundIntake();
     Trigger intakeTrig = new Trigger(intake);
     BooleanSupplier outtake = () -> Setup.getInstance().getPrimaryOuttake();
@@ -276,6 +280,14 @@ public class RobotContainer {
     intakeTrig.whileTrue(m_intake.Intake());
     outtakeTrig.whileTrue(m_intake.Outtake());
 
+
+    spinPosTrig.whileTrue(m_endeff.spinClockwise());
+    spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
+
+    m_secondary.a().onTrue(new EndToAngle(m_endeff,0.0));
+    m_secondary.b().onTrue(new EndToAngle(m_endeff,35.0));
+    m_secondary.x().onTrue(new EndToAngle(m_endeff,35.0));
+    m_secondary.y().onTrue(new EndToAngle(m_endeff,179.0));
   }
 
   /**

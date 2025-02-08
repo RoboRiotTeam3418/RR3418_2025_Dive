@@ -154,6 +154,10 @@ public class Setup {
   public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;
   }
+  public Double getSecondaryRX(){
+    //spins Endeff
+    return secondaryJoystick.getRightX();
+  }
   public boolean getSecondaryAasBool(){
     return secondaryJoystick.getHID().getAButtonPressed();
   }

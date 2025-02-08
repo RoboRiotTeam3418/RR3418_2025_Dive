@@ -57,11 +57,17 @@ public class CoralEndEffector extends SubsystemBase {
           spinMotor.set(-spinSpeed);
         });
   }
-
   public Command pistonMove(boolean state) {
     return runOnce(
       ()-> {
         claw.set(state);
+      }
+    );
+  }
+  public Command stop() {
+    return runOnce(
+      ()-> {
+        spinMotor.set(0);
       }
     );
   }

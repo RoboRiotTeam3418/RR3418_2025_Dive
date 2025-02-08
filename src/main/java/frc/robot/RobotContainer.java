@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import java.io.File;
 import java.util.function.BooleanSupplier;
@@ -39,7 +41,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   
   private final Elevator m_elevator = new Elevator();
-  //private final SwerveSubsystem m_drivetrain = new SwerveSubsystem();
+  private final CoralEndEffector m_endeff = new CoralEndEffector();
 
   //commands
   private final Command m_manual = new ElevatorManual(m_elevator);
@@ -76,6 +78,10 @@ public class RobotContainer {
     // Configure the trigger bindings
     //m_elevator.setDefaultCommand(m_manual);
     //m_endeff.setDefaultCommand(Commands.none());
+    //default commands
+    m_endeff.setDefaultCommand(new ParallelCommandGroup(
+      m_endeff.stop(),
+      m_endeff.pistonMove(false)));// stops movement and closes claw
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
@@ -110,6 +116,20 @@ public class RobotContainer {
     m_secondary.leftBumper().onTrue(new ElevatorSnap(m_elevator,true,0));// automatically bring elevator to 0 if left bumper pressed
     m_secondary.start().toggleOnTrue(Commands.none());
     m_secondary.start().toggleOnFalse(m_manual);
+    //create secondary triggers
+    BooleanSupplier spinIsPos = () -> Setup.getInstance().getSecondaryRX() >0.1;
+    Trigger spinPosTrig = new Trigger(spinIsPos);
+    BooleanSupplier spinIsNeg = () -> Setup.getInstance().getSecondaryRX() <-0.1;
+    Trigger spinNegTrig = new Trigger(spinIsNeg);
+    spinPosTrig.whileTrue(m_endeff.spinClockwise());
+    spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
+
+    m_secondary.a().onTrue(new EndToAngle(m_endeff,0.0));
+    m_secondary.b().onTrue(new EndToAngle(m_endeff,35.0));
+    m_secondary.x().onTrue(new EndToAngle(m_endeff,35.0));
+    m_secondary.y().onTrue(new EndToAngle(m_endeff,179.0));
+  
+
   }
 
   /**

@@ -155,6 +155,10 @@ public class Setup {
   public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;
   }
+  public Double getSecondaryRX(){
+    //spins Endeff
+    return secondaryJoystick.getRightX();
+  }
 
   public boolean getSecondaryMoveElev(){
     return secondaryJoystick.rightBumper().getAsBoolean();
@@ -193,10 +197,8 @@ public class Setup {
   
   public static final int ELEVMOT1ID = 18; 
   public static final int ELEVMOT2ID = 19; 
-  /* 
+   
   public static final int CLIMB_ID = 20; 
-  public static final int INTAKE_END_ID = 21; 
-  public static final int INTAKE_MOVE_ID = 22; 
   public static final int SPIN_ID = 23; 
-  */
+  
 }

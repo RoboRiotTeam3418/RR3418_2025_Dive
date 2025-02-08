@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import frc.robot.Constants;
 import frc.robot.Setup;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.AbsoluteEncoder;
@@ -20,7 +21,7 @@ public class CoralIntake extends SubsystemBase {
     public SparkMax intakeMotor;
     public DigitalInput gamePieceSensor;
 
-    public double outtakeSpeed = -0.7, intakeSpeed = 0.4; //placeholder value
+    public double outtakeSpeed = -0.7, intakeSpeed = Constants.getInstance().intakeSpeed; //placeholder value
     public boolean intake, outtake;
 
     public CoralIntake(){
@@ -28,12 +29,15 @@ public class CoralIntake extends SubsystemBase {
         //gamePieceSensor = new DigitalInput(Setup.GamePieceSensorID);
     }
 
-    public void Intake(double intakeSpeed){
+    public void Intake(){
         intakeMotor.set(intakeSpeed);
     }
 
     public void Outtake(){
         intakeMotor.set(outtakeSpeed);
+    }
+    public void Pivot(){
+        pivot.set()
     }
 
     public boolean getCoralInHold(){

@@ -78,13 +78,21 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
-    //m_elevator.setDefaultCommand(m_manual);
-    //m_endeff.setDefaultCommand(Commands.none());
+    
+    //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle, runs the intake, and opens grabby bit (we're using some sort of grabber right?)
+    private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
+      new ParallelCommandGroup(
+        new ElevatorSnap(m_elevator,true,0),
+        new EndToAngle(m_endeff, 0.0).withTimeout(5)),
+      m_intake.Pivot(true),
+      new intakeCommand(m_intake).withTimeout(10),
+      m_endeff.pistonMove(true));
+
     //default commands
     m_endeff.setDefaultCommand(new ParallelCommandGroup(
       m_endeff.stop(),
       m_endeff.pistonMove(false)));// stops movement and closes claw
+
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));

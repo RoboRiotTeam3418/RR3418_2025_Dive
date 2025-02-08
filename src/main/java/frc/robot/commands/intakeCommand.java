@@ -9,12 +9,11 @@ public class intakeCommand extends Command {
     //boolean active;// what is this? took it out
     public intakeCommand(CoralIntake subsystem){
         this.intake=subsystem;
-        value = subsystem.intakeSpeed;
         addRequirements(subsystem);
     }
     @Override
     public void execute(){
-        intake.Intake(value);
+        intake.Intake();
     }
     @Override
     public boolean isFinished(){
@@ -23,7 +22,7 @@ public class intakeCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         if (interrupted) {
-            intake.Intake(0);
+            intake.Intake();
         }
     }
 }

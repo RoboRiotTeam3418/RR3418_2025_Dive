@@ -42,9 +42,13 @@ public class RobotContainer {
   
   private final Elevator m_elevator = new Elevator();
   private final CoralEndEffector m_endeff = new CoralEndEffector();
+  private final CoralIntake m_intake = new CoralIntake();
 
   //commands
+  private final Command m_snap = new ElevatorSnap(m_elevator);
   private final Command m_manual = new ElevatorManual(m_elevator);
+
+
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
 

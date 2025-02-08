@@ -104,26 +104,21 @@ public class RobotContainer {
     Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator,false,-1));
     Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
 
-    //DRIVETRAIN COMMAND ASSIGNMENTS REMOVED IN ELEV FOR SIMPLICITY
+    //DRIVETRAIN COMMAND ASSIGNMENTS REMOVED FOR SIMPLICITY
 
-    //create triggers for primary buttons DRIVE ONES REMOVED IN ELEV FOR SIMPLICITY
+    //create triggers for primary buttons DRIVE ONES REMOVED FOR SIMPLICITY
 
-   //TRIGGERS AND COMMANDS MATCHED, DRIVERS REMOVED IN ELEV FOR SIMPLICITY
+   //TRIGGERS AND COMMANDS MATCHED, DRIVERS REMOVED FOR SIMPLICITY
 
     //m_elevator.setDefaultCommand(m_manual);
     m_secondary.leftBumper().onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0),new ElevatorSnap(m_elevator,true,0)));
     // automatically bring elevator to 0 if left bumper pressed, first ensure endeffector is in position
     
-    m_secondary.start().toggleOnTrue(m_elevator.stop());//climber
-    m_secondary.start().toggleOnFalse(m_manual);
     //create secondary triggers
     BooleanSupplier spinIsPos = () -> Setup.getInstance().getSecondaryRX() >0.1;
     Trigger spinPosTrig = new Trigger(spinIsPos);
     BooleanSupplier spinIsNeg = () -> Setup.getInstance().getSecondaryRX() <-0.1;
     Trigger spinNegTrig = new Trigger(spinIsNeg);
-    spinPosTrig.whileTrue(m_endeff.spinClockwise());
-    spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
-
     BooleanSupplier climbSelf = ()->Setup.getInstance().getClimbasBool();
     Trigger climbSelfTrig = new Trigger(climbSelf);
     BooleanSupplier climbManUp = ()->Setup.getInstance().getRightJoyIsPos();
@@ -133,12 +128,14 @@ public class RobotContainer {
 
     //COMMAND/TRIGGER ASSIGNMENTS, DRIVER RELATED REMOVED FROM CLIMBER FOR CLARITY
     m_secondary.start().toggleOnTrue(m_climbMan);
-    m_secondary.start().toggleOnFalse(Commands.none());
+    m_secondary.start().toggleOnFalse(m_manual);
     climbSelfTrig.onTrue(m_climber.ClimbSelf());
     m_secondary.a().onTrue(new EndToAngle(m_endeff,0.0));
     m_secondary.b().onTrue(new EndToAngle(m_endeff,35.0));
     m_secondary.x().onTrue(new EndToAngle(m_endeff,35.0));
     m_secondary.y().onTrue(new EndToAngle(m_endeff,179.0));
+    spinPosTrig.whileTrue(m_endeff.spinClockwise());
+    spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
 
   }
 

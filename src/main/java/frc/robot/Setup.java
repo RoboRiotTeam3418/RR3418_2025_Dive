@@ -162,10 +162,10 @@ public class Setup {
 
   public boolean getSecondaryMoveElev(){
     return secondaryJoystick.rightBumper().getAsBoolean();
+  }
   public Double getSecondaryLY(){
     return secondaryJoystick.getLeftY();
   }
-  
   public boolean getClimbasBool(){
     return secondaryJoystick.getHID().getLeftStickButtonPressed();
   }
@@ -176,9 +176,6 @@ public class Setup {
 
   public boolean getRightJoyIsNeg(){
     return secondaryJoystick.getRightTriggerAxis()<-0.1;
-  }
-  public Double getSecondaryLY(){
-    return secondaryJoystick.getLeftY();
   }
 
   public boolean getSecondaryPOVUpasBool(){

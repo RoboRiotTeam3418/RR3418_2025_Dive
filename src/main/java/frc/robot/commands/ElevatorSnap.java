@@ -24,7 +24,6 @@ public class ElevatorSnap extends Command {
   //public int levelstoTravel=0;
   //public int direction=1;
   public double setval, m_setheight;
-  public double speed = Constants.getInstance().ElevatorSpeed;
   public double kP = Constants.getInstance().ElevatorP,kI = Constants.getInstance().ElevatorI,kD = Constants.getInstance().ElevatorD;
   public PIDController pid;
    public AnalogPotentiometer pot;

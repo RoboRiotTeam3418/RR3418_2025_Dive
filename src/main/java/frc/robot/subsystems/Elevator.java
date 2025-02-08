@@ -72,12 +72,13 @@ public class Elevator extends SubsystemBase {
    *
    * @return a command
    */
-  public Command exampleMethodCommand() {
+  public Command stop() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
+    return run(
         () -> {
-          /* one-time action goes here */
+          mot1.set(0);
+          mot2.set(0);
         });
   }
   public double getElevPosition(){

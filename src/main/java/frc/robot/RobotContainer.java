@@ -100,9 +100,6 @@ public class RobotContainer {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     /*new Trigger(m_exampleSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_exampleSubsystem));*/
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
     Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator,false,-1));
     Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
 
@@ -113,8 +110,10 @@ public class RobotContainer {
    //TRIGGERS AND COMMANDS MATCHED, DRIVERS REMOVED IN ELEV FOR SIMPLICITY
 
     //m_elevator.setDefaultCommand(m_manual);
-    m_secondary.leftBumper().onTrue(new ElevatorSnap(m_elevator,true,0));// automatically bring elevator to 0 if left bumper pressed
-    m_secondary.start().toggleOnTrue(Commands.none());
+    m_secondary.leftBumper().onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0),new ElevatorSnap(m_elevator,true,0)));
+    // automatically bring elevator to 0 if left bumper pressed, first ensure endeffector is in position
+    
+    m_secondary.start().toggleOnTrue(m_elevator.stop());//climber
     m_secondary.start().toggleOnFalse(m_manual);
     //create secondary triggers
     BooleanSupplier spinIsPos = () -> Setup.getInstance().getSecondaryRX() >0.1;

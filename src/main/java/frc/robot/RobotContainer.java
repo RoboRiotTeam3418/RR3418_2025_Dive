@@ -45,7 +45,6 @@ public class RobotContainer {
   private final CoralIntake m_intake = new CoralIntake();
 
   //commands
-  private final Command m_snap = new ElevatorSnap(m_elevator);
   private final Command m_manual = new ElevatorManual(m_elevator);
 
 

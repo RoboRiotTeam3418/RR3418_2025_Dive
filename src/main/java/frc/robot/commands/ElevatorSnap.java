@@ -58,7 +58,7 @@ public class ElevatorSnap extends Command {
   public void execute() {   
     //if the goal is different from the acceptable range and is allowed to go because either a button was pushed or it was overridden for auto
     //if (((m_subsystem.goalToDistance(m_subsystem.goalheight) < m_subsystem.getElevPosition() - allowance)|| (m_subsystem.goalToDistance(m_subsystem.goalheight) > m_subsystem.getElevPosition() + allowance)) &&  (Setup.getInstance().getSecondaryMoveElev()||m_override)){
-    if(Deadbands.isOutside(m_subsystem.goalToDistance(m_subsystem.goalheight),m_subsystem.getElevPosition(),allowance){
+    if(Deadbands.getInstance().isOutside(m_subsystem.goalToDistance(m_subsystem.goalheight),m_subsystem.getElevPosition(),allowance) &&  (Setup.getInstance().getSecondaryMoveElev()||m_override)){
       //ACCOUNT FOR CHASSIS HEIGHT LATER
       switch(m_subsystem.goalheight) {
         case 0:

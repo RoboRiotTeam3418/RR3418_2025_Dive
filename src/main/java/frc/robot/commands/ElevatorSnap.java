@@ -55,9 +55,8 @@ public class ElevatorSnap extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {   
-
+    //if the goal is different from the acceptable range and is allowed to go because either a button was pushed or it was overridden for auto
     if (((m_subsystem.goalToDistance(m_subsystem.goalheight) < m_subsystem.getElevPosition() - allowance)|| (m_subsystem.goalToDistance(m_subsystem.goalheight) > m_subsystem.getElevPosition() + allowance)) &&  (Setup.getInstance().getSecondaryMoveElev()||m_override)){
-      //levelstoTravel = goalheight-height;
 
       //ACCOUNT FOR CHASSIS HEIGHT LATER
       switch(m_subsystem.goalheight) {

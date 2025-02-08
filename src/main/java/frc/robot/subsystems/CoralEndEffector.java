@@ -57,26 +57,6 @@ public class CoralEndEffector extends SubsystemBase {
           spinMotor.set(-spinSpeed);
         });
   }
-  public Command toAngle(Double angle) {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    if (spinEncoder.getPosition()> (angle+180)%360){
-      return run(
-        () -> {
-          while (spinEncoder.getPosition() > angle+1){
-            spinMotor.set(spinSpeed);
-          }
-          isFinished = true;
-        });
-    }else{
-      return run(
-        () -> {
-          while (spinEncoder.getPosition() <angle-1){
-            spinMotor.set(-spinSpeed);
-          }
-        });
-    }
-  }
 
   public Command pistonMove(boolean state) {
     return runOnce(

@@ -76,7 +76,7 @@ public class RobotContainer {
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
     new ParallelCommandGroup(
       new ElevatorSnap(m_elevator,0),
-      m_endeff.toAngle(0.0)).withTimeout(5),
+      new EndToAngle(m_endeff, 0.0).withTimeout(5)),
     m_intake.Pivot(true),
     m_intake.Intake().withTimeout(10),
     m_endeff.pistonMove(true));
@@ -170,8 +170,6 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
-    //m_elevator.setDefaultCommand(m_manual);
-    //m_endeff.setDefaultCommand(Commands.none());
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
@@ -193,10 +191,9 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    //Setup.getInstance().toggleClimber.toggleOnTrue(m_climb);
-    //Setup.getInstance().toggleElevator.toggleOnTrue(m_snap);
-    //Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
     //m_drivetrain.setDefaultCommand(m_simpDrive);
+    m_elevator.setDefaultCommand(m_manual);
+    m_endeff.setDefaultCommand(Commands.none());
 
 
     Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);

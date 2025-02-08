@@ -28,6 +28,7 @@ public class ElevatorSnap extends Command {
   public double kP = Constants.getInstance().ElevatorP,kI = Constants.getInstance().ElevatorI,kD = Constants.getInstance().ElevatorD;
   public PIDController pid;
    public AnalogPotentiometer pot;
+  public double allowance = 2; //inches 
 
   /**
    * 
@@ -56,30 +57,30 @@ public class ElevatorSnap extends Command {
   @Override
   public void execute() {   
 
-    if ((m_subsystem.goalheight!= m_subsystem.height &&  Setup.getInstance().getSecondaryMoveElev())||m_override){
+    if (((m_subsystem.goalToDistance(m_subsystem.goalheight) < m_subsystem.getElevPosition() - allowance)|| (m_subsystem.goalToDistance(m_subsystem.goalheight) > m_subsystem.getElevPosition() + allowance)) &&  (Setup.getInstance().getSecondaryMoveElev()||m_override)){
       //levelstoTravel = goalheight-height;
 
       //ACCOUNT FOR CHASSIS HEIGHT LATER
       switch(m_subsystem.goalheight) {
         case 0:
           // very small, home state
-          pid.setSetpoint(1);
+          pid.setSetpoint(m_subsystem.goalToDistance(0));
           break;
         case 1:
           // trough + 3in
-          pid.setSetpoint(21);
+          pid.setSetpoint(m_subsystem.goalToDistance(1));
           break;
         case 2:
           // pole 1
-          pid.setSetpoint(32);
+          pid.setSetpoint(m_subsystem.goalToDistance(2));
           break;
         case 3:
           // pole 2
-          pid.setSetpoint(48);
+          pid.setSetpoint(m_subsystem.goalToDistance(3));
           break;
         case 4:
           // pole 3 + 3in
-          pid.setSetpoint(75);
+          pid.setSetpoint(m_subsystem.goalToDistance(4));
           break;
         default:
           break;

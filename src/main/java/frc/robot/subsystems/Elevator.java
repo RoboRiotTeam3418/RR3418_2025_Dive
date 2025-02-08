@@ -38,7 +38,7 @@ public class Elevator extends SubsystemBase {
   private GenericEntry goalheightEntry =
       tab.add("Goal Height Level", 0)
          .getEntry();
-  public Dictionary<Integer, Double> goalToDist;
+  public Dictionary<Integer, Double> goalToDist;// key is goal height in tiers, entry is height to go to in inches
   
 
   public Elevator() {

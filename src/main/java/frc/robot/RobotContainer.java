@@ -107,7 +107,7 @@ public class RobotContainer {
    //TRIGGERS AND COMMANDS MATCHED, DRIVERS REMOVED IN ELEV FOR SIMPLICITY
 
     m_elevator.setDefaultCommand(m_manual);
-    m_secondary.leftBumper().onTrue(new ElevatorSnap(m_elevator,true,0));
+    m_secondary.leftBumper().onTrue(new ElevatorSnap(m_elevator,true,0));// automatically bring elevator to 0 if left bumper pressed
   }
 
   /**

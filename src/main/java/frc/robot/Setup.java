@@ -155,16 +155,12 @@ public class Setup {
     return secondaryJoystick.getHID().getAButtonPressed();
   }
 
-  public boolean getSecondaryMoveElev(){
-    return secondaryJoystick.getHID().getLeftStickButtonPressed();
-  }
-
   public Double getSecondaryLY(){
     return secondaryJoystick.getLeftY();
   }
   
   public boolean getClimbasBool(){
-    return secondaryJoystick.getHID().getRightStickButtonPressed();
+    return secondaryJoystick.getHID().getLeftStickButtonPressed();
   }
 
   public boolean getRightJoyIsPos(){

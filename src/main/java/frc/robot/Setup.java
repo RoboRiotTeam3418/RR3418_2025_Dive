@@ -162,8 +162,21 @@ public class Setup {
 
   public boolean getSecondaryMoveElev(){
     return secondaryJoystick.rightBumper().getAsBoolean();
+  public Double getSecondaryLY(){
+    return secondaryJoystick.getLeftY();
+  }
+  
+  public boolean getClimbasBool(){
+    return secondaryJoystick.getHID().getLeftStickButtonPressed();
   }
 
+  public boolean getRightJoyIsPos(){
+    return secondaryJoystick.getRightTriggerAxis()>0.1;
+  }
+
+  public boolean getRightJoyIsNeg(){
+    return secondaryJoystick.getRightTriggerAxis()<-0.1;
+  }
   public Double getSecondaryLY(){
     return secondaryJoystick.getLeftY();
   }
@@ -198,9 +211,12 @@ public class Setup {
   public static final int ELEVMOT1ID = 18; 
   public static final int ELEVMOT2ID = 19; 
 
-  public static final int CLIMB_ID = 20; 
+  public static final int CLIMB1_ID = 20;
+  public static final int CLIMB2_ID = 20;
   public static final int INTAKE_END_ID = 21; 
   public static final int INTAKE_MOVE_ID = 22; 
   public static final int SPIN_ID = 23; 
   
+  
+
 }

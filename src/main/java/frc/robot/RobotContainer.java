@@ -43,9 +43,11 @@ public class RobotContainer {
   private final Elevator m_elevator = new Elevator();
   private final CoralEndEffector m_endeff = new CoralEndEffector();
   private final CoralIntake m_intake = new CoralIntake();
+  private final Climber m_climber = new Climber();
 
   //commands
   private final Command m_manual = new ElevatorManual(m_elevator);
+
 
 
 
@@ -54,26 +56,24 @@ public class RobotContainer {
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
   public double speed = 0;
+  ClimberMove m_climbMan = new ClimberMove(m_climber);
+  //Driver speeds were here REMOVED FOR CLARITY
   
-  
-  //SPEED SETTING CODE GOES HERE, REMOVED FROM ELEVATOR VERSION FOR SIMPLICITY
-
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
 
    /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
-   * REMOVED IN ELEV FOR SIMPLICITY
+   * REMOVED FOR CLARITY
    */
-    
 
   /**
-   * Clones the angular velocity input stream and converts it to a fieldRelative input stream. 
-   * REMOVED IN ELEV FOR SIMPLICITY
+   * Clones the angular velocity input stream and converts it to a fieldRelative input stream.
+   * REMOVED FOR CLARITY
    */
-
-
-  // Derive the heading axis with math! REMOVED IN ELEV FOR SIMPLICITY
+  
+  
+   // Derive the heading axis with math! REMOVED FOR CLARITY
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -100,9 +100,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    /*new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));*/
+    
     Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator,false,-1));
     Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
 
@@ -126,11 +124,21 @@ public class RobotContainer {
     spinPosTrig.whileTrue(m_endeff.spinClockwise());
     spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
 
+    BooleanSupplier climbSelf = ()->Setup.getInstance().getClimbasBool();
+    Trigger climbSelfTrig = new Trigger(climbSelf);
+    BooleanSupplier climbManUp = ()->Setup.getInstance().getRightJoyIsPos();
+    Trigger climbManUpTrig = new Trigger(climbManUp);
+    BooleanSupplier climbManDown = ()->Setup.getInstance().getRightJoyIsNeg();
+    Trigger climbManDownTrig = new Trigger(climbManDown);
+
+    //COMMAND/TRIGGER ASSIGNMENTS, DRIVER RELATED REMOVED FROM CLIMBER FOR CLARITY
+    m_secondary.start().toggleOnTrue(m_climbMan);
+    m_secondary.start().toggleOnFalse(Commands.none());
+    climbSelfTrig.onTrue(m_climber.ClimbSelf());
     m_secondary.a().onTrue(new EndToAngle(m_endeff,0.0));
     m_secondary.b().onTrue(new EndToAngle(m_endeff,35.0));
     m_secondary.x().onTrue(new EndToAngle(m_endeff,35.0));
     m_secondary.y().onTrue(new EndToAngle(m_endeff,179.0));
-  
 
   }
 

@@ -6,20 +6,15 @@ import frc.robot.subsystems.CoralIntake;
 public class intakeCommand extends Command {
     double value;
     CoralIntake intake;
-    boolean active;
-    public intakeCommand(double intakeValue, CoralIntake subsystem, boolean Active){
-        this.value=intakeValue;
+    //boolean active;// what is this? took it out
+    public intakeCommand(CoralIntake subsystem){
         this.intake=subsystem;
-        this.active=Active;
+        value = subsystem.intakeSpeed;
         addRequirements(subsystem);
     }
     @Override
     public void execute(){
-        if (active) {
-        intake.Intake(value);    
-        } else {
-        intake.Intake(.1);
-        }
+        intake.Intake(value);
     }
     @Override
     public boolean isFinished(){

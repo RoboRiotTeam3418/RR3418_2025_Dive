@@ -43,20 +43,6 @@ public class Climber extends SubsystemBase {
           }
         });
   }
-  public Command ClimbMan(Boolean posOrNeg) {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return run(
-        () -> {
-          if(posOrNeg) {
-            mot1.set(climbSpeed);
-            mot2.set(-climbSpeed);
-          }else{
-            mot1.set(-climbSpeed);
-            mot2.set(climbSpeed);
-          }
-        });
-  }
 
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).

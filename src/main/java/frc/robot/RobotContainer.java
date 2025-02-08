@@ -44,8 +44,9 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
-  //CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
+  CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
   public double speed = 0;
+  ClimberMove m_climbMan = new ClimberMove(m_climber);
   //Driver speeds were here REMOVED FROM CLIMBER FOR CLARITY
   
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
@@ -98,10 +99,9 @@ public class RobotContainer {
     Trigger climbManDownTrig = new Trigger(climbManDown);
 
     //COMMAND/TRIGGER ASSIGNMENTS, DRIVER RELATED REMOVED FROM CLIMBER FOR CLARITY
-
+    m_secondary.start().toggleOnTrue(m_climbMan);
+    m_secondary.start().toggleOnFalse(Commands.none());
     climbSelfTrig.onTrue(m_climber.ClimbSelf());
-    climbManUpTrig.whileTrue(m_climber.ClimbMan(climbManUp.getAsBoolean()));
-    climbManDownTrig.whileTrue(m_climber.ClimbMan(climbManDown.getAsBoolean()));
 
   }
 

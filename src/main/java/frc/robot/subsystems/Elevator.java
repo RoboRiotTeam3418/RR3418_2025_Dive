@@ -4,8 +4,13 @@
 
 package frc.robot.subsystems;
 
+import java.util.Hashtable;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
@@ -28,12 +33,12 @@ public class Elevator extends SubsystemBase {
   public boolean higher,lower;
   public AnalogPotentiometer pot;
   public boolean isManual = true;
-  public int height = 0;
   public int goalheight = 0; //in teirs
   public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
   private GenericEntry goalheightEntry =
       tab.add("Goal Height Level", 0)
          .getEntry();
+  public Dictionary<Integer, Double> goalToDist;// key is goal height in tiers, entry is height to go to in inches
   
 
   public Elevator() {
@@ -44,6 +49,15 @@ public class Elevator extends SubsystemBase {
     higher = Setup.getInstance().getSecondaryPOVUpasBool();
     lower = Setup.getInstance().getSecondaryPOVDownasBool();
     pot =  new AnalogPotentiometer(0, 78, 0); //max height in inches is ~ 78
+    
+    goalToDist = new Hashtable<>();
+        // Adding key-value pairs
+        goalToDist.put(0, 0.0); // very small, home state
+        goalToDist.put(1, 21.0); // trough + 3in
+        goalToDist.put(2, 32.0); // pole 1
+        goalToDist.put(3, 48.0);// pole 2
+        goalToDist.put(4, 75.0); // pole 3 + 3in
+
     
   }
   public static Elevator instance = new Elevator();
@@ -58,18 +72,21 @@ public class Elevator extends SubsystemBase {
    *
    * @return a command
    */
-  public Command exampleMethodCommand() {
+  public Command stop() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
+    return run(
         () -> {
-          /* one-time action goes here */
+          mot1.set(0);
+          mot2.set(0);
         });
   }
   public double getElevPosition(){
     return pot.get();
   }
-
+  public double goalToDistance(Integer key){
+    return goalToDist.get(key);
+  }
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
    *

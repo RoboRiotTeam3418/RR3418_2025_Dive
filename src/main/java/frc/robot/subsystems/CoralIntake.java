@@ -1,9 +1,13 @@
 package frc.robot.subsystems;
 
+import frc.robot.Constants;
 import frc.robot.Setup;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.AbsoluteEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.Command;
+
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,8 +25,9 @@ public class CoralIntake extends SubsystemBase {
     //variables
     public SparkMax intakeMotor;
     public DigitalInput gamePieceSensor;
+    public Solenoid pivot;
 
-    public double outtakeSpeed = -0.7, intakeSpeed = 0.6; //placeholder values
+    public double outtakeSpeed = -0.7, intakeSpeed = Constants.getInstance().intakeSpeed; //placeholder value
     public boolean intake, outtake;
     public Solenoid pivot;
 
@@ -45,14 +50,16 @@ public class CoralIntake extends SubsystemBase {
             });
     }
 
-    public Command Outtake(){
+    public void Outtake(){
+        intakeMotor.set(outtakeSpeed);
+    }
+    public Command Pivot(boolean state){
         return run(
-            () -> {
-                intakeMotor.set(outtakeSpeed);
-            });
+            ()-> {pivot.set(state);
+        });
     }
 
-    public boolean getNoteInShooter(){
+    public boolean getCoralInHold(){
         return gamePieceSensor.get();
     }
   }

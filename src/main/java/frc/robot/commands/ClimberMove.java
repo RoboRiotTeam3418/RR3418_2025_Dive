@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import frc.robot.Setup;
 import frc.robot.subsystems.Climber;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -29,7 +30,18 @@ public class ClimberMove extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    if(Setup.getInstance().getRightJoyIsPos()) {
+      m_subsystem.mot1.set(m_subsystem.climbSpeed);
+      m_subsystem.mot2.set(-m_subsystem.climbSpeed);
+    }else if (Setup.getInstance().getRightJoyIsNeg()){
+      m_subsystem.mot1.set(-m_subsystem.climbSpeed);
+      m_subsystem.mot2.set(m_subsystem.climbSpeed);
+    }else{
+      m_subsystem.mot1.set(0);
+      m_subsystem.mot2.set(0);
+    }
+  }
 
   // Called once the command ends or is interrupted.
   @Override

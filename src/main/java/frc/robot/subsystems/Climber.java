@@ -4,13 +4,27 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Setup;
+import frc.robot.Constants;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class Climber extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
+  //variables
+  public SparkMax mot1,mot2;
+  public AbsoluteEncoder enc1,enc2;
+
+  public double climbSpeed = -0.2; //placeholder value
+  public boolean armsDown;
   public Climber() {
+    mot1 = new SparkMax(Setup.CLIMB1_ID, MotorType.kBrushless);
+    enc1 = mot1.getAbsoluteEncoder();
+    mot2 = new SparkMax(Setup.CLIMB2_ID, MotorType.kBrushless);
+    enc2 = mot2.getAbsoluteEncoder();
   }
 
   /**
@@ -18,12 +32,15 @@ public class Climber extends SubsystemBase {
    *
    * @return a command
    */
-  public Command exampleMethodCommand() {
+  public Command ClimbSelf() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
-          /* one-time action goes here */
+          while(enc1.getPosition() < Constants.getInstance().CLIMB_POS) {
+            mot1.set(climbSpeed);
+            mot2.set(-climbSpeed);
+          }
         });
   }
 

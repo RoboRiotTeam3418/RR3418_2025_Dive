@@ -2,6 +2,8 @@ package frc.robot;
 
 import java.util.function.DoubleSupplier;
 
+import javax.lang.model.util.ElementScanner14;
+
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -163,13 +165,32 @@ public class Setup {
     return secondaryJoystick.getHID().getLeftStickButtonPressed();
   }
 
-  public boolean getRightJoyIsPos(){
-    return secondaryJoystick.getRightTriggerAxis()>0.1;
+  public static boolean isJoystickInDeadzone(double axisValue) {
+  return Math.abs(axisValue) < Constants.CLIMB_DEADBAND;
   }
+
+  public static boolean isJoystickPositive(double axisValue) {
+   return axisValue > 0;
+  }
+
+ /* public boolean getRightJoyIsPos(){
+   
+    if (secondaryJoystick.getRightTriggerAxis()>0.1) {
+      return true;
+    } else {
+      return false;
+    }
+  }*/
+
+
+  public boolean getRightJoyIsPos(){
+    return secondaryJoystick.getRightTriggerAxis()<0.1;
+  } 
 
   public boolean getRightJoyIsNeg(){
     return secondaryJoystick.getRightTriggerAxis()<-0.1;
-  }
+  } 
+  
 //---------------------------------------------------------Hardware------------------------------------------------------------------------
 
   //Gyroscope

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.Constants;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,32 +45,19 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
-  //CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
+  CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
   public double speed = 0;
-  //Driver speeds were here REMOVED FROM CLIMBER FOR CLARITY
-  
+
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
 
    /**
-   * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
-   * REMOVED FROM CLIMBER FOR CLARITY
-   */
-
-  /**
-   * Clones the angular velocity input stream and converts it to a fieldRelative input stream.
-   * REMOVED FROM CLIMBER FOR CLARITY
-   */
-  
-  
-   // Derive the heading axis with math! REMOVED FROM CLIMBER FOR CLARITY
-
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     //m_elevator.setDefaultCommand(m_manual);
     //m_endeff.setDefaultCommand(Commands.none());
+    m_climber.setDefaultCommand(Climber.ClimbMan());
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
@@ -85,9 +73,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    //DRIVER COMMAND ASSIGNMENTS REMOVED FROM CLIMBER FOR CLARITY
-
-    //create triggers for primary buttons DRIVER RELATED REMOVED FROM CLIMBER FOR CLARITY
 
     //secondary triggers
     BooleanSupplier climbSelf = ()->Setup.getInstance().getClimbasBool();
@@ -96,8 +81,6 @@ public class RobotContainer {
     Trigger climbManUpTrig = new Trigger(climbManUp);
     BooleanSupplier climbManDown = ()->Setup.getInstance().getRightJoyIsNeg();
     Trigger climbManDownTrig = new Trigger(climbManDown);
-
-    //COMMAND/TRIGGER ASSIGNMENTS, DRIVER RELATED REMOVED FROM CLIMBER FOR CLARITY
 
     climbSelfTrig.onTrue(m_climber.ClimbSelf());
     climbManUpTrig.whileTrue(m_climber.ClimbMan(climbManUp.getAsBoolean()));

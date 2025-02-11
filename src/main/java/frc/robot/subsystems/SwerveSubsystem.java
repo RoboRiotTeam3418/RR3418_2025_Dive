@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Setup;
+import frc.robot.util.*;
 
 //import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
@@ -764,6 +765,13 @@ public class SwerveSubsystem extends SubsystemBase
   }
   public ChassisSpeeds getDeath(){
     return new ChassisSpeeds(0,0, getSwerveDrive().getMaximumChassisAngularVelocity());
+  }
+
+  public double getRot(Double twistval){
+    if (Deadbands.getInstance().isWithin(twistval,0.1)){
+
+    }
+    return
   }
 
 }

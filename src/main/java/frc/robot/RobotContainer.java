@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import com.pathplanner.lib.auto.NamedCommands;
+
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -121,15 +123,17 @@ public class RobotContainer {
 
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
-
+    // limit acceleration
+    SlewRateLimiter xfilter = new SlewRateLimiter(0.25,-0.9,0);
+    SlewRateLimiter yfilter = new SlewRateLimiter(0.25, -0.9,0);
    /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
   
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> m_primaryJoystick.getY() + getXSpeedSetting(),// CHECK FUNCTION
-                                                                () -> m_primaryJoystick.getX() + getYSpeedSetting())// CHECK FUNCTION
-                                                            .withControllerRotationAxis(m_primaryJoystick::getTwist)// CHECK FUNCTION
+                                                                () -> yfilter.calculate(m_primaryJoystick.getY()) + getXSpeedSetting(),// CHECK FUNCTION
+                                                                () -> xfilter.calculate(m_primaryJoystick.getX()) + getYSpeedSetting())// CHECK FUNCTION
+                                                            .withControllerRotationAxis(drivebase.getRot(m_primaryJoystick::getTwist))// CHECK FUNCTION
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -140,16 +144,8 @@ public class RobotContainer {
   public DoubleSupplier getNegTwist = ()-> m_primaryJoystick.getTwist()*-1;
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_primaryJoystick::getTwist, getNegTwist)//checkfunction
                                                            .headingWhile(true);
-
-  SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                   () -> -m_primaryJoystick.getY(),
-                                                                   () -> -m_primaryJoystick.getX())
-                                                               .withControllerRotationAxis(() -> m_primaryJoystick.getRawAxis(2))
-                                                               .deadband(OperatorConstants.DEADBAND)
-                                                               .scaleTranslation(0.8)
-                                                               .allianceRelativeControl(true);
   // Derive the heading axis with math!
-  SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
+  SwerveInputStream driveDirectAngleSim     = driveAngularVelocity.copy()
                                                                      .withControllerHeadingAxis(() -> Math.sin(
                                                                                                     m_primaryJoystick.getRawAxis(
                                                                                                         2) * Math.PI) * (Math.PI * 2),
@@ -186,17 +182,12 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    //Setup.getInstance().toggleClimber.toggleOnTrue(m_climb);
-    //Setup.getInstance().toggleElevator.toggleOnTrue(m_snap);
-    //Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
-    //m_drivetrain.setDefaultCommand(m_simpDrive);
 
 
     Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveSetpointGen                      = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
     Command driveFieldOrientedDirectAngleSim      = drivebase.driveFieldOriented(driveDirectAngleSim);
-    Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
     Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleSim);
     final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> new ChassisSpeeds(0,0, drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
@@ -226,13 +217,7 @@ public class RobotContainer {
     //m_secondary.rightBumper().whileTrue(m_endeff.spinClockwise());
     //m_secondary.b().onTrue(m_endeff.to35());
 
-    if (RobotBase.isSimulation())
-    {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
-    } else
-    {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    }
 
     if (Robot.isSimulation())
     {

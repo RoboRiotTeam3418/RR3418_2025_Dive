@@ -66,24 +66,95 @@ public class RobotContainer {
       m_intake.Pivot(true),
       new intakeCommand(m_intake).withTimeout(10),
       m_endeff.pistonMove(true));
-  //Driver speeds were here REMOVED FOR CLARITY
+
+  //Driver speeds
+  /*public Double getSpeedSetting(){
+    public String speedSetting = "medium";
+      //determine which speed setting the driver sets
+        if(Setup.getInstance().getDeathMode()){
+                speedSetting = "death";
+        } else if(Setup.getInstance().getPrimaryDriverXButton()){
+                speedSetting = "fast";
+        } else if(Setup.getInstance().getPrimaryDriverAButton()){
+                speedSetting = "medium";
+        } else if(Setup.getInstance().getPrimaryDriverBButton()){
+                speedSetting = "slow";
+        } else if(Setup.getInstance().getPrimaryDriverYButton()){
+                speedSetting = "reallySlow";
+        }*/
+    public Double getXSpeedSetting(){
+    //set the speed based on the current speed setting
+       double sign = 1;
+        //String whichSpeed = speedSetting;
+        if(Setup.getInstance().getDeathMode()){
+                speed =Constants.MAX_SPEED;
+        } else if(Setup.getInstance().getPrimaryDriverXButton()){
+                speed=-0.325;
+        } else if(Setup.getInstance().getPrimaryDriverAButton()){
+                speed=-0.5;
+        } else if(Setup.getInstance().getPrimaryDriverBButton()){
+                speed=-0.825;
+        } else if(Setup.getInstance().getPrimaryDriverYButton()){
+                speed = -.999;
+        }
+        if (m_primaryJoystick.getX()>0.1){
+          sign = -1;
+        }else if(m_primaryJoystick.getX()<0.1){
+          sign = 1;
+        }
+        return speed*sign;
+    }
+    public Double getYSpeedSetting(){
+      //set the speed based on the current speed setting
+         double sign = 1;
+          //String whichSpeed = speedSetting;
+          if(Setup.getInstance().getDeathMode()){
+                  speed =Constants.MAX_SPEED;
+          } else if(Setup.getInstance().getPrimaryDriverXButton()){
+                  speed=-0.325;
+          } else if(Setup.getInstance().getPrimaryDriverAButton()){
+                  speed=-0.5;
+          } else if(Setup.getInstance().getPrimaryDriverBButton()){
+                  speed=-0.825;
+          } else if(Setup.getInstance().getPrimaryDriverYButton()){
+                  speed = -.999;
+          }
+          if (m_primaryJoystick.getY()>0.1){
+            sign = 1;
+          }else if(m_primaryJoystick.getY()<0.1){
+            sign = -1;
+          }
+          return speed*sign;
+      }
   
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
 
-   /**
-   * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
-   * REMOVED FOR CLARITY
-   */
-
-  /**
+    /**
    * Clones the angular velocity input stream and converts it to a fieldRelative input stream.
-   * REMOVED FOR CLARITY
    */
-  
-  
-   // Derive the heading axis with math! REMOVED FOR CLARITY
+  public DoubleSupplier getNegTwist = ()-> m_primaryJoystick.getTwist()*-1;
+  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_primaryJoystick::getTwist, getNegTwist)//checkfunction
+                                                           .headingWhile(true);
 
+  SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
+                                                                   () -> -m_primaryJoystick.getY(),
+                                                                   () -> -m_primaryJoystick.getX())
+                                                               .withControllerRotationAxis(() -> m_primaryJoystick.getRawAxis(2))
+                                                               .deadband(OperatorConstants.DEADBAND)
+                                                               .scaleTranslation(0.8)
+                                                               .allianceRelativeControl(true);
+  // Derive the heading axis with math!
+  SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
+                                                                     .withControllerHeadingAxis(() -> Math.sin(
+                                                                                                    m_primaryJoystick.getRawAxis(
+                                                                                                        2) * Math.PI) * (Math.PI * 2),
+                                                                                                () -> Math.cos(
+                                                                                                    m_primaryJoystick.getRawAxis(
+                                                                                                        2) * Math.PI) *
+                                                                                                      (Math.PI * 2))
+                                                                      .headingWhile(true);
+   
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -114,13 +185,37 @@ public class RobotContainer {
     Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator,false,-1));
     Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
 
-    //DRIVETRAIN COMMAND ASSIGNMENTS REMOVED FOR SIMPLICITY
+    //DRIVETRAIN COMMAND ASSIGNMENTS R
+    Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
+    Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);
+    Command driveSetpointGen                      = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
+    Command driveFieldOrientedDirectAngleSim      = drivebase.driveFieldOriented(driveDirectAngleSim);
+    Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
+    Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
+        driveDirectAngleSim);
+    final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> new ChassisSpeeds(0,0, drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
+    Command death = drivebase.drive(DEATH_SPEEDS);
 
-    //create triggers for primary buttons DRIVE ONES REMOVED FOR SIMPLICITY
+    //create triggers for primary buttons
+    BooleanSupplier fullStop = () ->Setup.getInstance().getFullStop(); 
+    Trigger fullStopTrig = new Trigger(fullStop);
+    BooleanSupplier zeroGyro = () ->Setup.getInstance().getZeroGyro(); 
+    Trigger zeroGyroTrig = new Trigger(zeroGyro);
+    BooleanSupplier primaryStart = () ->Setup.getInstance().getPrimaryStart(); 
+    Trigger primaryStartTrig = new Trigger(primaryStart);
+    BooleanSupplier primaryBack = () ->Setup.getInstance().getPrimaryBack(); 
+    Trigger primaryBackTrig = new Trigger(primaryBack);
+    BooleanSupplier backIsPos = () ->Setup.getInstance().getBackIsPos();
+    Trigger backIsPosTrig = new Trigger(backIsPos);
+    BooleanSupplier backIsNeg = () ->Setup.getInstance().getBackIsNeg();
+    Trigger backIsNegTrig = new Trigger(backIsNeg);
+    BooleanSupplier driveSetDistance = () ->Setup.getInstance().getDriveSetDistance();
+    Trigger driveSetDistanceTrig = new Trigger(driveSetDistance);
+    BooleanSupplier fakeVision = () ->Setup.getInstance().getFakeVision();
+    Trigger fakeVisionTrig = new Trigger(fakeVision);
+    BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
+    Trigger deathModeTrig = new Trigger(deathMode);
 
-   //TRIGGERS AND COMMANDS MATCHED, DRIVERS REMOVED FOR SIMPLICITY
-
-    //m_elevator.setDefaultCommand(m_manual);
     m_secondary.leftBumper().onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0),new ElevatorSnap(m_elevator,true,0)));
     // automatically bring elevator to 0 if left bumper pressed, first ensure endeffector is in position
     

@@ -25,7 +25,6 @@ public class CoralIntake extends SubsystemBase {
     //variables
     public SparkMax intakeMotor;
     public DigitalInput gamePieceSensor;
-    public Solenoid pivot;
 
     public double outtakeSpeed = -0.7, intakeSpeed = Constants.getInstance().intakeSpeed; //placeholder value
     public boolean intake, outtake;
@@ -50,8 +49,11 @@ public class CoralIntake extends SubsystemBase {
             });
     }
 
-    public void Outtake(){
-        intakeMotor.set(outtakeSpeed);
+    public Command Outtake(){
+        return run(
+            () -> {
+                intakeMotor.set(outtakeSpeed);
+            });
     }
     public Command Pivot(boolean state){
         return run(

@@ -131,30 +131,43 @@ public class RobotContainer {
                                                                                 "swerve/neo"));
 
     /**
-   * Clones the angular velocity input stream and converts it to a fieldRelative input stream.
+   * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
-  public DoubleSupplier getNegTwist = ()-> m_primaryJoystick.getTwist()*-1;
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_primaryJoystick::getTwist, getNegTwist)//checkfunction
-                                                           .headingWhile(true);
+  
+  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+  () -> m_primaryJoystick.getY() + getXSpeedSetting(),// CHECK FUNCTION
+  () -> m_primaryJoystick.getX() + getYSpeedSetting())// CHECK FUNCTION
+.withControllerRotationAxis(m_primaryJoystick::getTwist)// CHECK FUNCTION
+.deadband(OperatorConstants.DEADBAND)
+.scaleTranslation(0.8)
+.allianceRelativeControl(true);
 
-  SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                   () -> -m_primaryJoystick.getY(),
-                                                                   () -> -m_primaryJoystick.getX())
-                                                               .withControllerRotationAxis(() -> m_primaryJoystick.getRawAxis(2))
-                                                               .deadband(OperatorConstants.DEADBAND)
-                                                               .scaleTranslation(0.8)
-                                                               .allianceRelativeControl(true);
-  // Derive the heading axis with math!
-  SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
-                                                                     .withControllerHeadingAxis(() -> Math.sin(
-                                                                                                    m_primaryJoystick.getRawAxis(
-                                                                                                        2) * Math.PI) * (Math.PI * 2),
-                                                                                                () -> Math.cos(
-                                                                                                    m_primaryJoystick.getRawAxis(
-                                                                                                        2) * Math.PI) *
-                                                                                                      (Math.PI * 2))
-                                                                      .headingWhile(true);
-   
+/**
+* Clones the angular velocity input stream and converts it to a fieldRelative input stream.
+*/
+public DoubleSupplier getNegTwist = ()-> m_primaryJoystick.getTwist()*-1;
+SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(m_primaryJoystick::getTwist, getNegTwist)//checkfunction
+.headingWhile(true);
+
+SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
+     () -> -m_primaryJoystick.getY(),
+     () -> -m_primaryJoystick.getX())
+ .withControllerRotationAxis(() -> m_primaryJoystick.getRawAxis(2))
+ .deadband(OperatorConstants.DEADBAND)
+ .scaleTranslation(0.8)
+ .allianceRelativeControl(true);
+// Derive the heading axis with math!
+SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
+       .withControllerHeadingAxis(() -> Math.sin(
+                                      m_primaryJoystick.getRawAxis(
+                                          2) * Math.PI) * (Math.PI * 2),
+                                  () -> Math.cos(
+                                      m_primaryJoystick.getRawAxis(
+                                          2) * Math.PI) *
+                                        (Math.PI * 2))
+       .headingWhile(true);
+
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

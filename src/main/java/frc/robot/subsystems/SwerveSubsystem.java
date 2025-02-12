@@ -20,6 +20,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,6 +30,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -494,8 +496,9 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative)
   {
+    SlewRateLimiter slew = new SlewRateLimiter(getRawRot());
     swerveDrive.drive(translation,
-                      rotation,
+                      slew.calculate(rotation),
                       fieldRelative,
                       false); // Open loop is disabled since it shouldn't be used most of the time.
   }
@@ -788,5 +791,23 @@ public class SwerveSubsystem extends SubsystemBase
     }
     return endval*twistval;
   }
+  
+  public double getRawRot(){
+    double velocity = MathUtils.pythag(NavX.getInstance().getVelocityX(),NavX.getInstance().getVelocityY());
+    double endval = 0;
+      if(velocity<1){
+       endval = 1;
+      }else if (velocity<2){
+        endval = 0.65;
+      }else if (velocity<3.5){
+        endval = 0.4;
+      }else if (velocity<5){
+        endval = 0.25;
+      }else{
+        endval = 0.1;
+      }
+      return endval;
+  }
+
 
 }

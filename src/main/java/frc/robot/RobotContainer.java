@@ -58,7 +58,7 @@ public class RobotContainer {
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
   public double speed = 0;
   //commands
-  ClimberMove m_climbMan = new ClimberMove(m_climber);
+  ClimberMove m_climbMan = new ClimberMove(m_climber,m_secondary);
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
       new ParallelCommandGroup(
         new ElevatorSnap(m_elevator,true,0),
@@ -239,13 +239,11 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
     Trigger spinNegTrig = new Trigger(spinIsNeg);
     BooleanSupplier climbSelf = ()->Setup.getInstance().getClimbasBool();
     Trigger climbSelfTrig = new Trigger(climbSelf);
-    BooleanSupplier climbManUp = ()->Setup.getInstance().getRightJoyIsPos();
-    Trigger climbManUpTrig = new Trigger(climbManUp);
-    BooleanSupplier climbManDown = ()->Setup.getInstance().getRightJoyIsNeg();
-    Trigger climbManDownTrig = new Trigger(climbManDown);
+    BooleanSupplier climbMan = ()->Setup.getInstance().getRightJoyIsOn();
+    Trigger climbManTrig = new Trigger(climbMan);
 
     //COMMAND/TRIGGER ASSIGNMENTS, DRIVER RELATED REMOVED FROM CLIMBER FOR CLARITY
-    m_secondary.start().toggleOnTrue(m_climbMan);
+    m_secondary.start().toggleOnTrue(new ClimberMove(m_climber,m_secondary));
     m_secondary.start().toggleOnFalse(m_manual);
     climbSelfTrig.onTrue(m_climber.ClimbSelf());
     BooleanSupplier intake = () -> Setup.getInstance().getPrimaryGroundIntake();
@@ -298,10 +296,6 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
     intakeTrig.onTrue(m_intake.Pivot(true));
     intakeTrig.whileTrue(m_intake.Intake());
     outtakeTrig.whileTrue(m_intake.Outtake());
-
-
-    spinPosTrig.whileTrue(m_endeff.spinClockwise());
-    spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
 
     m_secondary.a().onTrue(new EndToAngle(m_endeff,0.0));
     m_secondary.b().onTrue(new EndToAngle(m_endeff,35.0));

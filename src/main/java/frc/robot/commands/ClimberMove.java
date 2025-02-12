@@ -7,19 +7,23 @@ package frc.robot.commands;
 import frc.robot.Setup;
 import frc.robot.subsystems.Climber;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /** An example command that uses an example subsystem. */
 public class ClimberMove extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Climber m_subsystem;
+  private final CommandXboxController m_secondary;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ClimberMove(Climber subsystem) {
+  public ClimberMove(Climber subsystem, CommandXboxController secondary) {
     m_subsystem = subsystem;
+    m_secondary = secondary;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -31,16 +35,26 @@ public class ClimberMove extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Setup.getInstance().getRightJoyIsPos()) {
-      m_subsystem.mot1.set(m_subsystem.climbSpeed);
-      m_subsystem.mot2.set(-m_subsystem.climbSpeed);
-    }else if (Setup.getInstance().getRightJoyIsNeg()){
-      m_subsystem.mot1.set(-m_subsystem.climbSpeed);
-      m_subsystem.mot2.set(m_subsystem.climbSpeed);
+    if(Setup.getInstance().getRightJoyIsOn()) {
+      m_subsystem.mot1.set(m_subsystem.climbSpeed*m_secondary.getRightY());
+      m_subsystem.mot2.set(-m_subsystem.climbSpeed*m_secondary.getRightY());
     }else{
       m_subsystem.mot1.set(0);
       m_subsystem.mot2.set(0);
     }
+    if(m_secondary.rightBumper().getAsBoolean()){
+      m_subsystem.mot1.set(m_subsystem.climbSpeed);
+    }
+    if(m_secondary.rightTrigger().getAsBoolean()){
+      m_subsystem.mot1.set(-m_subsystem.climbSpeed);
+    }
+    if(m_secondary.leftBumper().getAsBoolean()){
+      m_subsystem.mot2.set(-m_subsystem.climbSpeed);
+    }
+    if(m_secondary.leftTrigger().getAsBoolean()){
+      m_subsystem.mot2.set(-m_subsystem.climbSpeed);
+    }
+
   }
 
   // Called once the command ends or is interrupted.

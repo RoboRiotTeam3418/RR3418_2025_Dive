@@ -9,6 +9,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.util.drivers.Gyroscope;
 import frc.robot.util.drivers.NavX;
+import frc.robot.util.math.Deadbands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -170,12 +171,8 @@ public class Setup {
     return secondaryJoystick.getHID().getLeftStickButtonPressed();
   }
 
-  public boolean getRightJoyIsPos(){
-    return secondaryJoystick.getRightTriggerAxis()>0.1;
-  }
-
-  public boolean getRightJoyIsNeg(){
-    return secondaryJoystick.getRightTriggerAxis()<-0.1;
+  public boolean getRightJoyIsOn(){
+    return Deadbands.getInstance().isGreater(secondaryJoystick.getRightTriggerAxis(),0.1);
   }
 
   public boolean getSecondaryPOVUpasBool(){

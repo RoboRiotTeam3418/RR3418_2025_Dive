@@ -119,4 +119,7 @@ public class MathUtils {
 			return t;
 		}
 	}
+	public static double pythag(double a, double b){
+		return Math.sqrt((a*a)+(b*b));
+	}
 }

@@ -129,11 +129,11 @@ public class RobotContainer {
    /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */
-  
+  DoubleSupplier rotSupplier = () -> drivebase.getRot(m_primaryJoystick.getTwist());
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
                                                                 () -> yfilter.calculate(m_primaryJoystick.getY()) + getXSpeedSetting(),// CHECK FUNCTION
                                                                 () -> xfilter.calculate(m_primaryJoystick.getX()) + getYSpeedSetting())// CHECK FUNCTION
-                                                            .withControllerRotationAxis(drivebase.getRot(m_primaryJoystick::getTwist))// CHECK FUNCTION
+                                                            .withControllerRotationAxis(rotSupplier)
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);

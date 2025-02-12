@@ -40,7 +40,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Setup;
-import frc.robot.util.*;
+import frc.robot.util.math.*;
+import frc.robot.util.drivers.*;
+
+import static java.lang.Math.sqrt;
 
 //import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
@@ -768,10 +771,22 @@ public class SwerveSubsystem extends SubsystemBase
   }
 
   public double getRot(Double twistval){
-    if (Deadbands.getInstance().isWithin(twistval,0.1)){
-
+    double velocity = MathUtils.pythag(NavX.getInstance().getVelocityX(),NavX.getInstance().getVelocityY());
+    double endval = 0;
+    if (Deadbands.getInstance().isGreater(twistval,0.1)){
+      if(velocity<1){
+       endval = 1;
+      }else if (velocity<2){
+        endval = 0.65;
+      }else if (velocity<3.5){
+        endval = 0.4;
+      }else if (velocity<5){
+        endval = 0.25;
+      }else{
+        endval = 0.1;
+      }
     }
-    return
+    return endval*twistval;
   }
 
 }

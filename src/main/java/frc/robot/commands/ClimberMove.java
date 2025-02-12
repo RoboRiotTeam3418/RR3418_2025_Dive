@@ -9,6 +9,7 @@ import frc.robot.subsystems.Climber;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import static java.lang.Math.signum;
 
 /** An example command that uses an example subsystem. */
 public class ClimberMove extends Command {
@@ -35,13 +36,15 @@ public class ClimberMove extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //moves both climbers based on right joystick y value
     if(Setup.getInstance().getRightJoyIsOn()) {
-      m_subsystem.mot1.set(m_subsystem.climbSpeed*m_secondary.getRightY());
-      m_subsystem.mot2.set(-m_subsystem.climbSpeed*m_secondary.getRightY());
+      m_subsystem.mot1.set(m_subsystem.climbSpeed*Math.signum(m_secondary.getRightY()));
+      m_subsystem.mot2.set(-m_subsystem.climbSpeed*Math.signum(m_secondary.getRightY()));
     }else{
       m_subsystem.mot1.set(0);
       m_subsystem.mot2.set(0);
     }
+    //moves individual climbers up with the bumper and down with the trigger
     if(m_secondary.rightBumper().getAsBoolean()){
       m_subsystem.mot1.set(m_subsystem.climbSpeed);
     }

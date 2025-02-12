@@ -22,4 +22,7 @@ public class Deadbands{
     public boolean isOutside(double valueA, double valueB, double deadband){
         return (valueA > valueB+deadband)&&(valueA<valueB-deadband);
     }
+    public boolean isGreater(double valueA, double deadband){
+        return valueA>deadband || valueA<-deadband;
+    }
 }

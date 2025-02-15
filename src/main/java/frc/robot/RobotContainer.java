@@ -43,7 +43,6 @@ public class RobotContainer {
   
   private final Elevator m_elevator = new Elevator();
   private final CoralEndEffector m_endeff = new CoralEndEffector();
-  private final CoralIntake m_intake = new CoralIntake();
   private final Climber m_climber = new Climber();
 
   //commands
@@ -62,9 +61,7 @@ public class RobotContainer {
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
       new ParallelCommandGroup(
         new ElevatorSnap(m_elevator,true,0),
-        new EndToAngle(m_endeff, 0.0).withTimeout(5)),
-      m_intake.Pivot(true),
-      new intakeCommand(m_intake).withTimeout(10),
+        new EndToAngle(m_endeff, 55.0).withTimeout(5)),
       m_endeff.pistonMove(true));
 
   //Driver speeds
@@ -246,8 +243,7 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
     m_secondary.start().toggleOnTrue(new ClimberMove(m_climber,m_secondary));
     m_secondary.start().toggleOnFalse(m_manual);
     climbSelfTrig.onTrue(m_climber.ClimbSelf());
-    BooleanSupplier intake = () -> Setup.getInstance().getPrimaryGroundIntake();
-    Trigger intakeTrig = new Trigger(intake);
+    Trigger intakeTrig = m_secondary.x();
     BooleanSupplier outtake = () -> Setup.getInstance().getPrimaryOuttake();
     Trigger outtakeTrig = new Trigger(outtake);
 
@@ -293,13 +289,10 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
     }
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
     deathModeTrig.whileTrue(death);
-    intakeTrig.onTrue(m_intake.Pivot(true));
-    intakeTrig.whileTrue(m_intake.Intake());
-    outtakeTrig.whileTrue(m_intake.Outtake());
+    intakeTrig.onTrue(new EndToAngle(m_endeff,55.0));
 
     m_secondary.a().onTrue(new EndToAngle(m_endeff,0.0));
     m_secondary.b().onTrue(new EndToAngle(m_endeff,35.0));
-    m_secondary.x().onTrue(new EndToAngle(m_endeff,35.0));
     m_secondary.y().onTrue(new EndToAngle(m_endeff,179.0));
     spinPosTrig.whileTrue(m_endeff.spinClockwise());
     spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());

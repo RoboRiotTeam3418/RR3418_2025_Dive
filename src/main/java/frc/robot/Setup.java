@@ -132,17 +132,7 @@ public class Setup {
   }
   public boolean getFakeVision(){
     return getPrimaryHID().getRawButtonPressed(13);
-  }
-  
-  //ground intake
-  public boolean getPrimaryGroundIntake(){
-    return getPrimaryHID().getRawButton(1);
-  }
-
-  public boolean getPrimaryOuttake(){
-    return getPrimaryHID().getRawButton(9);
-  }
-  
+  }  
 
    //-----------------------------------------------------secondary--------------------------------------------------------------------
   
@@ -207,8 +197,6 @@ public class Setup {
 
   public static final int CLIMB1_ID = 20;
   public static final int CLIMB2_ID = 20;
-  public static final int INTAKE_END_ID = 21; 
-  public static final int INTAKE_MOVE_ID = 22; 
   public static final int SPIN_ID = 23; 
   public static final int GamePieceSensorID = 0;
   

@@ -7,15 +7,63 @@ package frc.robot.util.drivers;
 
 import java.lang.reflect.Array;
 
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.DoubleSubscriber;
+//import edu.wpi.first.networktables.Topic;
+//import edu.wpi.first.networktables.DoubleTopic;
+
 //import edu.wpi.first.wpilibj2.command.Command;
 //import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard; // Changing to Shuffleboard.
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight{
-  /** https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api
+  NetworkTableInstance inst = NetworkTableInstance.getDefault(); // Default Networktable instance aka the first instance.
+  NetworkTable table = inst.getTable("limelight");
+  public NetworkTableEntry tx = table.getEntry("tx");
+  public NetworkTableEntry ty = table.getEntry("ty");
+  public NetworkTableEntry ta = table.getEntry("ta");
+  public NetworkTableEntry tv = table.getEntry("tv");
+
+
+  public void SetPipeline(int Pipelinenum) { // void prevents function from sending back a value.
+    table.getEntry("pipeline").setNumber(Pipelinenum); // Sets pipline number
+  }
+
+  public boolean comparetemp() {
+    return (tv.getDouble(0.0) == 1);
+  }
+
+  public double TXDistance(){
+    return 0.0;
+  }
+
+
+
+
+  Double[] LimelightInfoArray = new Double[4]; // Creates new 'double' array with 4 elements
+
+  public Limelight() { 
+    inst.startServer(); // Rev up those fryers! (Starts default server)
+
+    LimelightInfoArray[0] = tx.getDouble(0.0);
+    LimelightInfoArray[1] = ty.getDouble(0.0);
+    LimelightInfoArray[2] = ta.getDouble(0.0);
+    LimelightInfoArray[3] = tv.getDouble(0.0);
+  }
+
+  public void outputToSmartDashboard() {
+    SmartDashboard.putNumber("Limelight:tx", tx.getDouble(0.0));
+    SmartDashboard.putNumber("Limelight:ty", ty.getDouble(0.0));
+    SmartDashboard.putNumber("Limelight:ta", ta.getDouble(0.0));
+    SmartDashboard.putNumber("Limelight:tv", tv.getDouble(0.0));
+  }
+
+    /** https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api
    * 
    * tx = Horizontal offset of object relative to crosshair
    * ty = Vertical offset of object relative to crosshair. Doesn't matter as much as tx.
@@ -25,45 +73,5 @@ public class Limelight{
    * 
   */
 
-
-  // Actual Code
-  NetworkTableInstance inst = NetworkTableInstance.getDefault(); // Default Networktable instance aka the first instance.
-  NetworkTable table = inst.getTable("Limelight");
-
-  public void SetPipeline(int Pipelinenum) { // void prevents function from sending back a value.
-    table.getEntry("pipeline").setNumber(Pipelinenum); // Sets pipline number
-  }
-
-
-  public Limelight() { // NEW IDEA!!!: Just shove everything the limelight outputs into an array, then use that array to do stuff!
-    int[] LimelightInfo = {2, 3};
-
-    inst.startServer(); // Rev up those fryers! (Starts default server)
-    inst.getTable("limelight").getEntry("<tx>").getDouble(0); // Refer to Line 45
-
-    if (table.getEntry("tv").getInteger(0) == 1) { // If it see's a target it likes, it will do stuff
-    
-    // Time to learn swerve yay D;
-    // Wait, maybe this can be used as a way to schedule commands instead? (mmmm maybe not, may execute too many commands at once. test later if possible.)
-    }
-
-  }
-
-
-
- /* PSUDOCODE + THOUGHT PROCESS
- * 
- * Assuming that limelight does indeed start it's own network table upon the server being started, we could just get the values we need from that table itself.
- * 
- *   inst.getTable("limelight").getEntry("<variablename>").getDouble(0);
- * 
- * 
- * 
- * 
- * 
- * 
- */
-
-
-
 }
+

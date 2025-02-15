@@ -1,0 +1,13 @@
+diff a/src/main/java/frc/robot/RobotContainer.java b/src/main/java/frc/robot/RobotContainer.java	(rejected hunks)
+@@ -155,9 +155,10 @@
+ 
+     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
+     // cancelling on release.
++    /* 
+     Setup.getInstance().toggleClimber.toggleOnTrue(m_climb);
+     Setup.getInstance().toggleElevator.toggleOnTrue(m_snap);
+-    Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
++    Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);*/
+     //m_drivetrain.setDefaultCommand(m_simpDrive);
+ 
+ 

@@ -8,7 +8,6 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -43,7 +42,6 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Elevator m_elevator = new Elevator();
   private final Climber m_climber = new Climber();
-  private final CoralIntake m_Intake = new CoralIntake();
   private final Example_Subsystem m_exampleSubsystem = new Example_Subsystem();
   private final CoralEndEffector m_endEffect = new CoralEndEffector();
   //private final SwerveSubsystem m_drivetrain = new SwerveSubsystem();
@@ -53,14 +51,12 @@ public class RobotContainer {
   //private final Command m_snap = new ElevatorSnap(m_elevator);
   private final Command m_manual = new ElevatorManual(m_elevator);
 
-  //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle, runs the intake, and opens grabby bit (we're using some sort of grabber right?)
-  private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
-    new ParallelCommandGroup(
+  //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle, and opens grabby bit (we're using some sort of grabber right?)
+  private final ParallelCommandGroup m_pickup = new ParallelCommandGroup(
       new ElevatorSnap(m_elevator,0),
       new SetArmCommand(m_endEffect, 0, 10),
       m_endEffect.pistonMove(true)
-    ),
-    new intakeCommand(.7, m_Intake, true));
+    );
   //private final Command m_simpDrive = new simpleDriveCommand(m_drivetrain);
 
 
@@ -165,7 +161,7 @@ public class RobotContainer {
     m_secondary.a().onTrue(m_elevator.setSnap()).whileTrue(m_manual);
     m_secondary.leftTrigger().whileTrue(new ElevatorSnap(m_elevator, m_elevator.goalheight));
 
-    //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle, runs the intake, and opens grabby bit (we're using some sort of grabber right?)
+    //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle, and opens grabby bit (we're using some sort of grabber right?)
     m_primaryJoystick.trigger().whileTrue(m_pickup);
 
     configureBindings();

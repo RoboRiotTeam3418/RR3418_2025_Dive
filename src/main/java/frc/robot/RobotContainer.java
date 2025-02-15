@@ -61,7 +61,7 @@ public class RobotContainer {
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
       new ParallelCommandGroup(
         new ElevatorSnap(m_elevator,true,0),
-        new EndToAngle(m_endeff, 55.0).withTimeout(5)),
+        new EndToAngle(m_endeff, 0.0).withTimeout(5)),
       m_endeff.pistonMove(true));
 
   //Driver speeds
@@ -169,7 +169,7 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     
-    //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle, runs the intake, and opens grabby bit (we're using some sort of grabber right?)
+    //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle,  and opens grabby bit (we're using some sort of grabber right?)
 
     //default commands
     m_endeff.setDefaultCommand(new ParallelCommandGroup(
@@ -243,10 +243,6 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
     m_secondary.start().toggleOnTrue(new ClimberMove(m_climber,m_secondary));
     m_secondary.start().toggleOnFalse(m_manual);
     climbSelfTrig.onTrue(m_climber.ClimbSelf());
-    Trigger intakeTrig = m_secondary.x();
-    BooleanSupplier outtake = () -> Setup.getInstance().getPrimaryOuttake();
-    Trigger outtakeTrig = new Trigger(outtake);
-
 
     if (RobotBase.isSimulation())
     {
@@ -289,7 +285,6 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
     }
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
     deathModeTrig.whileTrue(death);
-    intakeTrig.onTrue(new EndToAngle(m_endeff,55.0));
 
     m_secondary.a().onTrue(new EndToAngle(m_endeff,0.0));
     m_secondary.b().onTrue(new EndToAngle(m_endeff,35.0));

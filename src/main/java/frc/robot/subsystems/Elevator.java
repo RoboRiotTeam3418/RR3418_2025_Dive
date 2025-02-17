@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkMax;
 
@@ -12,6 +14,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Setup;
@@ -30,19 +33,16 @@ public class Elevator extends SubsystemBase {
   public AnalogPotentiometer pot;
   public boolean isManual = true;
   public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
-  private GenericEntry goalheightEntry =
-      tab.add("Goal Height Level", 0)
-         .getEntry();
 
   
 
   public Elevator() {
-    mot2 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
-    mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
-    enc2 = mot2.getEncoder();
-    enc1 = mot1.getEncoder();
+    //remove mot2 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
+    //remove mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
+    //remove enc2 = mot2.getEncoder();
+    //remove enc1 = mot1.getEncoder();
     higher = Setup.getInstance().getSecondaryAasBool();
-    pot =  new AnalogPotentiometer(0, 78, 0); //max height in inches is ~ 78
+    //remove pot =  new AnalogPotentiometer(0, 78, 0); //max height in inches is ~ 78
   }
   public static Elevator instance = new Elevator();
   public static Elevator getInstance() {
@@ -66,7 +66,7 @@ public class Elevator extends SubsystemBase {
           }else{
             goalheight = 0;
           }
-          goalheightEntry.setDouble(goalheight);
+
         });
   }
   public double getElevPosition(){
@@ -86,6 +86,7 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("snap height",goalheight);
   }
 
   @Override

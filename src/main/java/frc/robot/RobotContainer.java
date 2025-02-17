@@ -54,8 +54,8 @@ public class RobotContainer {
   //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle, and opens grabby bit (we're using some sort of grabber right?)
   private final ParallelCommandGroup m_pickup = new ParallelCommandGroup(
       new ElevatorSnap(m_elevator,0),
-      new SetArmCommand(m_endEffect, 0, 10),
-      m_endEffect.pistonMove(true)
+      new SetArmCommand(m_endEffect, 0, 10)//,
+      //m_endEffect.pistonMove(true)
     );
   //private final Command m_simpDrive = new simpleDriveCommand(m_drivetrain);
 
@@ -106,9 +106,9 @@ public class RobotContainer {
    */
   
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> m_primaryJoystick.getY() * -1*speed,// CHECK FUNCTION
-                                                                () -> m_primaryJoystick.getX() * -1*speed)// CHECK FUNCTION
-                                                            .withControllerRotationAxis(m_primaryJoystick::getZ)// CHECK FUNCTION
+                                                                () -> m_primaryJoystick.getRawAxis(1) * -1,// CHECK FUNCTION
+                                                                () -> m_primaryJoystick.getRawAxis(0) * -1)// CHECK FUNCTION
+                                                            .withControllerRotationAxis(()->m_primaryJoystick.getRawAxis(5))// CHECK FUNCTION
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -144,11 +144,8 @@ public class RobotContainer {
     // Configure the trigger bindings
 
     //default commands
-    m_elevator.setDefaultCommand(m_manual);
-    m_endEffect.setDefaultCommand(new ParallelCommandGroup(
-      m_endEffect.stop(),
-      m_endEffect.pistonMove(false)
-    ));//stops movement of motors and closes claw by default
+    //remove m_elevator.setDefaultCommand(m_manual);
+    //remove m_endEffect.setDefaultCommand(m_endEffect.stop());//stops movement of motors and closes claw by default
 
     //end effector commands
     m_secondary.y().whileTrue(new SetArmCommand(m_endEffect, 0, 10));
@@ -158,12 +155,12 @@ public class RobotContainer {
     m_secondary.rightTrigger().whileTrue(m_endEffect.pistonMove(true));
 
     //elevator commands
-    m_secondary.a().onTrue(m_elevator.setSnap()).whileTrue(m_manual);
+    m_secondary.a().onTrue(m_elevator.setSnap());//remove .whileTrue(m_manual);
     m_secondary.leftTrigger().whileTrue(new ElevatorSnap(m_elevator, m_elevator.goalheight));
 
     //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle, and opens grabby bit (we're using some sort of grabber right?)
     m_primaryJoystick.trigger().whileTrue(m_pickup);
-
+    
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));

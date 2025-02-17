@@ -34,9 +34,9 @@ public class CoralEndEffector extends SubsystemBase {
 
   /** Creates a new ExampleSubsystem. */
   public CoralEndEffector() {
-    spinMotor = new SparkMax(Setup.getInstance().SPIN_ID, MotorType.kBrushless);
-    piston = new Solenoid(0, null, 0);
-    spinEncoder = spinMotor.getAbsoluteEncoder();
+    //remove spinMotor = new SparkMax(Setup.getInstance().SPIN_ID, MotorType.kBrushless);
+    //remove piston = new Solenoid(0, null, 0);
+    //remove spinEncoder = spinMotor.getAbsoluteEncoder();
   }  
 
   

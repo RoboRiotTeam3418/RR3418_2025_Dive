@@ -152,8 +152,7 @@ public class Setup {
   
   //Xbox Controller (Secondary)
   private static CommandXboxController secondaryJoystick = new CommandXboxController(1);
-  public final Trigger toggleClimber = secondaryJoystick.start();
-  public final Trigger toggleElevator = secondaryJoystick.back();
+  
 
   public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;
@@ -189,11 +188,10 @@ public class Setup {
   public static final int DrivetrainSubsystem_FRONT_RIGHT_DRIVE_MOTOR = 16; 
   public static final int DrivetrainSubsystem_FRONT_RIGHT_ANGLE_MOTOR = 17;
 
-  public static final int ELEVMOT1ID = 7; 
-  public static final int ELEVMOT2ID = 7; 
+  //remove public static final int ELEVMOT1ID = 7; 
+  //remove public static final int ELEVMOT2ID = 7; 
 
-  public static final int CLIMB_ID = 7; 
-  public static final int SPIN_ID = 7; 
-  public static final int GamePieceSensorID = 7;
-  
+  //remove public static final int CLIMB_ID = 7; 
+  //remove public static final int SPIN_ID = 7; 
+  //remove public static final int GamePieceSensorID = 7;
 }

@@ -37,7 +37,7 @@ public class Climber extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
-          while(enc1.getPosition() < Constants.getInstance().CLIMB_POS) {
+          while(enc1.getPosition() < Constants.CLIMB_POS) {
             mot1.set(climbSpeed);
             mot2.set(-climbSpeed);
           }

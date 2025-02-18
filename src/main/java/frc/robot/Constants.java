@@ -20,14 +20,6 @@ import swervelib.math.Matter;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static Constants instance = new Constants();
-  public static Constants getInstance() {
-    if (instance == null) {
-      instance = new Constants();
-    }
-	  return instance;
-  }   
-
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
@@ -59,10 +51,10 @@ public final class Constants {
   public static final double i = 0;
   public static final double d = 0;*/
 
-  public Double CLIMB_POS = 45.0;
+  public static Double CLIMB_POS = 45.0;
   //elevator heights
-  public static double intakeSpeed = 0.4;
-  public static double ElevatorSpeed = 0.3;
-  public final double ElevatorP=0, ElevatorI=0, ElevatorD=0;
+  public static double INTAKE_SPEED = 0.4;
+  public static double ELEVATOR_SPEED = 0.3;
+  public final static double ELEVATOR_P=0, ELEVATOR_I=0, ELEVATOR_D=0;
 
 }

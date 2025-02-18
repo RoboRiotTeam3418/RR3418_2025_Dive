@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ElevatorManual extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Elevator m_subsystem;
-  private final double speed = Constants.getInstance().ElevatorSpeed;
+  private final double speed = Constants.ELEVATOR_SPEED;
 
   /**
    * Creates a new ExampleCommand.

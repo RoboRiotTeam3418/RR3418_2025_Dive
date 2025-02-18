@@ -162,7 +162,7 @@ public class Setup {
   }
 
   public boolean getRightJoyIsOn(){
-    return Deadbands.getInstance().isGreater(secondaryJoystick.getRightTriggerAxis(),0.1);
+    return Deadbands.isGreater(secondaryJoystick.getRightTriggerAxis(),0.1);
   }
 
   public boolean getSecondaryPOVUpasBool(){

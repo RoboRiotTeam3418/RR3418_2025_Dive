@@ -22,7 +22,6 @@ public class ElevatorManual extends Command {
    */
   public ElevatorManual(Elevator subsystem) {
     m_subsystem = subsystem;
-
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }

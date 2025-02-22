@@ -45,23 +45,19 @@ public class RobotContainer {
   private final CoralEndEffector m_endeff = new CoralEndEffector();
   private final Climber m_climber = new Climber();
 
-  //commands
-  private final Command m_manual = new ElevatorManual(m_elevator);
-
-
-
-
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
+  //commands
+  private final Command m_manual = new ElevatorManual(m_elevator);
+  private final Command m_climberMove = new ClimberMove(m_climber, m_secondary);
+
   public double speed = 0;
   //commands
   ClimberMove m_climbMan = new ClimberMove(m_climber,m_secondary);
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
       new ParallelCommandGroup(
         new ElevatorSnap(m_elevator,true,0),
-        new EndToAngle(m_endeff, 0.0).withTimeout(5)),
+        new EndToAngle(m_endeff, 0.0).withTimeout(20)),
       m_endeff.pistonMove(true));
 
   //Driver speeds
@@ -133,10 +129,6 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
    * joysticks}.
    */
   private void configureBindings() {
-    
-    Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator,false,-1));
-    Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
-
     //DRIVETRAIN COMMAND ASSIGNMENTS R
     Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);
@@ -168,8 +160,7 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
 
-    m_secondary.leftBumper().onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0),new ElevatorSnap(m_elevator,true,0)));
-    // automatically bring elevator to 0 if left bumper pressed, first ensure endeffector is in position
+   // automatically bring elevator to 0 if left bumper pressed, first ensure endeffector is in position
     
     //create secondary triggers
     BooleanSupplier spinIsPos = () -> Setup.getInstance().getSecondaryRX() >0.1;
@@ -181,10 +172,16 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
     BooleanSupplier climbMan = ()->Setup.getInstance().getRightJoyIsOn();
     Trigger climbManTrig = new Trigger(climbMan);
 
-    //COMMAND/TRIGGER ASSIGNMENTS, DRIVER RELATED REMOVED FROM CLIMBER FOR CLARITY
-    m_secondary.start().toggleOnTrue(new ClimberMove(m_climber,m_secondary));
+    BooleanSupplier climbNotSched = () -> !m_climberMove.isScheduled();
+
+    //COMMAND/TRIGGER ASSIGNMENTS
+    m_secondary.start().toggleOnTrue(m_climberMove);
     m_secondary.start().toggleOnFalse(m_manual);
     climbSelfTrig.onTrue(m_climber.ClimbSelf());
+
+    Setup.getInstance().toggleElevator.and(climbNotSched).toggleOnTrue(new ElevatorSnap(m_elevator,false,-1));
+    Setup.getInstance().toggleElevator.and(climbNotSched).toggleOnFalse(m_manual);
+
 
     if (RobotBase.isSimulation())
     {
@@ -233,6 +230,7 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
     m_secondary.y().onTrue(new EndToAngle(m_endeff,90.0));
     spinPosTrig.whileTrue(m_endeff.spinClockwise());
     spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
+    m_secondary.leftBumper().and(climbNotSched).onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0),new ElevatorSnap(m_elevator,true,0)));
 
   }
 

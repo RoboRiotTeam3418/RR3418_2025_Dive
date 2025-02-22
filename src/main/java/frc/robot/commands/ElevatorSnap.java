@@ -15,11 +15,13 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 /** An example command that uses an example subsystem. */
 public class ElevatorSnap extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final Elevator m_subsystem;
+  private final CommandXboxController m_secondary;
   private boolean m_inAuto, m_override;
   public PIDController shooterController;
   //public int levelstoTravel=0;
@@ -41,6 +43,7 @@ public class ElevatorSnap extends Command {
     m_subsystem = subsystem;
     m_setheight =setheight;
     m_override = Override;
+    m_secondary = Setup.getInstance().getSecondaryJoystick();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -85,8 +88,11 @@ public class ElevatorSnap extends Command {
           break;
   
       }
-      if(m_override){
+      if(m_override||m_secondary.rightBumper().getAsBoolean()){
         pid.setSetpoint(m_setheight);
+        m_override=true;
+      }else{
+        pid.setSetpoint(m_subsystem.getElevPosition());
       }
       setval = pid.calculate(pot.get(), pid.getSetpoint());
       m_subsystem.mot1.set(setval);

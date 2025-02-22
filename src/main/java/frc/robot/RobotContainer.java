@@ -59,7 +59,6 @@ public class RobotContainer {
     // Configure the trigger bindings
     //m_elevator.setDefaultCommand(m_manual);
     //m_endeff.setDefaultCommand(Commands.none());
-    m_climber.setDefaultCommand(Climber.ClimbMan());
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
@@ -88,6 +87,8 @@ public class RobotContainer {
     m_secondary.start().toggleOnTrue(m_climbMan);
     m_secondary.start().toggleOnFalse(Commands.none());
     climbSelfTrig.onTrue(m_climber.ClimbSelf());
+    climbManDownTrig.whileTrue(m_climber.ClimbMan(false));
+    climbManUpTrig.whileTrue(m_climber.ClimbMan(true));
 
   }
 

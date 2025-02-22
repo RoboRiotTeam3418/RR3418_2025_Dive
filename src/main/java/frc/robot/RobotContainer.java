@@ -44,42 +44,6 @@ public class RobotContainer {
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   //CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
-  //Driver speeds
-  /* 
-  public Double getSpeedSetting(){
-  public String speedSetting = "medium";
-    //determine which speed setting the driver sets
-      if(Setup.getInstance().getDeathMode()){
-              speedSetting = "death";
-      } else if(Setup.getInstance().getPrimaryDriverXButton()){
-              speedSetting = "fast";
-      } else if(Setup.getInstance().getPrimaryDriverAButton()){
-              speedSetting = "medium";
-      } else if(Setup.getInstance().getPrimaryDriverBButton()){
-              speedSetting = "slow";
-      } else if(Setup.getInstance().getPrimaryDriverYButton()){
-              speedSetting = "reallySlow";
-      }*/
-public double speed = 0.5, xtraSlow = 0.35, slow = 0.5, med = 0.75, fast = 0.8;
-  public Double getSpeedSetting(double joyInput){
-  //set the speed based on the current speed setting
-      //String whichSpeed = speedSetting;
-      if(Setup.getInstance().getDeathMode()){
-              speed =Constants.MAX_SPEED;
-      } else if(Setup.getInstance().getPrimaryDriverXButton()){
-              speed=xtraSlow;
-      } else if(Setup.getInstance().getPrimaryDriverAButton()){
-              speed=slow;
-      } else if(Setup.getInstance().getPrimaryDriverBButton()){
-              speed=med;
-      } else if(Setup.getInstance().getPrimaryDriverYButton()){
-              speed = fast;
-      }
-      if (Math.abs(joyInput)>0.1){
-        return speed;
-      }
-      return 0.0;
-  }
   
 
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
@@ -152,7 +116,7 @@ public double speed = 0.5, xtraSlow = 0.35, slow = 0.5, med = 0.75, fast = 0.8;
     //Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
         //driveDirectAngleSim);
     final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> new ChassisSpeeds(0,0, drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
-    //Command death = drivebase.drive(DEATH_SPEEDS);
+    Command death = drivebase.drive(DEATH_SPEEDS);
 
     //create triggers for primary buttons
     BooleanSupplier fullStop = () ->Setup.getInstance().getFullStop(); 
@@ -192,18 +156,17 @@ public double speed = 0.5, xtraSlow = 0.35, slow = 0.5, med = 0.75, fast = 0.8;
       fastTrig.onTrue(new SpeedChanger(drivebase,"fast",m_primaryJoystick));
        // }
       zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      fakeVisionTrig.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driveSetDistanceTrig.whileTrue(
+      //fakeVisionTrig.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      /*driveSetDistanceTrig.whileTrue(
           drivebase.driveToPose(
               new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0)))
-                              );
+                              );*/
       primaryStartTrig.whileTrue(Commands.none());
       primaryBackTrig.whileTrue(Commands.none());
       //backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       //backIsPosTrig.onTrue(Commands.none());
-      //deathModeTrig.whileTrue(death);
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    //deathModeTrig.whileTrue(death);
+    deathModeTrig.whileTrue(death);
   }
 
   /**

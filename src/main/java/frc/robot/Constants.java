@@ -60,5 +60,6 @@ public final class Constants {
   public static final double d = 0;*/
 
   public Double CLIMB_POS = 45.0;
+  public static double CLIMB_DEADBAND = 0.1;
 
 }

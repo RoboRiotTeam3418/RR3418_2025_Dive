@@ -175,7 +175,7 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
     BooleanSupplier climbNotSched = () -> !m_climberMove.isScheduled();
 
     //COMMAND/TRIGGER ASSIGNMENTS
-    m_secondary.start().toggleOnTrue(m_climberMove);
+    m_secondary.start().toggleOnTrue(new ParallelCommandGroup(m_climberMove, new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0),new ElevatorSnap(m_elevator,true,0))));
     m_secondary.start().toggleOnFalse(m_manual);
     climbSelfTrig.onTrue(m_climber.ClimbSelf());
 

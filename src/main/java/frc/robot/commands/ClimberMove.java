@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import frc.robot.Setup;
 import frc.robot.subsystems.Climber;
+import frc.robot.util.math.Deadbands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -56,6 +57,16 @@ public class ClimberMove extends Command {
     }
     if(m_secondary.leftTrigger().getAsBoolean()){
       m_subsystem.mot2.set(-m_subsystem.climbSpeed);
+    }
+
+    if (Deadbands.isWithin(m_subsystem.enc1.getPosition(),m_subsystem.enc2.getPosition(),5)
+        && Deadbands.isWithin(m_subsystem.enc2.getPosition(),m_subsystem.enc1.getPosition(),5)
+        && m_subsystem.enc1.getPosition()>=125){
+        m_subsystem.clamp.set(true);
+    }
+    if (Setup.getInstance().getSecondaryJoystick().x().getAsBoolean()){
+      m_subsystem.clamp.set(!m_subsystem.clamp.get());
+
     }
 
   }

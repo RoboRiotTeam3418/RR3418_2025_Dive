@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Setup;
@@ -17,6 +18,7 @@ public class Climber extends SubsystemBase {
   //variables
   public SparkMax mot1,mot2;
   public AbsoluteEncoder enc1,enc2;
+  public Solenoid clamp;
 
   public double climbSpeed = -0.2; //placeholder value
   public boolean armsDown;
@@ -25,6 +27,7 @@ public class Climber extends SubsystemBase {
     enc1 = mot1.getAbsoluteEncoder();
     mot2 = new SparkMax(Setup.CLIMB2_ID, MotorType.kBrushless);
     enc2 = mot2.getAbsoluteEncoder();
+    clamp = new Solenoid(0, null, 0);
   }
 
   /**

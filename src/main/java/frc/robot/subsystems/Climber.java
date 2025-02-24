@@ -42,7 +42,7 @@ public class Climber extends SubsystemBase {
         () -> {
           while(enc1.getPosition() < Constants.CLIMB_POS) {
             mot1.set(climbSpeed);
-            mot2.set(-climbSpeed);
+            mot2.set(climbSpeed);
           }
         });
   }

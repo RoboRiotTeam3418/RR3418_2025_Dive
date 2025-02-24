@@ -59,9 +59,9 @@ public class ClimberMove extends Command {
       m_subsystem.mot2.set(-m_subsystem.climbSpeed);
     }
 
-    if (Deadbands.isWithin(m_subsystem.enc1.getPosition(),m_subsystem.enc2.getPosition(),5)
-        && Deadbands.isWithin(m_subsystem.enc2.getPosition(),m_subsystem.enc1.getPosition(),5)
-        && m_subsystem.enc1.getPosition()>=125){
+    if (Deadbands.isWithin(m_subsystem.enc1.getPosition(),m_subsystem.enc2.getPosition(),2.5)
+        && Deadbands.isWithin(m_subsystem.enc2.getPosition(),m_subsystem.enc1.getPosition(),2.5)
+        && (m_subsystem.enc1.getPosition()>=125|| m_subsystem.enc2.getPosition()>=125)){
         m_subsystem.clamp.set(true);
     }
     if (Setup.getInstance().getSecondaryJoystick().x().getAsBoolean()){

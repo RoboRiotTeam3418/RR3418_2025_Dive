@@ -144,9 +144,16 @@ public class RobotContainer {
     // Configure the trigger bindings
 
     //default commands
-    //remove m_elevator.setDefaultCommand(m_manual);
     //remove m_endEffect.setDefaultCommand(m_endEffect.stop());//stops movement of motors and closes claw by default
 
+    //toggle commands
+    BooleanSupplier toggleSupply = () -> m_elevator.getToggle();
+    m_secondary.start().onTrue(m_elevator.toggleMode());
+    m_secondary.start().and(toggleSupply).toggleOnTrue(
+      new ParallelCommandGroup(
+        //remove m_manual
+      ));
+    
     //end effector commands
     m_secondary.y().whileTrue(new SetArmCommand(m_endEffect, 0, 10));
     m_secondary.leftBumper().whileTrue(m_endEffect.spin(-1));
@@ -157,7 +164,6 @@ public class RobotContainer {
     //elevator commands
     m_secondary.a().onTrue(m_elevator.setSnap());//remove .whileTrue(m_manual);
     m_secondary.leftTrigger().whileTrue(new ElevatorSnap(m_elevator, m_elevator.goalheight));
-
     //the below command makes elevator move to grabbing position, puts the grabby bit at the right angle, and opens grabby bit (we're using some sort of grabber right?)
     m_primaryJoystick.trigger().whileTrue(m_pickup);
     

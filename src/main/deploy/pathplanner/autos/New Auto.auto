@@ -7,13 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New Path"
+            "pathName": "straight to reef right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Place Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "to pickup right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "pickup"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "return right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Place Right"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }

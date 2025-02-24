@@ -32,7 +32,7 @@ public class Elevator extends SubsystemBase {
   public boolean higher;
   public AnalogPotentiometer pot;
   public boolean isManual = true;
-  public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
+  public boolean toggle=false;
 
   
 
@@ -72,6 +72,14 @@ public class Elevator extends SubsystemBase {
   public double getElevPosition(){
     return pot.get();
   }
+  public boolean getToggle() {
+    return toggle;
+  }
+  public Command toggleMode() {
+    return runOnce(()-> {
+      toggle=!toggle;
+    });
+  }
 
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).
@@ -87,6 +95,7 @@ public class Elevator extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("snap height",goalheight);
+    SmartDashboard.putBoolean("Mode", toggle);
   }
 
   @Override

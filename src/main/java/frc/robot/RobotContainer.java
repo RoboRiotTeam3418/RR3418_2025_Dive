@@ -170,7 +170,12 @@ public class RobotContainer {
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    NamedCommands.registerCommand("Place", new SequentialCommandGroup(
+    NamedCommands.registerCommand("Place Left", new SequentialCommandGroup(
+      new ElevatorSnap(m_elevator, 3), 
+      new SetArmCommand(m_endEffect, 35, 10), 
+      m_endEffect.pistonMove(true)
+    ));
+    NamedCommands.registerCommand("Place Right", new SequentialCommandGroup(
       new ElevatorSnap(m_elevator, 3), 
       new SetArmCommand(m_endEffect, 35, 10), 
       m_endEffect.pistonMove(true)

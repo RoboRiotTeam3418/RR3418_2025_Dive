@@ -10,6 +10,7 @@ import frc.robot.Setup;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.AbsoluteEncoder;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -33,7 +34,7 @@ public class CoralEndEffector extends SubsystemBase {
   public CoralEndEffector() {
     spinMotor = new SparkMax(Setup.getInstance().SPIN_ID, MotorType.kBrushless);
     spinEncoder = spinMotor.getAbsoluteEncoder();
-    claw = new Solenoid(0, null, 0);
+    claw = new Solenoid(PneumaticsModuleType.REVPH, 0);
   }  
 
   /**

@@ -165,14 +165,6 @@ public class Setup {
     return secondaryJoystick.getHID().getLeftStickButtonPressed();
   }
 
-  public static boolean isJoystickInDeadzone(double axisValue) {
-  return Math.abs(axisValue) < Constants.CLIMB_DEADBAND;
-  }
-
-  public static boolean isJoystickPositive(double axisValue) {
-   return axisValue > 0;
-  }
-
  /* public boolean getRightJoyIsPos(){
    
     if (secondaryJoystick.getRightTriggerAxis()>0.1) {

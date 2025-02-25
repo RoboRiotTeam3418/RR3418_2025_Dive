@@ -55,40 +55,6 @@ public class Climber extends SubsystemBase {
           }
         });
   }
-  public Command ClimbMan(Boolean posOrNeg) { // Manual : Teleoperated
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return run(
-        () -> {
-
-        if (!Setup.isJoystickInDeadzone(Setup.getInstance().getSecondaryJoystick().getRightTriggerAxis())){
-         if (Setup.isJoystickPositive(Setup.getInstance().getSecondaryJoystick().getRightTriggerAxis())) {
-            while (enc1.getPosition() < Constants.getInstance().CLIMB_POS && enc2.getPosition() > -Constants.getInstance().CLIMB_POS) {
-              this.mot1.set(climbSpeed);
-              this.mot2.set(-climbSpeed);
-            }
-          } else {
-            while (enc1.getPosition() < Constants.getInstance().CLIMB_POS && enc2.getPosition() > -Constants.getInstance().CLIMB_POS) {
-              this.mot1.set(-climbSpeed);
-              this.mot2.set(climbSpeed); 
-            }
-          }
-        }
-
-          /* if(posOrNeg == true && enc1.getPosition() < Constants.getInstance().CLIMB_POS) { // CLIMB_POS is a placeholder value
-            while (enc1.getPosition() < Constants.getInstance().CLIMB_POS && enc2.getPosition() > -Constants.getInstance().CLIMB_POS) {
-              this.mot1.set(climbSpeed);
-              this.mot2.set(-climbSpeed);
-            }
-          } else if (posOrNeg == true && enc2.getPosition() < Constants.getInstance().CLIMB_POS) {
-            while (enc1.getPosition() < Constants.getInstance().CLIMB_POS && enc2.getPosition() > -Constants.getInstance().CLIMB_POS) {
-              this.mot1.set(-climbSpeed);
-              this.mot2.set(climbSpeed); 
-            }
-        } */
-
-    });
-  }
 
   /**
    * An example method querying a boolean state of the subsystem (for example, a digital sensor).

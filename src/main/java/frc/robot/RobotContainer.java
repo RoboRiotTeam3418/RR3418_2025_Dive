@@ -129,7 +129,7 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
    * joysticks}.
    */
   private void configureBindings() {
-    //DRIVETRAIN COMMAND ASSIGNMENTS R
+    //DRIVETRAIN COMMAND ASSIGNMENTS 
     Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveSetpointGen                      = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
@@ -169,8 +169,6 @@ SwerveInputStream driveDirectAngleSim     = driveAngularVelocitySim.copy()
     Trigger spinNegTrig = new Trigger(spinIsNeg);
     BooleanSupplier climbSelf = ()->Setup.getInstance().getClimbasBool();
     Trigger climbSelfTrig = new Trigger(climbSelf);
-    BooleanSupplier climbMan = ()->Setup.getInstance().getRightJoyIsOn();
-    Trigger climbManTrig = new Trigger(climbMan);
 
     BooleanSupplier climbNotSched = () -> !m_climberMove.isScheduled();
 

@@ -4,13 +4,12 @@
 
 package frc.robot.subsystems;
 
+import java.util.Dictionary;
 import java.util.Hashtable;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Hashtable;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
@@ -20,8 +19,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Setup;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Elevator extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
@@ -44,8 +41,8 @@ public class Elevator extends SubsystemBase {
   public Elevator() {
     mot2 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
     mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
-    enc2 = mot2.getEncoder();
-    enc1 = mot1.getEncoder();
+    enc2 = mot2.getAlternateEncoder();
+    enc1 = mot1.getAlternateEncoder();
     higher = Setup.getInstance().getSecondaryPOVUpasBool();
     lower = Setup.getInstance().getSecondaryPOVDownasBool();
     pot =  new AnalogPotentiometer(0, 78, 0); //max height in inches is ~ 78

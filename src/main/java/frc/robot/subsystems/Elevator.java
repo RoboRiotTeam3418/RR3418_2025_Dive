@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -24,11 +25,9 @@ public class Elevator extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
   public SparkMax mot2;
   public SparkMax mot1;
-  public RelativeEncoder enc2;
-  public RelativeEncoder enc1;
   public PIDController elevController;
   public boolean higher,lower;
-  public AnalogPotentiometer pot;
+  public AnalogInput pot;
   public boolean isManual = true;
   public int goalheight = 0; //in teirs
   public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
@@ -45,7 +44,7 @@ public class Elevator extends SubsystemBase {
     enc1 = mot1.getAlternateEncoder();
     higher = Setup.getInstance().getSecondaryPOVUpasBool();
     lower = Setup.getInstance().getSecondaryPOVDownasBool();
-    pot =  new AnalogPotentiometer(0, 78, 0); //max height in inches is ~ 78
+    pot =  new AnalogInput(3); //max height in inches is ~ 78
     
     goalToDist = new Hashtable<>();
         // Adding key-value pairs
@@ -79,7 +78,7 @@ public class Elevator extends SubsystemBase {
         });
   }
   public double getElevPosition(){
-    return pot.get();
+    return pot.getVoltage()*(75/5);
   }
   public double goalToDistance(Integer key){
     return goalToDist.get(key);

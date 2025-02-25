@@ -10,7 +10,6 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.util.math.Deadbands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,7 +28,6 @@ public class ElevatorSnap extends Command {
   public double setval, m_setheight;
   public double kP = Constants.ELEVATOR_P, kI = Constants.ELEVATOR_I, kD = Constants.ELEVATOR_D;
   public PIDController pid;
-   public AnalogPotentiometer pot;
   public double allowance = 2; //inches 
 
   /**
@@ -94,7 +92,7 @@ public class ElevatorSnap extends Command {
       }else{
         pid.setSetpoint(m_subsystem.getElevPosition());
       }
-      setval = pid.calculate(pot.get(), pid.getSetpoint());
+      setval = pid.calculate(m_subsystem.getElevPosition(), pid.getSetpoint());
       m_subsystem.mot1.set(setval);
       m_subsystem.mot2.set(setval);
     }

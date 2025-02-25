@@ -2,6 +2,8 @@ package frc.robot;
 
 import java.util.function.DoubleSupplier;
 
+import javax.lang.model.util.ElementScanner14;
+
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -160,6 +162,16 @@ public class Setup {
   public boolean getClimbasBool(){
     return secondaryJoystick.getHID().getLeftStickButtonPressed();
   }
+
+ /* public boolean getRightJoyIsPos(){
+   
+    if (secondaryJoystick.getRightTriggerAxis()>0.1) {
+      return true;
+    } else {
+      return false;
+    }
+  }*/
+
 
   public boolean getRightJoyIsOn(){
     return Deadbands.isGreater(secondaryJoystick.getRightTriggerAxis(),0.1);

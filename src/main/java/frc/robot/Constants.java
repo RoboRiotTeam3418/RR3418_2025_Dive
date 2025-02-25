@@ -52,6 +52,7 @@ public final class Constants {
   public static final double d = 0;*/
 
   public static Double CLIMB_POS = 45.0;
+  public static double CLIMB_DEADBAND = 0.1;
   //elevator heights
   public static double INTAKE_SPEED = 0.4;
   public static double ELEVATOR_SPEED = 0.3;

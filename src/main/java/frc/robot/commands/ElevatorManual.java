@@ -4,14 +4,14 @@
 
 package frc.robot.commands;
 
-import frc.robot.Setup;
-import frc.robot.Constants;
-import frc.robot.subsystems.Elevator;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
+import frc.robot.Setup;
+import frc.robot.subsystems.Elevator;
 
 /** An example command that uses an example subsystem. */
 public class ElevatorManual extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final Elevator m_subsystem;
   private final double speed = Constants.ELEVATOR_SPEED;
 
@@ -35,21 +35,22 @@ public class ElevatorManual extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Setup.getInstance().getSecondaryLY()>0.1 || Setup.getInstance().getSecondaryLY()<-0.1){
-      m_subsystem.mot1.set(speed*Setup.getInstance().getSecondaryLY());
-    }else{
+    if (Setup.getInstance().getSecondaryLY() > 0.1 || Setup.getInstance().getSecondaryLY() < -0.1) {
+      m_subsystem.mot1.set(speed * Setup.getInstance().getSecondaryLY());
+    } else {
       m_subsystem.mot1.set(0);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(!Elevator.getInstance().isManual){
+    if (!Elevator.getInstance().isManual) {
       return true;
     }
     return false;

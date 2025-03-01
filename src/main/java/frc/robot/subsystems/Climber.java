@@ -4,24 +4,25 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Setup;
 import frc.robot.Constants;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
+import frc.robot.Setup;
 
 public class Climber extends SubsystemBase {
-  //variables
-  public SparkMax mot1,mot2;
-  public AbsoluteEncoder enc1,enc2;
+  // variables
+  public SparkMax mot1, mot2;
+  public AbsoluteEncoder enc1, enc2;
   public Solenoid clamp;
 
-  public double climbSpeed = -0.2; //placeholder value
+  public double climbSpeed = -0.2; // placeholder value
   public boolean armsDown;
+
   public Climber() {
     mot1 = new SparkMax(Setup.CLIMB1_ID, MotorType.kBrushless);
     enc1 = mot1.getAbsoluteEncoder();
@@ -40,7 +41,7 @@ public class Climber extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
-          while(enc1.getPosition() < Constants.CLIMB_POS) {
+          while (enc1.getPosition() < Constants.CLIMB_POS) {
             mot1.set(climbSpeed);
             mot2.set(-climbSpeed);
           }
@@ -48,7 +49,8 @@ public class Climber extends SubsystemBase {
   }
 
   /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
+   * An example method querying a boolean state of the subsystem (for example, a
+   * digital sensor).
    *
    * @return value of some boolean subsystem state, such as a digital sensor.
    */

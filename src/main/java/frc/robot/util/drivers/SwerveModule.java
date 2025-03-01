@@ -9,8 +9,8 @@ import frc.robot.util.math.Vector2;
 public abstract class SwerveModule {
     private final Vector2 modulePosition;
     private SwerveModulePosition currentPos = new SwerveModulePosition();
-    //private SwerveModuleState moduleState = new SwerveModuleState(0, new Rotation2d(0));
-
+    // private SwerveModuleState moduleState = new SwerveModuleState(0, new
+    // Rotation2d(0));
 
     private final Object sensorMutex = new Object();
     private double currentAngle = 0.0;
@@ -63,7 +63,8 @@ public abstract class SwerveModule {
     protected abstract double readAngle();
 
     /**
-     * Reads the drive encoder to get the displacement of the module wheel in inches.
+     * Reads the drive encoder to get the displacement of the module wheel in
+     * inches.
      *
      * @return the displacement of the module in inches
      */
@@ -84,7 +85,8 @@ public abstract class SwerveModule {
     protected abstract void setDriveOutput(double output);
 
     /**
-     * Gets the distance the module is from the robot's center of rotation (usually the center).
+     * Gets the distance the module is from the robot's center of rotation (usually
+     * the center).
      *
      * @return The distance the module is from the robot's center of rotation.
      */
@@ -117,7 +119,9 @@ public abstract class SwerveModule {
     /**
      * Gets the current velocity of the wheel.
      *
-     * Allow implementors to specify the current velocity without overriding this method.
+     * Allow implementors to specify the current velocity without overriding this
+     * method.
+     * 
      * @return the velocity of the module.
      */
     public double getCurrentVelocity() {
@@ -128,6 +132,7 @@ public abstract class SwerveModule {
      * Gets the amount of current being drawn by the drive motor.
      *
      * Allow implementors to specify current draw without overriding this method.
+     * 
      * @return the amount of current being drawn by the drive motor.
      */
     public double getDriveCurrent() {
@@ -147,7 +152,8 @@ public abstract class SwerveModule {
     }
 
     /**
-     * Sets the target velocity. The vector should have a length that is less than or equal to 1.
+     * Sets the target velocity. The vector should have a length that is less than
+     * or equal to 1.
      *
      * @param velocity the target velocity
      */
@@ -159,11 +165,11 @@ public abstract class SwerveModule {
     }
 
     public final void setTargetVelocity(double speed, double angle) {
-        //DON'T USE THIS... unless you want snappy wheels, which you don't want.
+        // DON'T USE THIS... unless you want snappy wheels, which you don't want.
         // if (speed < 0.0) {
-        //     speed *= -1.0;
+        // speed *= -1.0;
 
-        //     angle += Math.PI;
+        // angle += Math.PI;
         // }
 
         angle %= 2.0 * Math.PI;
@@ -248,32 +254,35 @@ public abstract class SwerveModule {
             targetSpeed = this.targetSpeed;
         }
 
-        //final double currentAngle = getCurrentAngle();
-/* 
-        // Change the target angle so the delta is in the range [-pi, pi) instead of [0, 2pi)
-        double delta = targetAngle - currentAngle;
-        if (delta >= Math.PI) {
-            targetAngle -= 2.0 * Math.PI;
-        } else if (delta < -Math.PI) {
-            targetAngle += 2.0 * Math.PI;
-        }
-
-        // Deltas that are greater than 90 deg or less than -90 deg can be inverted so the total movement of the module
-        // is less than 90 deg by inverting the wheel direction
-        delta = targetAngle - currentAngle;
-        if (delta > Math.PI / 2.0 || delta < -Math.PI / 2.0) {
-            // Only need to add pi here because the target angle will be put back into the range [0, 2pi)
-            targetAngle += Math.PI;
-
-            targetSpeed *= -1.0;
-        }
-
-        // Put target angle back into the range [0, 2pi)
-        targetAngle %= 2.0 * Math.PI;
-        if (targetAngle < 0.0) {
-            targetAngle += 2.0 * Math.PI;
-        }
-*/
+        // final double currentAngle = getCurrentAngle();
+        /*
+         * // Change the target angle so the delta is in the range [-pi, pi) instead of
+         * [0, 2pi)
+         * double delta = targetAngle - currentAngle;
+         * if (delta >= Math.PI) {
+         * targetAngle -= 2.0 * Math.PI;
+         * } else if (delta < -Math.PI) {
+         * targetAngle += 2.0 * Math.PI;
+         * }
+         * 
+         * // Deltas that are greater than 90 deg or less than -90 deg can be inverted
+         * so the total movement of the module
+         * // is less than 90 deg by inverting the wheel direction
+         * delta = targetAngle - currentAngle;
+         * if (delta > Math.PI / 2.0 || delta < -Math.PI / 2.0) {
+         * // Only need to add pi here because the target angle will be put back into
+         * the range [0, 2pi)
+         * targetAngle += Math.PI;
+         * 
+         * targetSpeed *= -1.0;
+         * }
+         * 
+         * // Put target angle back into the range [0, 2pi)
+         * targetAngle %= 2.0 * Math.PI;
+         * if (targetAngle < 0.0) {
+         * targetAngle += 2.0 * Math.PI;
+         * }
+         */
         setTargetAngle(targetAngle);
         setDriveOutput(targetSpeed);
     }

@@ -4,18 +4,18 @@
 
 package frc.robot.commands;
 
-import frc.robot.commands.drivebase.AbsoluteDrive;
-//import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.SwerveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+//import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
-  public static double autodistance= 6;
+  public static double autodistance = 6;
   public static double autospeed = 0.4;
+
   public static Command exampleAuto(SwerveSubsystem drive) {
-    return Commands.sequence(drive.driveToDistanceCommand(autodistance,autospeed) /*, placeholder command*/);
+    return Commands.sequence(drive.driveToDistanceCommand(autodistance, autospeed) /* , placeholder command */);
   }
 
   private Autos() {

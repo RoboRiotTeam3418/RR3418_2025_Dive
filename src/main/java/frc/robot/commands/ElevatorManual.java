@@ -14,7 +14,7 @@ public class ElevatorManual extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final Elevator m_subsystem;
 
-  public final static double ELEVATOR_SPEED = 0.3;
+  public final static double ELEVATOR_SPEED = 0.6;
 
   /**
    * Creates a new ExampleCommand.
@@ -30,7 +30,6 @@ public class ElevatorManual extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Elevator.getInstance().isManual = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,8 +37,10 @@ public class ElevatorManual extends Command {
   public void execute() {
     if (DeadbandUtils.isGreater(Setup.getInstance().getSecondaryLY(), 0.1)) {
       m_subsystem.mot1.set(ELEVATOR_SPEED * Setup.getInstance().getSecondaryLY());
+      m_subsystem.mot2.set(ELEVATOR_SPEED * Setup.getInstance().getSecondaryLY());
     } else {
       m_subsystem.mot1.set(0);
+      m_subsystem.mot2.set(0);
     }
   }
 
@@ -51,9 +52,5 @@ public class ElevatorManual extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (!Elevator.getInstance().isManual) {
-      return true;
-    }
-    return false;
   }
 }

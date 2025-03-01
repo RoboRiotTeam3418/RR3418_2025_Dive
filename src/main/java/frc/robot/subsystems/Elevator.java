@@ -16,6 +16,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ElevatorLevel;
@@ -30,11 +31,7 @@ public class Elevator extends SubsystemBase {
   public PIDController elevController;
   public boolean higher, lower;
   private AnalogInput pot;
-  public boolean isManual = true;
   public ElevatorLevel goalLevel = ElevatorLevel.LOWEST;
-
-  public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
-  private GenericEntry goalheightEntry = tab.add("Goal Height Level", "").getEntry();
 
   public Dictionary<ElevatorLevel, Double> elevatorLeveltoHeightDictionary;// key is goal height in tiers, entry is
                                                                            // height to go to in inches
@@ -64,14 +61,6 @@ public class Elevator extends SubsystemBase {
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO, 48.0);// pole 2
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_THREE, 75.0); // pole 3 + 3in
   }
-
-  public static Elevator instance = new Elevator();
-
-  public static Elevator getInstance() {
-    if (instance == null) {
-      instance = new Elevator();
-    }
-    return instance;
   }
 
   /**
@@ -102,14 +91,13 @@ public class Elevator extends SubsystemBase {
     // This method will be called once per scheduler run
     if (higher) {
       incrementElevatorLevel(goalLevel);
-      goalheightEntry.setDefaultString(goalLevel.toString());
       higher = false;
     }
     if (lower) {
       decrementElevatorLevel(goalLevel);
-      goalheightEntry.setDefaultString(goalLevel.toString());
       lower = false;
     }
+    SmartDashboard.putNumber("snap height", goalLevel.ordinal());
   }
 
   private void incrementElevatorLevel(ElevatorLevel currentElevatorLevel) {

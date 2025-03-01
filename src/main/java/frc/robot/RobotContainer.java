@@ -64,7 +64,7 @@ public class RobotContainer {
   ClimberMove m_climbMan = new ClimberMove(m_climber, m_secondary);
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
       new ParallelCommandGroup(
-          new ElevatorSnap(m_elevator, true, 0),
+          new ElevatorSnap(m_elevator),
           new EndToAngle(m_endeff, 0.0).withTimeout(20)),
       m_endeff.pistonMove(true));
 

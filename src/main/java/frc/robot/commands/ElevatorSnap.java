@@ -16,27 +16,20 @@ public class ElevatorSnap extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final Elevator m_subsystem;
   private final CommandXboxController m_secondary;
-  private boolean m_inAuto, m_override;
-  private PIDController shooterController;
-  private double setval, m_setheight;
+  private boolean m_inAuto;
+  private double setval;
   private PIDController pid;
   private final static double ALLOWANCE = 2; // inches
 
-  private final static double ELEVATOR_P = 0, ELEVATOR_I = 0, ELEVATOR_D = 0;
+  private final static double ELEVATOR_P = .01, ELEVATOR_I = 0.001, ELEVATOR_D = 0;
 
   /**
    * 
    *
    * @param subsystem The subsystem used by this command.
-   * @param override  True if we don't need to push the button to make the
-   *                  elevator move (ie autonomous or one button start position)
-   * @param setHeight only matters if override is true, else please put -1 for
-   *                  clarity
    */
-  public ElevatorSnap(Elevator subsystem, boolean override, double setHeight) {
+  public ElevatorSnap(Elevator subsystem) {
     m_subsystem = subsystem;
-    m_setheight = setHeight;
-    m_override = override;
     m_secondary = Setup.getInstance().getSecondaryJoystick();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -45,7 +38,6 @@ public class ElevatorSnap extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Elevator.getInstance().isManual = false;
     pid = new PIDController(ELEVATOR_P, ELEVATOR_I, ELEVATOR_D);
     pid.setTolerance(5, 10);// values suggested by wpilib documentation
   }
@@ -61,16 +53,9 @@ public class ElevatorSnap extends Command {
     // m_subsystem.getElevPosition() + allowance)) &&
     // (Setup.getInstance().getSecondaryMoveElev()||m_override)){
     if (DeadbandUtils.isOutside(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel),
-        m_subsystem.getElevPosition(), ALLOWANCE) && (Setup.getInstance().getSecondaryMoveElev() || m_override)) {
+        m_subsystem.getElevPosition(), ALLOWANCE)) {
       // ACCOUNT FOR CHASSIS HEIGHT LATER
       pid.setSetpoint(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel));
-
-      if (m_override || m_secondary.rightBumper().getAsBoolean()) {
-        pid.setSetpoint(m_setheight);
-        m_override = true;
-      } else {
-        pid.setSetpoint(m_subsystem.getElevPosition());
-      }
       setval = pid.calculate(m_subsystem.getElevPosition(), pid.getSetpoint());
       m_subsystem.mot1.set(setval);
       m_subsystem.mot2.set(setval);
@@ -88,9 +73,6 @@ public class ElevatorSnap extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (pid.atSetpoint()) {
-      Elevator.getInstance().isManual = true;
-    }
     return pid.atSetpoint();
   }
 }

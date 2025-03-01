@@ -9,13 +9,11 @@ import java.util.Hashtable;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkAnalogSensor;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,8 +27,8 @@ public class Elevator extends SubsystemBase {
   public RelativeEncoder enc2;
   public RelativeEncoder enc1;
   public PIDController elevController;
-  public boolean higher, lower;
-  private AnalogInput pot;
+  public boolean higher, lower, toggle = true;
+  private SparkAnalogSensor pot;
   public ElevatorLevel goalLevel = ElevatorLevel.LOWEST;
 
   public Dictionary<ElevatorLevel, Double> elevatorLeveltoHeightDictionary;// key is goal height in tiers, entry is
@@ -47,7 +45,7 @@ public class Elevator extends SubsystemBase {
     enc1 = mot1.getAlternateEncoder();
     higher = Setup.getInstance().getSecondaryPOVUpasBool();
     lower = Setup.getInstance().getSecondaryPOVDownasBool();
-    pot = new AnalogInput(3); // max height in inches is ~ 78
+    pot = mot2.getAnalog(); // max height in inches is ~ 78
 
     initializeDictionary();
   }
@@ -60,7 +58,6 @@ public class Elevator extends SubsystemBase {
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_ONE, 32.0); // pole 1
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO, 48.0);// pole 2
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_THREE, 75.0); // pole 3 + 3in
-  }
   }
 
   /**
@@ -79,7 +76,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getElevPosition() {
-    return pot.getVoltage() * (75 / 5);
+    return (pot.getVoltage()/2.3)*50-2;
   }
 
   public double getHeightFromElevatorLevel(ElevatorLevel key) {
@@ -98,6 +95,20 @@ public class Elevator extends SubsystemBase {
       lower = false;
     }
     SmartDashboard.putNumber("snap height", goalLevel.ordinal());
+  }
+  public Command setSnap(ElevatorLevel key) {
+    return runOnce(
+      () -> {
+        goalLevel = key;
+      }
+    );
+  }
+  public Command toggle() {
+    return runOnce(
+      () -> {
+        toggle=!toggle;
+      }
+    );
   }
 
   private void incrementElevatorLevel(ElevatorLevel currentElevatorLevel) {

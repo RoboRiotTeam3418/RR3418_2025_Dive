@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Setup;
 import frc.robot.subsystems.Elevator;
+import frc.robot.util.drivers.Toggles;
 import frc.robot.util.math.DeadbandUtils;
 
 /** An example command that uses an example subsystem. */
@@ -35,6 +36,7 @@ public class ElevatorManual extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (Toggles.getSecondaryToggle()) {      
     if (DeadbandUtils.isGreater(Setup.getInstance().getSecondaryLY(), 0.1)) {
       m_subsystem.mot1.set(ELEVATOR_SPEED * Setup.getInstance().getSecondaryLY());
       m_subsystem.mot2.set(ELEVATOR_SPEED * Setup.getInstance().getSecondaryLY());
@@ -42,6 +44,7 @@ public class ElevatorManual extends Command {
       m_subsystem.mot1.set(0);
       m_subsystem.mot2.set(0);
     }
+  }
   }
 
   // Called once the command ends or is interrupted.
@@ -52,5 +55,6 @@ public class ElevatorManual extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    return false;
   }
 }

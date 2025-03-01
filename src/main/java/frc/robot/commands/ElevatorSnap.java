@@ -6,8 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Setup;
 import frc.robot.subsystems.Elevator;
 import frc.robot.util.math.DeadbandUtils;
 
@@ -15,8 +13,6 @@ import frc.robot.util.math.DeadbandUtils;
 public class ElevatorSnap extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final Elevator m_subsystem;
-  private final CommandXboxController m_secondary;
-  private boolean m_inAuto;
   private double setval;
   private PIDController pid;
   private final static double ALLOWANCE = 2; // inches
@@ -30,7 +26,6 @@ public class ElevatorSnap extends Command {
    */
   public ElevatorSnap(Elevator subsystem) {
     m_subsystem = subsystem;
-    m_secondary = Setup.getInstance().getSecondaryJoystick();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }

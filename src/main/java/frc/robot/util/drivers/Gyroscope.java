@@ -25,6 +25,7 @@ public abstract class Gyroscope {
 	}
 
 	public abstract Rotation2 getUnadjustedAngle();
+
 	public abstract double getUnadjustedRate();
 
 	public final Rotation2 getAngle() {

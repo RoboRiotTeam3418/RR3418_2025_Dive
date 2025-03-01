@@ -3,10 +3,9 @@ package frc.robot.util.drivers;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
-import frc.robot.util.math.Rotation2;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.SerialPort;
-import frc.robot.Setup;
+import frc.robot.util.math.Rotation2;
 
 public final class NavX extends Gyroscope {
     public final AHRS navX;
@@ -16,34 +15,35 @@ public final class NavX extends Gyroscope {
     public static NavX getInstance() {
         if (mInstance == null)
             mInstance = new NavX(SerialPort.Port.kMXP);
-    	return mInstance;
+        return mInstance;
     }
 
     public NavX(edu.wpi.first.wpilibj.SerialPort.Port kmxp) {
         navX = new AHRS(NavXComType.kUSB2);
     }
-/* 
-    public NavX(edu.wpi.first.wpilibj.SerialPort.Port kmxp, byte updateRate) {
-        navX = new AHRS(kmxp, AHRS.SerialDataType.kProcessedData, updateRate);
+
+    /*
+     * public NavX(edu.wpi.first.wpilibj.SerialPort.Port kmxp, byte updateRate) {
+     * navX = new AHRS(kmxp, AHRS.SerialDataType.kProcessedData, updateRate);
+     * }
+     */
+    public float getX() {
+
+        return navX.getDisplacementX();
+
     }
-*/
-    public float getX(){
 
-       return navX.getDisplacementX();
-
-    }
-
-    public float getY(){
+    public float getY() {
 
         return navX.getDisplacementY();
- 
-     }
 
-     public float getVelocityX(){
-         return navX.getVelocityX();
-     }
+    }
 
-     public float getVelocityY(){
+    public float getVelocityX() {
+        return navX.getVelocityX();
+    }
+
+    public float getVelocityY() {
         return navX.getVelocityY();
     }
 

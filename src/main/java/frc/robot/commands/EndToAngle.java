@@ -4,32 +4,28 @@
 
 package frc.robot.commands;
 
-import frc.robot.Setup;
-import frc.robot.subsystems.CoralEndEffector;
-
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.CoralEndEffector;
 
 /** An example command that uses an example subsystem. */
 public class EndToAngle extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final CoralEndEffector m_subsystem;
   private double m_angle;
-    //variables
+  // variables
   public SparkMax spinMotor;
   public AbsoluteEncoder spinEncoder;
   public DigitalInput gamePieceSensor;
   public Solenoid claw;
   public double allowance = 1.5;
 
-  public double spinSpeed; //placeholder value
+  public double spinSpeed; // placeholder value
   public boolean isClockwise, isCounterClockwise;
-  
 
   /**
    * Creates a new ExampleCommand.
@@ -49,17 +45,19 @@ public class EndToAngle extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (spinEncoder.getPosition()> (m_angle+180)%360){
-      while (spinEncoder.getPosition() > m_angle+allowance){
-        spinMotor.set(spinSpeed);}
-    }else{
-      while (spinEncoder.getPosition() <m_angle-allowance){
-       spinMotor.set(-spinSpeed);
+    if (spinEncoder.getPosition() > (m_angle + 180) % 360) {
+      while (spinEncoder.getPosition() > m_angle + allowance) {
+        spinMotor.set(spinSpeed);
+      }
+    } else {
+      while (spinEncoder.getPosition() < m_angle - allowance) {
+        spinMotor.set(-spinSpeed);
       }
     }
   }

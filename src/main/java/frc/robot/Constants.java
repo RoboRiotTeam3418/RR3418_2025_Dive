@@ -62,8 +62,8 @@ public final class Constants {
   //elevator heights
   public final double[] Elevheights = {1,2,3,4};
 
-  public final double ElevatorSpeed = 0.4;
+  public final double ElevatorSpeed = 0.6;
 
-  public final double ElevatorP=0, ElevatorI=0, ElevatorD=0;
+  public final double ElevatorP=.01, ElevatorI=0.001, ElevatorD=.00;
 
 }

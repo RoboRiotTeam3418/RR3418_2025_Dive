@@ -168,6 +168,9 @@ public class Setup {
   public Double getSecondaryLY(){
     return secondaryJoystick.getLeftY();
   }
+  public Double getSecondaryRY(){
+    return secondaryJoystick.getRightY();
+  }
 //---------------------------------------------------------Hardware------------------------------------------------------------------------
 
   //Gyroscope

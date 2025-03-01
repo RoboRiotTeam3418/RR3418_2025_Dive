@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -31,8 +32,9 @@ public class Elevator extends SubsystemBase {
   public int goalheight = 0; //in tiers
   public boolean higher;
   public AnalogPotentiometer pot;
+  public AnalogInput in;
   public boolean isManual = true;
-  public boolean toggle=false;
+  public boolean toggle=true;
 
   
 
@@ -42,7 +44,8 @@ public class Elevator extends SubsystemBase {
     enc2 = mot2.getEncoder();
     enc1 = mot1.getEncoder();
     higher = Setup.getInstance().getSecondaryAasBool();
-    pot =  new AnalogPotentiometer(1, 78, 0); //max height in inches is ~ 78
+    //pot =  new AnalogPotentiometer(1, 78, -1.5); //max height in inches is ~ 78
+    in= new AnalogInput(1);
   }
   /**
    * Example command factory method.
@@ -83,12 +86,16 @@ public class Elevator extends SubsystemBase {
     // Query some boolean state, such as a digital sensor.
     return false;
   }
+  public double getScaled() {
+    return (in.getVoltage()/2.3)*50.5-2;//measuring first stage then multiplying by two
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("snap height",goalheight);
     SmartDashboard.putBoolean("Mode", toggle);
+    SmartDashboard.putNumber("Current Height", getScaled());
   }
 
   @Override

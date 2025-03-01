@@ -37,11 +37,15 @@ public class ElevatorManual extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if(m_subsystem.toggle) {
     if(Setup.getInstance().getSecondaryLY()>0.1 || Setup.getInstance().getSecondaryLY()<-0.1){
       m_subsystem.mot1.set(speed*Setup.getInstance().getSecondaryLY());
+      m_subsystem.mot2.set(speed*Setup.getInstance().getSecondaryLY());
     }else{
       m_subsystem.mot1.set(0);
+      m_subsystem.mot2.set(0);
     }
+  }
   }
 
   // Called once the command ends or is interrupted.

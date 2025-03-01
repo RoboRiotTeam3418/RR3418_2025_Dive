@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ElevatorLevel;
 import frc.robot.Setup;
 
 public class Elevator extends SubsystemBase {
@@ -28,15 +29,21 @@ public class Elevator extends SubsystemBase {
   public RelativeEncoder enc1;
   public PIDController elevController;
   public boolean higher, lower;
-  public AnalogPotentiometer pot;
+  private AnalogPotentiometer pot;
   public boolean isManual = true;
-  public int goalheight = 0; // in teirs
+  public ElevatorLevel goalLevel = ElevatorLevel.LOWEST;
+
   public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
-  private GenericEntry goalheightEntry = tab.add("Goal Height Level", 0)
-      .getEntry();
-  public Dictionary<Integer, Double> goalToDist;// key is goal height in tiers, entry is height to go to in inches
+  private GenericEntry goalheightEntry = tab.add("Goal Height Level", "").getEntry();
+
+  public Dictionary<ElevatorLevel, Double> elevatorLeveltoHeightDictionary;// key is goal height in tiers, entry is
+                                                                           // height to go to in inches
 
   public Elevator() {
+    initialize();
+  }
+
+  private void initialize() {
     mot2 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
     mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
     enc2 = mot2.getEncoder();
@@ -45,14 +52,17 @@ public class Elevator extends SubsystemBase {
     lower = Setup.getInstance().getSecondaryPOVDownasBool();
     pot = new AnalogPotentiometer(0, 78, 0); // max height in inches is ~ 78
 
-    goalToDist = new Hashtable<>();
-    // Adding key-value pairs
-    goalToDist.put(0, 0.0); // very small, home state
-    goalToDist.put(1, 21.0); // trough + 3in
-    goalToDist.put(2, 32.0); // pole 1
-    goalToDist.put(3, 48.0);// pole 2
-    goalToDist.put(4, 75.0); // pole 3 + 3in
+    initializeDictionary();
+  }
 
+  private void initializeDictionary() {
+    elevatorLeveltoHeightDictionary = new Hashtable<>();
+    // Adding key-value pairs
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.LOWEST, 0.0); // very small, home state
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.TROUGH, 21.0); // trough + 3in
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_ONE, 32.0); // pole 1
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO, 48.0);// pole 2
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_THREE, 75.0); // pole 3 + 3in
   }
 
   public static Elevator instance = new Elevator();
@@ -83,42 +93,34 @@ public class Elevator extends SubsystemBase {
     return pot.get();
   }
 
-  public double goalToDistance(Integer key) {
-    return goalToDist.get(key);
-  }
-
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a
-   * digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
+  public double getHeightFromElevatorLevel(ElevatorLevel key) {
+    return elevatorLeveltoHeightDictionary.get(key);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     if (higher) {
-      if (goalheight < 4) {
-        goalheight++;
-      } else {
-        goalheight = 0;
-      }
-      goalheightEntry.setDouble(goalheight);
+      incrementElevatorLevel(goalLevel);
+      goalheightEntry.setDefaultString(goalLevel.toString());
       higher = false;
     }
     if (lower) {
-      if (goalheight > 0) {
-        goalheight--;
-      } else {
-        goalheight = 4;
-      }
-      goalheightEntry.setDouble(goalheight);
-      higher = false;
+      decrementElevatorLevel(goalLevel);
+      goalheightEntry.setDefaultString(goalLevel.toString());
+      lower = false;
     }
+  }
+
+  private ElevatorLevel incrementElevatorLevel(ElevatorLevel currentElevatorLevel) {
+
+    ElevatorLevel[] values = ElevatorLevel.values();
+
+    return values[(currentElevatorLevel.ordinal() + 1) % values.length];
+  }
+
+  private ElevatorLevel decrementElevatorLevel(ElevatorLevel currentElevatorLevel) {
+    return ElevatorLevel.values()[(currentElevatorLevel.ordinal() - 1) % ElevatorLevel.values().length];
   }
 
   @Override

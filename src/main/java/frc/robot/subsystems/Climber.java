@@ -11,10 +11,12 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Setup;
 
 public class Climber extends SubsystemBase {
+
+  private static final Double CLIMB_POS = 45.0;
+
   // variables
   public SparkMax mot1, mot2;
   public AbsoluteEncoder enc1, enc2;
@@ -24,6 +26,10 @@ public class Climber extends SubsystemBase {
   public boolean armsDown;
 
   public Climber() {
+    initialize();
+  }
+
+  private void initialize() {
     mot1 = new SparkMax(Setup.CLIMB1_ID, MotorType.kBrushless);
     enc1 = mot1.getAbsoluteEncoder();
     mot2 = new SparkMax(Setup.CLIMB2_ID, MotorType.kBrushless);
@@ -41,22 +47,11 @@ public class Climber extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
-          while (enc1.getPosition() < Constants.CLIMB_POS) {
+          while (enc1.getPosition() < CLIMB_POS) {
             mot1.set(climbSpeed);
             mot2.set(-climbSpeed);
           }
         });
-  }
-
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a
-   * digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
   }
 
   @Override

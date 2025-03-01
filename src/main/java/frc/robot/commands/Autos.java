@@ -11,11 +11,11 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
-  public static double autodistance = 6;
-  public static double autospeed = 0.4;
+  private static double AUTO_DISTANCE = 6;
+  private static double AUTO_SPEED = 0.4;
 
   public static Command exampleAuto(SwerveSubsystem drive) {
-    return Commands.sequence(drive.driveToDistanceCommand(autodistance, autospeed) /* , placeholder command */);
+    return Commands.sequence(drive.driveToDistanceCommand(AUTO_DISTANCE, AUTO_SPEED) /* , placeholder command */);
   }
 
   private Autos() {

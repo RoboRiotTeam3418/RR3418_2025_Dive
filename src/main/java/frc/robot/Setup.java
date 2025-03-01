@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.util.drivers.Gyroscope;
 import frc.robot.util.drivers.NavX;
-import frc.robot.util.math.Deadbands;
+import frc.robot.util.math.DeadbandUtils;
 
 public class Setup {
 
@@ -173,7 +173,7 @@ public class Setup {
   }
 
   public boolean getRightJoyIsOn() {
-    return Deadbands.isGreater(secondaryJoystick.getRightTriggerAxis(), 0.1);
+    return DeadbandUtils.isGreater(secondaryJoystick.getRightTriggerAxis(), 0.1);
   }
 
   public boolean getSecondaryPOVUpasBool() {

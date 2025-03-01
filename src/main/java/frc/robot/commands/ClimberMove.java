@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Setup;
 import frc.robot.subsystems.Climber;
-import frc.robot.util.math.Deadbands;
+import frc.robot.util.math.DeadbandUtils;
 
 /** An example command that uses an example subsystem. */
 public class ClimberMove extends Command {
@@ -58,8 +58,8 @@ public class ClimberMove extends Command {
       m_subsystem.mot2.set(-m_subsystem.climbSpeed);
     }
 
-    if (Deadbands.isWithin(m_subsystem.enc1.getPosition(), m_subsystem.enc2.getPosition(), 5)
-        && Deadbands.isWithin(m_subsystem.enc2.getPosition(), m_subsystem.enc1.getPosition(), 5)
+    if (DeadbandUtils.isWithin(m_subsystem.enc1.getPosition(), m_subsystem.enc2.getPosition(), 5)
+        && DeadbandUtils.isWithin(m_subsystem.enc2.getPosition(), m_subsystem.enc1.getPosition(), 5)
         && m_subsystem.enc1.getPosition() >= 125) {
       m_subsystem.clamp.set(true);
     }

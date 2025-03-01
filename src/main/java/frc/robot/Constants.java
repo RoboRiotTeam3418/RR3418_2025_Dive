@@ -43,17 +43,9 @@ public final class Constants {
   public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED = Units.feetToMeters(14.5);
   // Maximum speed of the robot in meters per second, used to limit acceleration.
+  }
+  
 
-  /*
-   * public static final double p = 0;
-   * public static final double i = 0;
-   * public static final double d = 0;
-   */
 
-  public static Double CLIMB_POS = 45.0;
-  // elevator heights
-  public static double INTAKE_SPEED = 0.4;
-  public static double ELEVATOR_SPEED = 0.3;
-  public final static double ELEVATOR_P = 0, ELEVATOR_I = 0, ELEVATOR_D = 0;
-
-}
+  
+  

@@ -8,10 +8,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants;
 import frc.robot.Setup;
 import frc.robot.subsystems.Elevator;
-import frc.robot.util.math.Deadbands;
+import frc.robot.util.math.DeadbandUtils;
 
 /** An example command that uses an example subsystem. */
 public class ElevatorSnap extends Command {
@@ -19,28 +18,27 @@ public class ElevatorSnap extends Command {
   private final Elevator m_subsystem;
   private final CommandXboxController m_secondary;
   private boolean m_inAuto, m_override;
-  public PIDController shooterController;
-  // public int levelstoTravel=0;
-  // public int direction=1;
-  public double setval, m_setheight;
-  public double kP = Constants.ELEVATOR_P, kI = Constants.ELEVATOR_I, kD = Constants.ELEVATOR_D;
-  public PIDController pid;
-  public AnalogPotentiometer pot;
-  public double allowance = 2; // inches
+  private PIDController shooterController;
+  private double setval, m_setheight;
+  private PIDController pid;
+  private AnalogPotentiometer pot;
+  private final static double ALLOWANCE = 2; // inches
+
+  private final static double ELEVATOR_P = 0, ELEVATOR_I = 0, ELEVATOR_D = 0;
 
   /**
    * 
    *
    * @param subsystem The subsystem used by this command.
-   * @param Override  True if we don't need to push the button to make the
+   * @param override  True if we don't need to push the button to make the
    *                  elevator move (ie autonomous or one button start position)
-   * @param setheight only matters if override is true, else please put -1 for
+   * @param setHeight only matters if override is true, else please put -1 for
    *                  clarity
    */
-  public ElevatorSnap(Elevator subsystem, boolean Override, double setheight) {
+  public ElevatorSnap(Elevator subsystem, boolean override, double setHeight) {
     m_subsystem = subsystem;
-    m_setheight = setheight;
-    m_override = Override;
+    m_setheight = setHeight;
+    m_override = override;
     m_secondary = Setup.getInstance().getSecondaryJoystick();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -50,7 +48,7 @@ public class ElevatorSnap extends Command {
   @Override
   public void initialize() {
     Elevator.getInstance().isManual = false;
-    pid = new PIDController(kP, kI, kD);
+    pid = new PIDController(ELEVATOR_P, ELEVATOR_I, ELEVATOR_D);
     pid.setTolerance(5, 10);// values suggested by wpilib documentation
   }
 
@@ -64,34 +62,11 @@ public class ElevatorSnap extends Command {
     // (m_subsystem.goalToDistance(m_subsystem.goalheight) >
     // m_subsystem.getElevPosition() + allowance)) &&
     // (Setup.getInstance().getSecondaryMoveElev()||m_override)){
-    if (Deadbands.isOutside(m_subsystem.goalToDistance(m_subsystem.goalheight), m_subsystem.getElevPosition(),
-        allowance) && (Setup.getInstance().getSecondaryMoveElev() || m_override)) {
+    if (DeadbandUtils.isOutside(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel),
+        m_subsystem.getElevPosition(), ALLOWANCE) && (Setup.getInstance().getSecondaryMoveElev() || m_override)) {
       // ACCOUNT FOR CHASSIS HEIGHT LATER
-      switch (m_subsystem.goalheight) {
-        case 0:
-          // very small, home state
-          pid.setSetpoint(m_subsystem.goalToDistance(0));
-          break;
-        case 1:
-          // trough + 3in
-          pid.setSetpoint(m_subsystem.goalToDistance(1));
-          break;
-        case 2:
-          // pole 1
-          pid.setSetpoint(m_subsystem.goalToDistance(2));
-          break;
-        case 3:
-          // pole 2
-          pid.setSetpoint(m_subsystem.goalToDistance(3));
-          break;
-        case 4:
-          // pole 3 + 3in
-          pid.setSetpoint(m_subsystem.goalToDistance(4));
-          break;
-        default:
-          break;
+      pid.setSetpoint(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel));
 
-      }
       if (m_override || m_secondary.rightBumper().getAsBoolean()) {
         pid.setSetpoint(m_setheight);
         m_override = true;

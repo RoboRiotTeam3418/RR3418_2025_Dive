@@ -100,16 +100,6 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (higher) {
-      incrementElevatorLevel(goalLevel);
-      goalheightEntry.setDefaultString(goalLevel.toString());
-      higher = false;
-    }
-    if (lower) {
-      decrementElevatorLevel(goalLevel);
-      goalheightEntry.setDefaultString(goalLevel.toString());
-      lower = false;
-    }
   }
 
   private ElevatorLevel incrementElevatorLevel(ElevatorLevel currentElevatorLevel) {
@@ -121,6 +111,23 @@ public class Elevator extends SubsystemBase {
 
   private ElevatorLevel decrementElevatorLevel(ElevatorLevel currentElevatorLevel) {
     return ElevatorLevel.values()[(currentElevatorLevel.ordinal() - 1) % ElevatorLevel.values().length];
+  }
+  /*
+   * updates height setting 
+   * @param upOrDown if true going up, else going down
+   */
+  public Command setHeight(Boolean upOrDown){
+    return runOnce(
+        () -> {
+          if (upOrDown) {
+            incrementElevatorLevel(goalLevel);
+            goalheightEntry.setDefaultString(goalLevel.toString());
+          }else{
+            decrementElevatorLevel(goalLevel);
+            goalheightEntry.setDefaultString(goalLevel.toString());
+          }
+        });
+
   }
 
   @Override

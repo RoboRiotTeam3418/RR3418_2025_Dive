@@ -191,6 +191,10 @@ public class RobotContainer {
     Trigger spinNegTrig = new Trigger(spinIsNeg);
     BooleanSupplier climbSelf = () -> Setup.getInstance().getClimbasBool();
     Trigger climbSelfTrig = new Trigger(climbSelf);
+    BooleanSupplier elevUp = ()-> Setup.getInstance().getSecondaryPOVUpasBool();
+    Trigger elevUpTrig = new Trigger(elevUp);
+    BooleanSupplier elevDown = ()-> Setup.getInstance().getSecondaryPOVDownasBool();
+    Trigger elevDownTrig = new Trigger(elevDown);
 
     BooleanSupplier climbNotSched = () -> !m_climberMove.isScheduled();
 
@@ -246,7 +250,8 @@ public class RobotContainer {
     spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
     m_secondary.leftBumper().and(climbNotSched)
         .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), new ElevatorSnap(m_elevator, true, 0)));
-
+    elevUpTrig.onTrue(m_elevator.setHeight(true));
+    elevDownTrig.onTrue(m_elevator.setHeight(false));
     Setup.getInstance().toggleElevator.and(climbNotSched).toggleOnTrue(new ElevatorSnap(m_elevator, false, -1));
     Setup.getInstance().toggleElevator.and(climbNotSched).toggleOnFalse(m_manual);
 

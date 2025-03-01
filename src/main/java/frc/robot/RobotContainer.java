@@ -100,7 +100,7 @@ public class RobotContainer {
 
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
-
+      //probably using thrifty encoders, remember to change to thriftys
    /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
    */

@@ -47,7 +47,7 @@ public class ElevatorSnap extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Elevator.getInstance().isManual = false;
+    m_subsystem.isManual = false;
     pid = new PIDController(kP, kI, kD);
     pid.setTolerance(5, 10);//values suggested by wpilib documentation
   }

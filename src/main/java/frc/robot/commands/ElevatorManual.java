@@ -31,7 +31,7 @@ public class ElevatorManual extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Elevator.getInstance().isManual = true;
+    m_subsystem.isManual = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.

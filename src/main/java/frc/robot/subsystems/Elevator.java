@@ -37,20 +37,13 @@ public class Elevator extends SubsystemBase {
   
 
   public Elevator() {
-    //remove mot2 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
-    //remove mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
-    //remove enc2 = mot2.getEncoder();
-    //remove enc1 = mot1.getEncoder();
+    mot2 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
+    mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
+    enc2 = mot2.getEncoder();
+    enc1 = mot1.getEncoder();
     higher = Setup.getInstance().getSecondaryAasBool();
-    //remove pot =  new AnalogPotentiometer(0, 78, 0); //max height in inches is ~ 78
+    pot =  new AnalogPotentiometer(1, 78, 0); //max height in inches is ~ 78
   }
-  public static Elevator instance = new Elevator();
-  public static Elevator getInstance() {
-    if (instance == null) {
-      instance = new Elevator();
-    }
-    return instance;
-  }  
   /**
    * Example command factory method.
    *

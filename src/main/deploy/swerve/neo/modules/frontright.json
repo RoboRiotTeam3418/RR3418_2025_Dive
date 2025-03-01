@@ -15,8 +15,8 @@
     "canbus": 17
   },
   "encoder": {
-    "type": "sparkflex_analog5v",
-    "id": 17,
+    "type": "thrifty",
+    "id": 3,
     "canbus": 17
   },
   "inverted": {

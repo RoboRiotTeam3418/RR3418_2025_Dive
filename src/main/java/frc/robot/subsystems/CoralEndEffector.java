@@ -37,7 +37,7 @@ public class CoralEndEffector extends SubsystemBase {
   }
 
   private void initialize() {
-    spinMotor = new SparkMax(Setup.SPIN_ID, MotorType.kBrushless);
+    //spinMotor = new SparkMax(Setup.SPIN_ID, MotorType.kBrushless);
     spinEncoder = spinMotor.getAbsoluteEncoder();
     claw = new Solenoid(PneumaticsModuleType.REVPH, 0);
   }

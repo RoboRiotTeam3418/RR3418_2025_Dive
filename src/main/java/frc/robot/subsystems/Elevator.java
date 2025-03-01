@@ -43,8 +43,8 @@ public class Elevator extends SubsystemBase {
     mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
     enc2 = mot2.getAlternateEncoder();
     enc1 = mot1.getAlternateEncoder();
-    higher = Setup.getInstance().getSecondaryPOVUpasBool();
-    lower = Setup.getInstance().getSecondaryPOVDownasBool();
+    //higher = Setup.getInstance().getSecondaryPOVUpasBool();
+    //lower = Setup.getInstance().getSecondaryPOVDownasBool();
     pot = mot2.getAnalog(); // max height in inches is ~ 78
 
     initializeDictionary();
@@ -86,15 +86,8 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (higher) {
-      incrementElevatorLevel(goalLevel);
-      higher = false;
-    }
-    if (lower) {
-      decrementElevatorLevel(goalLevel);
-      lower = false;
-    }
     SmartDashboard.putNumber("snap height", goalLevel.ordinal());
+    SmartDashboard.putNumber("Current Height", getElevPosition());
   }
   public Command setSnap(ElevatorLevel key) {
     return runOnce(
@@ -107,6 +100,20 @@ public class Elevator extends SubsystemBase {
     return runOnce(
       () -> {
         toggle=!toggle;
+      }
+    );
+  }
+  public Command snapDown() {
+    return runOnce(
+      ()-> {
+        decrementElevatorLevel(goalLevel);
+      }
+    );
+  }
+  public Command snapUp() {
+    return runOnce(
+      ()-> {
+        incrementElevatorLevel(goalLevel);
       }
     );
   }

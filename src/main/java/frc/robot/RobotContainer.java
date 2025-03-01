@@ -127,9 +127,9 @@ public class RobotContainer {
     // grabber right?)
 
     // default commands
-    m_endeff.setDefaultCommand(new ParallelCommandGroup(
+    /*m_endeff.setDefaultCommand(new ParallelCommandGroup(
         m_endeff.stop(),
-        m_endeff.pistonMove(false)));// stops movement and closes claw
+        m_endeff.pistonMove(false)));// stops movement and closes claw*/
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -182,6 +182,7 @@ public class RobotContainer {
     Trigger fakeVisionTrig = new Trigger(fakeVision);
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
+    
 
     // automatically bring elevator to 0 if left bumper pressed, first ensure
     // endeffector is in position
@@ -200,7 +201,7 @@ public class RobotContainer {
     m_secondary.start().toggleOnTrue(new ParallelCommandGroup(m_climberMove,
         new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST),new ElevatorSnap(m_elevator))));
     climbSelfTrig.onTrue(m_climber.ClimbSelf());
-    
+
     m_secondary.start().onTrue(new InstantCommand(new Runnable() {
       public void run() {Toggles.toggleSecondary();};
     }));
@@ -208,6 +209,8 @@ public class RobotContainer {
     // Elevator
     m_elevator.setDefaultCommand(m_manual);
     m_secondary.leftTrigger().whileTrue(new ElevatorSnap(m_elevator));
+    m_secondary.pov(180).onTrue(m_elevator.snapDown());
+    m_secondary.pov(0).onTrue(m_elevator.snapUp());
 
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);

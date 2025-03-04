@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
 import frc.robot.util.math.DeadbandUtils;
@@ -15,9 +16,9 @@ public class ElevatorSnap extends Command {
   private final Elevator m_subsystem;
   private double setval;
   private PIDController pid;
-  private final static double ALLOWANCE = 2; // inches
+  private final static double ALLOWANCE = 1; // inches
 
-  private final static double ELEVATOR_P = .01, ELEVATOR_I = 0.001, ELEVATOR_D = 0;
+  private final static double ELEVATOR_P = .025, ELEVATOR_I = 0.001, ELEVATOR_D = 0.00;
 
   /**
    * 
@@ -34,7 +35,7 @@ public class ElevatorSnap extends Command {
   @Override
   public void initialize() {
     pid = new PIDController(ELEVATOR_P, ELEVATOR_I, ELEVATOR_D);
-    pid.setTolerance(5, 10);// values suggested by wpilib documentation
+    pid.setTolerance(2.5, 5);// values suggested by wpilib documentation
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -47,15 +48,20 @@ public class ElevatorSnap extends Command {
     // (m_subsystem.goalToDistance(m_subsystem.goalheight) >
     // m_subsystem.getElevPosition() + allowance)) &&
     // (Setup.getInstance().getSecondaryMoveElev()||m_override)){
-    if (DeadbandUtils.isOutside(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel),
-        m_subsystem.getElevPosition(), ALLOWANCE)) {
-      // ACCOUNT FOR CHASSIS HEIGHT LATER
-      pid.setSetpoint(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel));
-      setval = pid.calculate(m_subsystem.getElevPosition(), pid.getSetpoint());
-      m_subsystem.mot1.set(setval);
-      m_subsystem.mot2.set(setval);
+    if (!pid.atSetpoint()) {
+      if (DeadbandUtils.isOutside(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel),
+          m_subsystem.getElevPosition(), ALLOWANCE)) {
+        // ACCOUNT FOR CHASSIS HEIGHT LATER
+        pid.setSetpoint(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel));
+        setval = pid.calculate(m_subsystem.getElevPosition(), pid.getSetpoint());
+        m_subsystem.mot1.set(-setval);
+        m_subsystem.mot2.set(-setval);
+        SmartDashboard.putNumber("targetSpeed", -setval);
+      }
+    } else {
+      m_subsystem.mot1.set(0);
+      m_subsystem.mot2.set(0);
     }
-
   }
 
   // Called once the command ends or is interrupted.
@@ -68,6 +74,7 @@ public class ElevatorSnap extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return pid.atSetpoint();
+    // return pid.atSetpoint();
+    return false;
   }
 }

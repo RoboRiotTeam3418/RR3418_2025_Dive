@@ -39,8 +39,8 @@ public class Elevator extends SubsystemBase {
   }
 
   private void initialize() {
-    mot2 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
-    mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
+    mot2 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
+    mot1 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
     enc2 = mot2.getAlternateEncoder();
     enc1 = mot1.getAlternateEncoder();
     //higher = Setup.getInstance().getSecondaryPOVUpasBool();
@@ -54,10 +54,10 @@ public class Elevator extends SubsystemBase {
     elevatorLeveltoHeightDictionary = new Hashtable<>();
     // Adding key-value pairs
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.LOWEST, 0.0); // very small, home state
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.TROUGH, 21.0); // trough + 3in
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_ONE, 32.0); // pole 1
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO, 48.0);// pole 2
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_THREE, 75.0); // pole 3 + 3in
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.TROUGH, 13.0); // trough + 3in
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_ONE, 25.0); // pole 1
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO, 36.0);// pole 2
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_THREE,48.0); // pole 3 + 3in
   }
 
   /**
@@ -76,7 +76,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getElevPosition() {
-    return (pot.getVoltage()/2.3)*50-2;
+    return (pot.getVoltage()/1.55)*50-2;
   }
 
   public double getHeightFromElevatorLevel(ElevatorLevel key) {
@@ -93,13 +93,6 @@ public class Elevator extends SubsystemBase {
     return runOnce(
       () -> {
         goalLevel = key;
-      }
-    );
-  }
-  public Command toggle() {
-    return runOnce(
-      () -> {
-        toggle=!toggle;
       }
     );
   }

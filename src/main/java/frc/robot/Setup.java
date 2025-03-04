@@ -56,7 +56,7 @@ public class Setup {
   // TO REFERENCE THE JOYSTICK OBJECT ITSELF EACH TIME
 
   // Flight Stick (Primary)
-  private static CommandJoystick primaryJoystick = new CommandJoystick(1);
+  private static CommandJoystick primaryJoystick = new CommandJoystick(0);
 
   public CommandJoystick getPrimaryJoystick() {
     return primaryJoystick;
@@ -145,7 +145,7 @@ public class Setup {
   // -----------------------------------------------------secondary--------------------------------------------------------------------
 
   // Xbox Controller (Secondary)
-  private static CommandXboxController secondaryJoystick = new CommandXboxController(0);
+  private static CommandXboxController secondaryJoystick = new CommandXboxController(1);
   /*public final Trigger toggleClimber = secondaryJoystick.start();
   public final Trigger POVUp = new POVButton(secondaryJoystick.getHID(), 0);
   public final Trigger POVDown = new POVButton(secondaryJoystick.getHID(), 180);*/

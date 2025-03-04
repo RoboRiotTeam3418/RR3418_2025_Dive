@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.Joystick;
@@ -146,10 +148,16 @@ public class Setup {
 
   // Xbox Controller (Secondary)
   private static CommandXboxController secondaryJoystick = new CommandXboxController(0);
-  public final Trigger toggleClimber = secondaryJoystick.start();
   public final Trigger toggleElevator = secondaryJoystick.back();
   public final Trigger POVUp = new POVButton(secondaryJoystick.getHID(), 0);
   public final Trigger POVDown = new POVButton(secondaryJoystick.getHID(), 180);
+  public final Trigger releaseCoral = secondaryJoystick.rightTrigger(0.1);
+  public final BooleanSupplier elevDown = ()-> getSecondaryPOVDownasBool();
+  public final Trigger elevDownTrig = new Trigger(elevDown);
+  public final BooleanSupplier elevUp = ()-> getSecondaryPOVUpasBool();
+  public final Trigger elevUpTrig = new Trigger(elevUp);
+  public final Trigger spinNegTrig = secondaryJoystick.axisLessThan(4,0.1);
+  public final Trigger spinPosTrig = secondaryJoystick.axisGreaterThan(4,0.1);
 
   public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;
@@ -161,19 +169,11 @@ public class Setup {
   }
 
   public boolean getSecondaryMoveElev() {
-    return secondaryJoystick.rightBumper().getAsBoolean();
+    return secondaryJoystick.leftTrigger(0.1).getAsBoolean();
   }
 
   public Double getSecondaryLY() {
     return secondaryJoystick.getLeftY();
-  }
-
-  public boolean getClimbasBool() {
-    return secondaryJoystick.getHID().getLeftStickButtonPressed();
-  }
-
-  public boolean getRightJoyIsOn() {
-    return DeadbandUtils.isGreater(secondaryJoystick.getRightTriggerAxis(), 0.1);
   }
 
   public boolean getSecondaryPOVUpasBool() {

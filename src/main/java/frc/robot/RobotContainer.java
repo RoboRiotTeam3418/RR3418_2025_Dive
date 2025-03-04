@@ -27,11 +27,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ClimberMove;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.ElevatorSnap;
 import frc.robot.commands.EndToAngle;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralEndEffector;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -51,17 +49,14 @@ public class RobotContainer {
 
   private final Elevator m_elevator = new Elevator();
   private final CoralEndEffector m_endeff = new CoralEndEffector();
-  private final Climber m_climber = new Climber();
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
   // commands
   private final Command m_manual = new ElevatorManual(m_elevator);
-  private final Command m_climberMove = new ClimberMove(m_climber, m_secondary);
 
   public double speed = 0;
   // commands
-  ClimberMove m_climbMan = new ClimberMove(m_climber, m_secondary);
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
       new ParallelCommandGroup(
           new ElevatorSnap(m_elevator, true, 0),
@@ -164,7 +159,7 @@ public class RobotContainer {
     // create triggers for primary buttons
     BooleanSupplier fullStop = () -> Setup.getInstance().getFullStop();
     Trigger fullStopTrig = new Trigger(fullStop);
-    BooleanSupplier zeroGyro = () -> Setup.getInstance().getZeroGyro();
+    /*BooleanSupplier zeroGyro = () -> Setup.getInstance().getZeroGyro();
     Trigger zeroGyroTrig = new Trigger(zeroGyro);
     BooleanSupplier primaryStart = () -> Setup.getInstance().getPrimaryStart();
     Trigger primaryStartTrig = new Trigger(primaryStart);
@@ -177,128 +172,79 @@ public class RobotContainer {
     BooleanSupplier driveSetDistance = () -> Setup.getInstance().getDriveSetDistance();
     Trigger driveSetDistanceTrig = new Trigger(driveSetDistance);
     BooleanSupplier fakeVision = () -> Setup.getInstance().getFakeVision();
-    Trigger fakeVisionTrig = new Trigger(fakeVision);
+    Trigger fakeVisionTrig = new Trigger(fakeVision);*/
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
 
-    // automatically bring elevator to 0 if left bumper pressed, first ensure
-    // endeffector is in position
-
     // create secondary triggers
-    BooleanSupplier spinIsPos = () -> Setup.getInstance().getSecondaryRX() > 0.1;
-    Trigger spinPosTrig = new Trigger(spinIsPos);
-    BooleanSupplier spinIsNeg = () -> Setup.getInstance().getSecondaryRX() < -0.1;
-    Trigger spinNegTrig = new Trigger(spinIsNeg);
-    BooleanSupplier climbSelf = () -> Setup.getInstance().getClimbasBool();
-    Trigger climbSelfTrig = new Trigger(climbSelf);
-    BooleanSupplier elevUp = ()-> Setup.getInstance().getSecondaryPOVUpasBool();
-    Trigger elevUpTrig = new Trigger(elevUp);
-    BooleanSupplier elevDown = ()-> Setup.getInstance().getSecondaryPOVDownasBool();
-    Trigger elevDownTrig = new Trigger(elevDown);
+    Trigger m_spinPos = Setup.getInstance().spinPosTrig;
+    Trigger m_spinNeg = Setup.getInstance().spinNegTrig;
+    Trigger m_elevUp = Setup.getInstance().elevUpTrig;
+    Trigger m_elevDown = Setup.getInstance().elevDownTrig;
+    Trigger m_coralRelease = Setup.getInstance().releaseCoral;
 
-    BooleanSupplier climbNotSched = () -> !m_climberMove.isScheduled();
+    // Default commands
+    m_elevator.setDefaultCommand(m_manual);
+    Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator, false, -1));
+    Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
+
+    /* 
+    if (RobotBase.isSimulation()) {
+      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
+    } else {*/
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+    /* }
+
+    if (Robot.isSimulation()) {
+      primaryStartTrig.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+      m_primaryJoystick.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
+
+    }
+    if (DriverStation.isTest()) {
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
+
+      fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      driveSetDistanceTrig.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      primaryBackTrig.whileTrue(drivebase.centerModulesCommand());
+      backIsNegTrig.onTrue(Commands.none());
+      backIsPosTrig.onTrue(Commands.none());
+    } else {
+      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+      fakeVisionTrig.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+      driveSetDistanceTrig.whileTrue(
+          drivebase.driveToPose(
+              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+      primaryStartTrig.whileTrue(Commands.none());
+      primaryBackTrig.whileTrue(Commands.none());
+      backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      backIsPosTrig.onTrue(Commands.none());
+      deathModeTrig.whileTrue(death);
+
+  }*/
+    //zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
     // COMMAND/TRIGGER ASSIGNMENTS
-    m_secondary.start().toggleOnTrue(new ParallelCommandGroup(m_climberMove,
-        new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), new ElevatorSnap(m_elevator, true, 0))));
-    m_secondary.start().toggleOnFalse(m_manual);
-    climbSelfTrig.onTrue(m_climber.ClimbSelf());
 
-    Setup.getInstance().toggleElevator.and(climbNotSched).toggleOnTrue(new ElevatorSnap(m_elevator, false, -1));
-    Setup.getInstance().toggleElevator.and(climbNotSched).toggleOnFalse(m_manual);
-
-    if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
-    } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    }
-
-    if (Robot.isSimulation()) {
-      primaryStartTrig.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      m_primaryJoystick.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
-
-    }
-    if (DriverStation.isTest()) {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
-
-      fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driveSetDistanceTrig.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      primaryBackTrig.whileTrue(drivebase.centerModulesCommand());
-      backIsNegTrig.onTrue(Commands.none());
-      backIsPosTrig.onTrue(Commands.none());
-    } else {
-      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      fakeVisionTrig.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driveSetDistanceTrig.whileTrue(
-          drivebase.driveToPose(
-              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-      primaryStartTrig.whileTrue(Commands.none());
-      primaryBackTrig.whileTrue(Commands.none());
-      backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      backIsPosTrig.onTrue(Commands.none());
-      deathModeTrig.whileTrue(death);
-
-    }
-    zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    //Primary Driver 
     deathModeTrig.whileTrue(death);
+    fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
-    m_secondary.a().onTrue(new EndToAngle(m_endeff, 0.0));
-    m_secondary.b().onTrue(new EndToAngle(m_endeff, 35.0));
-    m_secondary.y().onTrue(new EndToAngle(m_endeff, 90.0));
-    spinPosTrig.whileTrue(m_endeff.spinClockwise());
-    spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
-    m_secondary.leftBumper().and(climbNotSched)
+    //Secondary
+    m_secondary.a().onTrue(new EndToAngle(m_endeff, 0.0));//vertical
+    m_secondary.b().onTrue(new EndToAngle(m_endeff, 35.0));//ready to drop on mid levels
+    m_secondary.y().onTrue(new EndToAngle(m_endeff, 90.0));//ready to drop on top level and trough
+    m_spinPos.whileTrue(m_endeff.spinClockwise());
+    m_spinNeg.whileTrue(m_endeff.spinCounterClockwise());
+    m_coralRelease.whileTrue(m_endeff.pistonMove(true));
+    m_coralRelease.onFalse(m_endeff.pistonMove(false));
+    m_secondary.leftBumper()
         .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), new ElevatorSnap(m_elevator, true, 0)));
-    elevUpTrig.onTrue(m_elevator.setHeight(true));
-    elevDownTrig.onTrue(m_elevator.setHeight(false));
-    Setup.getInstance().toggleElevator.and(climbNotSched).toggleOnTrue(new ElevatorSnap(m_elevator, false, -1));
-    Setup.getInstance().toggleElevator.and(climbNotSched).toggleOnFalse(m_manual);
-
-    if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
-    } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    }
-
-    if (Robot.isSimulation()) {
-      primaryStartTrig.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      m_primaryJoystick.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
-
-    }
-    if (DriverStation.isTest()) {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
-
-      fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driveSetDistanceTrig.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      primaryBackTrig.whileTrue(drivebase.centerModulesCommand());
-      backIsNegTrig.onTrue(Commands.none());
-      backIsPosTrig.onTrue(Commands.none());
-    } else {
-      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      fakeVisionTrig.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driveSetDistanceTrig.whileTrue(
-          drivebase.driveToPose(
-              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-      primaryStartTrig.whileTrue(Commands.none());
-      primaryBackTrig.whileTrue(Commands.none());
-      backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      backIsPosTrig.onTrue(Commands.none());
-      deathModeTrig.whileTrue(death);
-
-    }
-    zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    deathModeTrig.whileTrue(death);
-
-    m_secondary.a().onTrue(new EndToAngle(m_endeff, 0.0));
-    m_secondary.b().onTrue(new EndToAngle(m_endeff, 35.0));
-    m_secondary.y().onTrue(new EndToAngle(m_endeff, 90.0));
-    spinPosTrig.whileTrue(m_endeff.spinClockwise());
-    spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
-    m_secondary.leftBumper().and(climbNotSched)
-        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), new ElevatorSnap(m_elevator, true, 0)));
-
+    // automatically bring elevator to 0 if left bumper pressed, first ensure
+    // endeffector is in position
+    m_elevUp.onTrue(m_elevator.setHeight(true));
+    m_elevDown.onTrue(m_elevator.setHeight(false));
+    
   }
 
   /**

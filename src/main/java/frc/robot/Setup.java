@@ -133,6 +133,8 @@ public class Setup {
     //reset odometry in simulation, nothing in teleop
     return getPrimaryHID().getRawButtonPressed(12);
   }
+
+/*
   public boolean getBackIsPos(){
     //clears command
     return getPrimaryHID().getRawAxis(6)>0.1;
@@ -141,6 +143,16 @@ public class Setup {
     //stops driver, clears command
     return getPrimaryHID().getRawAxis(6)<-0.1;
   }
+*/
+public boolean axis6IsActive(){
+  return Math.abs(getPrimaryHID().getRawAxis(6))>0.5;
+}
+
+public double axis6Value(){
+  return getPrimaryHID().getRawAxis(6);
+}
+
+
   public boolean getDriveSetDistance(){
     return getPrimaryHID().getRawButtonPressed(15);
   }

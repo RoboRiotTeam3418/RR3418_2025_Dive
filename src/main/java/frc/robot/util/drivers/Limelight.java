@@ -23,19 +23,38 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight{
   NetworkTableInstance inst = NetworkTableInstance.getDefault(); // Default Networktable instance aka the first instance.
-  NetworkTable table = inst.getTable("limelight");
-  public NetworkTableEntry tx = table.getEntry("tx");
-  public NetworkTableEntry ty = table.getEntry("ty");
-  public NetworkTableEntry ta = table.getEntry("ta");
-  public NetworkTableEntry tv = table.getEntry("tv");
+
+  NetworkTable LIMELIGHT1 = inst.getTable("limelight"); // Dr. Claw's Limelight
+  public NetworkTableEntry l1_tx = LIMELIGHT1.getEntry("tx");
+  public NetworkTableEntry l1_ty = LIMELIGHT1.getEntry("ty");
+  public NetworkTableEntry l1_ta = LIMELIGHT1.getEntry("ta");
+  public NetworkTableEntry l1_tv = LIMELIGHT1.getEntry("tv");
+
+  NetworkTable LIMELIGHT2 = inst.getTable("limelight-limeone"); // E.D.D's Limelight
+  public NetworkTableEntry l2_tx = LIMELIGHT2.getEntry("tx");
+  public NetworkTableEntry l2_ty = LIMELIGHT2.getEntry("ty");
+  public NetworkTableEntry l2_ta = LIMELIGHT2.getEntry("ta");
+  public NetworkTableEntry l2_tv = LIMELIGHT2.getEntry("tv");
 
 
   public void SetPipeline(int Pipelinenum) { // void prevents function from sending back a value.
-    table.getEntry("pipeline").setNumber(Pipelinenum); // Sets pipline number
+    LIMELIGHT1.getEntry("pipeline").setNumber(Pipelinenum); // Sets pipline number
   }
 
   public boolean comparetemp() {
-    return (tv.getDouble(0.0) == 1);
+    return (l1_tv.getDouble(0.0) == 1);
+  }
+
+  public int whichLimelightSees(){
+    if (l1_tv.getDouble(0) == 1){
+      return 1;
+    } else if (l2_tv.getDouble(0) == 1){
+      return 2;
+    } else if (l1_tv.getDouble(0) == 1 && l2_tv.getDouble(0) == 1) {
+      return 3;
+    } else {
+      return 0;
+    }
   }
 
   public double TXDistance(){
@@ -50,18 +69,19 @@ public class Limelight{
   public Limelight() { 
     inst.startServer(); // Rev up those fryers! (Starts default server)
 
-    LimelightInfoArray[0] = tx.getDouble(0.0);
-    LimelightInfoArray[1] = ty.getDouble(0.0);
-    LimelightInfoArray[2] = ta.getDouble(0.0);
-    LimelightInfoArray[3] = tv.getDouble(0.0);
+    LimelightInfoArray[0] = l1_tx.getDouble(0.0);
+    LimelightInfoArray[1] = l1_ty.getDouble(0.0);
+    LimelightInfoArray[2] = l1_ta.getDouble(0.0);
+    LimelightInfoArray[3] = l1_tv.getDouble(0.0);
   }
 
+/*
   public void outputToSmartDashboard() {
     SmartDashboard.putNumber("Limelight:tx", tx.getDouble(0.0));
     SmartDashboard.putNumber("Limelight:ty", ty.getDouble(0.0));
     SmartDashboard.putNumber("Limelight:ta", ta.getDouble(0.0));
     SmartDashboard.putNumber("Limelight:tv", tv.getDouble(0.0));
-  }
+  } */
 
     /** https://docs.limelightvision.io/docs/docs-limelight/apis/complete-networktables-api
    * 

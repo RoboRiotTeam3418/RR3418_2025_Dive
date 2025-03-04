@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.*;
+import frc.robot.util.drivers.Limelight;
 import frc.robot.commands.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -40,6 +41,7 @@ public class RobotContainer {
   private final Elevator m_elevator = new Elevator();
   private final Climber m_climber = new Climber();
   private final Example_Subsystem m_exampleSubsystem = new Example_Subsystem();
+  private final Limelight m_Limelight = new Limelight();
   //private final SwerveSubsystem m_drivetrain = new SwerveSubsystem();
 
   //commands
@@ -168,6 +170,7 @@ public class RobotContainer {
         driveDirectAngleSim);
     final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> new ChassisSpeeds(0,0, drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
     Command death = drivebase.drive(DEATH_SPEEDS);
+    //Command LimeAutoOrient = drivebase.drive(DEATH_SPEEDS);
 
     //create triggers for primary buttons
     BooleanSupplier fullStop = () ->Setup.getInstance().getFullStop(); 
@@ -178,16 +181,24 @@ public class RobotContainer {
     Trigger primaryStartTrig = new Trigger(primaryStart);
     BooleanSupplier primaryBack = () ->Setup.getInstance().getPrimaryBack(); 
     Trigger primaryBackTrig = new Trigger(primaryBack);
+
+
+    /*
     BooleanSupplier backIsPos = () ->Setup.getInstance().getBackIsPos();
     Trigger backIsPosTrig = new Trigger(backIsPos);
     BooleanSupplier backIsNeg = () ->Setup.getInstance().getBackIsNeg();
     Trigger backIsNegTrig = new Trigger(backIsNeg);
+    */
+
+
     BooleanSupplier driveSetDistance = () ->Setup.getInstance().getDriveSetDistance();
     Trigger driveSetDistanceTrig = new Trigger(driveSetDistance);
     BooleanSupplier fakeVision = () ->Setup.getInstance().getFakeVision();
     Trigger fakeVisionTrig = new Trigger(fakeVision);
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
+    BooleanSupplier limelightSelect = () -> Setup.getInstance().axis6IsActive();
+    Trigger limeSelectTrigger = new Trigger(limelightSelect);
 
     if (RobotBase.isSimulation())
     {
@@ -211,8 +222,12 @@ public class RobotContainer {
       driveSetDistanceTrig.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
       zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
       primaryBackTrig.whileTrue(drivebase.centerModulesCommand());
+
+      /*
       backIsNegTrig.onTrue(Commands.none());
       backIsPosTrig.onTrue(Commands.none());
+      */
+
     } else
     {
       zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
@@ -223,9 +238,14 @@ public class RobotContainer {
                               );
       primaryStartTrig.whileTrue(Commands.none());
       primaryBackTrig.whileTrue(Commands.none());
+
+      /*
       backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       backIsPosTrig.onTrue(Commands.none());
+      */
+
       deathModeTrig.whileTrue(death);
+      limeSelectTrigger.whileTrue(new AutoOrientCmd(drivebase, m_Limelight, 2, 5, 1, 0.5));
 
     }
   }

@@ -35,7 +35,7 @@ public class ElevatorSnap extends Command {
   @Override
   public void initialize() {
     pid = new PIDController(ELEVATOR_P, ELEVATOR_I, ELEVATOR_D);
-    pid.setTolerance(2.5, 5);// values suggested by wpilib documentation
+    pid.setTolerance(1, 5);// values suggested by wpilib documentation
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,19 +48,14 @@ public class ElevatorSnap extends Command {
     // (m_subsystem.goalToDistance(m_subsystem.goalheight) >
     // m_subsystem.getElevPosition() + allowance)) &&
     // (Setup.getInstance().getSecondaryMoveElev()||m_override)){
-    if (!pid.atSetpoint()) {
-      if (DeadbandUtils.isOutside(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel),
-          m_subsystem.getElevPosition(), ALLOWANCE)) {
-        // ACCOUNT FOR CHASSIS HEIGHT LATER
-        pid.setSetpoint(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel));
-        setval = pid.calculate(m_subsystem.getElevPosition(), pid.getSetpoint());
-        m_subsystem.mot1.set(-setval);
-        m_subsystem.mot2.set(-setval);
-        SmartDashboard.putNumber("targetSpeed", -setval);
-      }
-    } else {
-      m_subsystem.mot1.set(0);
-      m_subsystem.mot2.set(0);
+    if (DeadbandUtils.isOutside(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel),
+        m_subsystem.getElevPosition(), ALLOWANCE)) {
+      // ACCOUNT FOR CHASSIS HEIGHT LATER
+      pid.setSetpoint(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel));
+      setval = pid.calculate(m_subsystem.getElevPosition(), pid.getSetpoint());
+      m_subsystem.mot1.set(-setval);
+      m_subsystem.mot2.set(-setval);
+      SmartDashboard.putNumber("targetSpeed", -setval);
     }
   }
 
@@ -74,7 +69,6 @@ public class ElevatorSnap extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // return pid.atSetpoint();
-    return false;
+    return pid.atSetpoint();
   }
 }

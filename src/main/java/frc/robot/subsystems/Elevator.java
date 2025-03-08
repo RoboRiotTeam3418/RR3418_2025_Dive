@@ -9,13 +9,12 @@ import java.util.Hashtable;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkAnalogSensor;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ElevatorLevel;
@@ -28,13 +27,9 @@ public class Elevator extends SubsystemBase {
   public RelativeEncoder enc2;
   public RelativeEncoder enc1;
   public PIDController elevController;
-  public boolean higher, lower;
-  private AnalogInput pot;
-  public boolean isManual = true;
+  public boolean higher, lower, toggle = true;
+  private SparkAnalogSensor pot;
   public ElevatorLevel goalLevel = ElevatorLevel.LOWEST;
-
-  public ShuffleboardTab tab = Shuffleboard.getTab("Driver");
-  private GenericEntry goalheightEntry = tab.add("Goal Height Level", "").getEntry();
 
   public Dictionary<ElevatorLevel, Double> elevatorLeveltoHeightDictionary;// key is goal height in tiers, entry is
                                                                            // height to go to in inches
@@ -44,13 +39,13 @@ public class Elevator extends SubsystemBase {
   }
 
   private void initialize() {
-    mot2 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
-    mot1 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
+    mot2 = new SparkMax(Setup.ELEVMOT2ID, MotorType.kBrushless);
+    mot1 = new SparkMax(Setup.ELEVMOT1ID, MotorType.kBrushless);
     enc2 = mot2.getAlternateEncoder();
     enc1 = mot1.getAlternateEncoder();
-    higher = Setup.getInstance().getSecondaryPOVUpasBool();
-    lower = Setup.getInstance().getSecondaryPOVDownasBool();
-    pot = new AnalogInput(3); // max height in inches is ~ 78
+    //higher = Setup.getInstance().getSecondaryPOVUpasBool();
+    //lower = Setup.getInstance().getSecondaryPOVDownasBool();
+    pot = mot2.getAnalog(); // max height in inches is ~ 78
 
     initializeDictionary();
   }
@@ -59,19 +54,10 @@ public class Elevator extends SubsystemBase {
     elevatorLeveltoHeightDictionary = new Hashtable<>();
     // Adding key-value pairs
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.LOWEST, 0.0); // very small, home state
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.TROUGH, 21.0); // trough + 3in
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_ONE, 32.0); // pole 1
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO, 48.0);// pole 2
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_THREE, 75.0); // pole 3 + 3in
-  }
-
-  public static Elevator instance = new Elevator();
-
-  public static Elevator getInstance() {
-    if (instance == null) {
-      instance = new Elevator();
-    }
-    return instance;
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.TROUGH, 13.0); // trough + 3in
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_ONE, 25.0); // pole 1
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO, 36.0);// pole 2
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_THREE,48.0); // pole 3 + 3in
   }
 
   /**
@@ -90,7 +76,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public double getElevPosition() {
-    return pot.getVoltage() * (75 / 5);
+    return (pot.getVoltage()/1.55)*50-2;
   }
 
   public double getHeightFromElevatorLevel(ElevatorLevel key) {
@@ -100,34 +86,40 @@ public class Elevator extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("snap height", goalLevel.ordinal());
+    SmartDashboard.putNumber("Current Height", getElevPosition());
+  }
+  public Command setSnap(ElevatorLevel key) {
+    return runOnce(
+      () -> {
+        goalLevel = key;
+      }
+    );
+  }
+  public Command snapDown() {
+    return runOnce(
+      ()-> {
+        decrementElevatorLevel(goalLevel);
+      }
+    );
+  }
+  public Command snapUp() {
+    return runOnce(
+      ()-> {
+        incrementElevatorLevel(goalLevel);
+      }
+    );
   }
 
-  private ElevatorLevel incrementElevatorLevel(ElevatorLevel currentElevatorLevel) {
-
+  private void incrementElevatorLevel(ElevatorLevel currentElevatorLevel) {
     ElevatorLevel[] values = ElevatorLevel.values();
 
-    return values[(currentElevatorLevel.ordinal() + 1) % values.length];
+    int newIndex = currentElevatorLevel.ordinal() + 1;
+    goalLevel = values[newIndex % values.length];
   }
 
   private ElevatorLevel decrementElevatorLevel(ElevatorLevel currentElevatorLevel) {
     return ElevatorLevel.values()[(currentElevatorLevel.ordinal() - 1) % ElevatorLevel.values().length];
-  }
-  /*
-   * updates height setting 
-   * @param upOrDown if true going up, else going down
-   */
-  public Command setHeight(Boolean upOrDown){
-    return runOnce(
-        () -> {
-          if (upOrDown) {
-            incrementElevatorLevel(goalLevel);
-            goalheightEntry.setDefaultString(goalLevel.toString());
-          }else{
-            decrementElevatorLevel(goalLevel);
-            goalheightEntry.setDefaultString(goalLevel.toString());
-          }
-        });
-
   }
 
   @Override

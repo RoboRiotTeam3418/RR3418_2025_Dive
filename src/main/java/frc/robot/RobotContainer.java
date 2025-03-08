@@ -59,7 +59,7 @@ public class RobotContainer {
   // commands
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
       new ParallelCommandGroup(
-          new ElevatorSnap(m_elevator, true, 0),
+          new ElevatorSnap(m_elevator),
           new EndToAngle(m_endeff, 0.0).withTimeout(20)),
       m_endeff.pistonMove(true));
 
@@ -185,7 +185,7 @@ public class RobotContainer {
 
     // Default commands
     m_elevator.setDefaultCommand(m_manual);
-    Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator, false, -1));
+    Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator));
     Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
 
     /* 
@@ -239,11 +239,11 @@ public class RobotContainer {
     m_coralRelease.whileTrue(m_endeff.pistonMove(true));
     m_coralRelease.onFalse(m_endeff.pistonMove(false));
     m_secondary.leftBumper()
-        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), new ElevatorSnap(m_elevator, true, 0)));
+        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
     // automatically bring elevator to 0 if left bumper pressed, first ensure
     // endeffector is in position
-    m_elevUp.onTrue(m_elevator.setHeight(true));
-    m_elevDown.onTrue(m_elevator.setHeight(false));
+    m_elevUp.onTrue(m_elevator.snapUp());
+    m_elevDown.onTrue(m_elevator.snapDown());
     
   }
 

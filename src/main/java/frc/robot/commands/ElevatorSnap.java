@@ -5,9 +5,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Setup;
 import frc.robot.subsystems.Elevator;
 import frc.robot.util.math.DeadbandUtils;
 
@@ -15,29 +14,19 @@ import frc.robot.util.math.DeadbandUtils;
 public class ElevatorSnap extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final Elevator m_subsystem;
-  private final CommandXboxController m_secondary;
-  private boolean m_inAuto, m_override;
-  private PIDController shooterController;
-  private double setval, m_setheight;
+  private double setval;
   private PIDController pid;
-  private final static double ALLOWANCE = 2; // inches
+  private final static double ALLOWANCE = 1; // inches
 
-  private final static double ELEVATOR_P = 0, ELEVATOR_I = 0, ELEVATOR_D = 0;
+  private final static double ELEVATOR_P = .025, ELEVATOR_I = 0.001, ELEVATOR_D = 0.00;
 
   /**
    * 
    *
    * @param subsystem The subsystem used by this command.
-   * @param override  True if we don't need to push the button to make the
-   *                  elevator move (ie autonomous or one button start position)
-   * @param setHeight only matters if override is true, else please put -1 for
-   *                  clarity
    */
-  public ElevatorSnap(Elevator subsystem, boolean override, double setHeight) {
+  public ElevatorSnap(Elevator subsystem) {
     m_subsystem = subsystem;
-    m_setheight = setHeight;
-    m_override = override;
-    m_secondary = Setup.getInstance().getSecondaryJoystick();
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -45,9 +34,8 @@ public class ElevatorSnap extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Elevator.getInstance().isManual = false;
     pid = new PIDController(ELEVATOR_P, ELEVATOR_I, ELEVATOR_D);
-    pid.setTolerance(5, 10);// values suggested by wpilib documentation
+    pid.setTolerance(2.5, 5);// values suggested by wpilib documentation
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -60,22 +48,20 @@ public class ElevatorSnap extends Command {
     // (m_subsystem.goalToDistance(m_subsystem.goalheight) >
     // m_subsystem.getElevPosition() + allowance)) &&
     // (Setup.getInstance().getSecondaryMoveElev()||m_override)){
-    if (DeadbandUtils.isOutside(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel),
-        m_subsystem.getElevPosition(), ALLOWANCE) && (Setup.getInstance().getSecondaryMoveElev() || m_override)) {
-      // ACCOUNT FOR CHASSIS HEIGHT LATER
-      pid.setSetpoint(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel));
-
-      if (m_override || m_secondary.rightBumper().getAsBoolean()) {
-        pid.setSetpoint(m_setheight);
-        m_override = true;
-      } else {
-        pid.setSetpoint(m_subsystem.getElevPosition());
+    if (!pid.atSetpoint()) {
+      if (DeadbandUtils.isOutside(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel),
+          m_subsystem.getElevPosition(), ALLOWANCE)) {
+        // ACCOUNT FOR CHASSIS HEIGHT LATER
+        pid.setSetpoint(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel));
+        setval = pid.calculate(m_subsystem.getElevPosition(), pid.getSetpoint());
+        m_subsystem.mot1.set(-setval);
+        m_subsystem.mot2.set(-setval);
+        SmartDashboard.putNumber("targetSpeed", -setval);
       }
-      setval = pid.calculate(m_subsystem.getElevPosition(), pid.getSetpoint());
-      m_subsystem.mot1.set(setval);
-      m_subsystem.mot2.set(setval);
+    } else {
+      m_subsystem.mot1.set(0);
+      m_subsystem.mot2.set(0);
     }
-
   }
 
   // Called once the command ends or is interrupted.
@@ -88,9 +74,7 @@ public class ElevatorSnap extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (pid.atSetpoint()) {
-      Elevator.getInstance().isManual = true;
-    }
-    return pid.atSetpoint();
+    // return pid.atSetpoint();
+    return false;
   }
 }

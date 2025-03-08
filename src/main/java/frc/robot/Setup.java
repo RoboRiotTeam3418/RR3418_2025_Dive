@@ -58,7 +58,7 @@ public class Setup {
   // TO REFERENCE THE JOYSTICK OBJECT ITSELF EACH TIME
 
   // Flight Stick (Primary)
-  private static CommandJoystick primaryJoystick = new CommandJoystick(1);
+  private static CommandJoystick primaryJoystick = new CommandJoystick(0);
 
   public CommandJoystick getPrimaryJoystick() {
     return primaryJoystick;
@@ -205,12 +205,12 @@ public class Setup {
   public static final int DrivetrainSubsystem_FRONT_RIGHT_DRIVE_MOTOR = 16;
   public static final int DrivetrainSubsystem_FRONT_RIGHT_ANGLE_MOTOR = 17;
 
-  public static final int ELEVMOT1ID = 18;
-  public static final int ELEVMOT2ID = 19;
+  public static final int ELEVMOT1ID = 20;
+  public static final int ELEVMOT2ID = 21;
 
-  public static final int CLIMB1_ID = 20;
-  public static final int CLIMB2_ID = 20;
-  public static final int SPIN_ID = 23;
+  public static final int CLIMB1_ID = 24;
+  public static final int CLIMB2_ID = 23;
+  //public static final int SPIN_ID = 22;
   public static final int GamePieceSensorID = 0;
 
 }

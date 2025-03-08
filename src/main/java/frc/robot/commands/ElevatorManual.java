@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Setup;
 import frc.robot.subsystems.Elevator;
+import frc.robot.util.drivers.Toggles;
 import frc.robot.util.math.DeadbandUtils;
 
 /** An example command that uses an example subsystem. */
@@ -14,7 +15,8 @@ public class ElevatorManual extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final Elevator m_subsystem;
 
-  public final static double ELEVATOR_SPEED = 0.3;
+  public final static double ELEVATOR_SPEED = .75;
+  private double speed;
 
   /**
    * Creates a new ExampleCommand.
@@ -30,17 +32,24 @@ public class ElevatorManual extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Elevator.getInstance().isManual = true;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (DeadbandUtils.isGreater(Setup.getInstance().getSecondaryLY(), 0.1)) {
-      m_subsystem.mot1.set(ELEVATOR_SPEED * Setup.getInstance().getSecondaryLY());
+    if(DeadbandUtils.isGreater(Setup.getInstance().getSecondaryLY(), .1)) {
+      speed = ELEVATOR_SPEED*Setup.getInstance().getSecondaryLY();
     } else {
-      m_subsystem.mot1.set(0);
+      speed = 0;
+    };
+    if ((m_subsystem.getElevPosition()>35&&Setup.getInstance().getSecondaryLY()<0)||(m_subsystem.getElevPosition()<13&&Setup.getInstance().getSecondaryLY()>0)) {
+      speed/=2;
     }
+    if ((m_subsystem.getElevPosition()>45&&Setup.getInstance().getSecondaryLY()<0)||(m_subsystem.getElevPosition()<5&&Setup.getInstance().getSecondaryLY()>0)) {
+      speed=0;
+    }
+    m_subsystem.mot1.set(speed);
+    m_subsystem.mot2.set(speed);
   }
 
   // Called once the command ends or is interrupted.
@@ -51,9 +60,6 @@ public class ElevatorManual extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (!Elevator.getInstance().isManual) {
-      return true;
-    }
     return false;
   }
 }

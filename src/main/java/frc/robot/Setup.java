@@ -158,6 +158,7 @@ public class Setup {
   public final Trigger elevUpTrig = new Trigger(elevUp);
   public final Trigger spinNegTrig = secondaryJoystick.axisLessThan(4,0.1);
   public final Trigger spinPosTrig = secondaryJoystick.axisGreaterThan(4,0.1);
+  public final Trigger snapGo = secondaryJoystick.leftTrigger(0.1);
 
   public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;

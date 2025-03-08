@@ -182,11 +182,12 @@ public class RobotContainer {
     Trigger m_elevUp = Setup.getInstance().elevUpTrig;
     Trigger m_elevDown = Setup.getInstance().elevDownTrig;
     Trigger m_coralRelease = Setup.getInstance().releaseCoral;
+    Trigger m_elevGo = Setup.getInstance().snapGo;
 
     // Default commands
     m_elevator.setDefaultCommand(m_manual);
-    Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator));
-    Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
+    //Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator));
+    //Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
 
     /* 
     if (RobotBase.isSimulation()) {
@@ -244,6 +245,7 @@ public class RobotContainer {
     // endeffector is in position
     m_elevUp.onTrue(m_elevator.snapUp());
     m_elevDown.onTrue(m_elevator.snapDown());
+    m_elevGo.whileTrue(new ElevatorSnap(m_elevator));
     
   }
 

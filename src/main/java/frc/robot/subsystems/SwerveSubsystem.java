@@ -2,10 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.swervedrive;
+package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Meter;
 
+import swervelib.SwerveInputStream;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -38,8 +39,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.Setup;
+
 //import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
 import java.io.IOException;
@@ -748,5 +752,18 @@ public class SwerveSubsystem extends SubsystemBase
   public SwerveDrive getSwerveDrive()
   {
     return swerveDrive;
+  }
+
+  public SwerveInputStream getAngularVelocity(SwerveSubsystem swerve, String speed){
+    CommandJoystick m_primary = Setup.getInstance().getPrimaryJoystick();
+    String m_speed = speed;
+    SwerveInputStream stream = SwerveInputStream.of(swerve.getSwerveDrive(),
+                        () -> m_primary.getX()*Constants.SpeedChangerConstants.get(m_speed)[0], // CHECK FUNCTION
+                        () -> m_primary.getY()*Constants.SpeedChangerConstants.get(m_speed)[0])// CHECK FUNCTION
+                    .withControllerRotationAxis(m_primary::getTwist)
+                    .deadband(Constants.OperatorConstants.DEADBAND)
+                    .scaleTranslation(0.8)
+                    .allianceRelativeControl(true);
+    return stream;
   }
 }

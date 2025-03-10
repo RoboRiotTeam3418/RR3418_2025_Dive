@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
@@ -31,7 +35,24 @@ public final class Constants
 //    public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
 //    public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
 //  }
-
+  public static final class SpeedChangerConstants{
+    //first value = speed multipier, second value = slew rate limit
+    public static Double[] xtraSlowSpeeds = {0.35,0.75}, slowSpeeds = {0.55,0.65}, medSpeeds = {0.8,0.6}, fastSpeeds = {0.9,0.55};
+    public static Double[] get(String param){
+      switch (param) {
+        case "xtraSlow":
+          return xtraSlowSpeeds;
+        case "slow":
+          return xtraSlowSpeeds;
+        case "medium":
+          return xtraSlowSpeeds;
+        case "fast":
+          return xtraSlowSpeeds;      
+        default:
+          return medSpeeds;
+      }
+    }
+  }
   public static final class DrivebaseConstants
   {
 

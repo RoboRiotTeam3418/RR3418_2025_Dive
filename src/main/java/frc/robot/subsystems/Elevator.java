@@ -16,7 +16,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.ElevatorLevel;
 import frc.robot.Setup;
 
@@ -55,10 +54,8 @@ public class Elevator extends SubsystemBase {
     // Adding key-value pairs
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.LOWEST, 0.0); // very small, home state
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.TROUGH, 13.0); // trough + 3in
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_ONE,
-        25.0 - (Math.cos(Math.toRadians(Constants.ARM_ANGLE))) * 23.05); // pole 1
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO,
-        40.0 - (Math.cos(Math.toRadians(Constants.ARM_ANGLE))) * 23.05);// pole 2
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_ONE, 25.0); // pole 1
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO, 40.0);// pole 2
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_THREE, 49.0); // pole 3 + 3in
   }
 

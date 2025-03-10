@@ -5,10 +5,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.util.drivers.Gyroscope;
-import frc.robot.util.drivers.NavX;
 import frc.robot.util.math.DeadbandUtils;
 
 public class Setup {
@@ -146,9 +142,12 @@ public class Setup {
 
   // Xbox Controller (Secondary)
   private static CommandXboxController secondaryJoystick = new CommandXboxController(1);
-  /*public final Trigger toggleClimber = secondaryJoystick.start();
-  public final Trigger POVUp = new POVButton(secondaryJoystick.getHID(), 0);
-  public final Trigger POVDown = new POVButton(secondaryJoystick.getHID(), 180);*/
+  /*
+   * public final Trigger toggleClimber = secondaryJoystick.start();
+   * public final Trigger POVUp = new POVButton(secondaryJoystick.getHID(), 0);
+   * public final Trigger POVDown = new POVButton(secondaryJoystick.getHID(),
+   * 180);
+   */
 
   public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;
@@ -175,18 +174,18 @@ public class Setup {
     return DeadbandUtils.isGreater(secondaryJoystick.getRightTriggerAxis(), 0.1);
   }
 
-  /*public boolean getSecondaryPOVUpasBool() {
-    return POVUp.getAsBoolean();
-  }
-
-  public boolean getSecondaryPOVDownasBool() {
-    return POVDown.getAsBoolean();
-  }*/
+  /*
+   * public boolean getSecondaryPOVUpasBool() {
+   * return POVUp.getAsBoolean();
+   * }
+   * 
+   * public boolean getSecondaryPOVDownasBool() {
+   * return POVDown.getAsBoolean();
+   * }
+   */
 
   // ---------------------------------------------------------Hardware------------------------------------------------------------------------
 
-  // Gyroscope
-  public final Gyroscope gyroscope = NavX.getInstance();
   // -----------------------------------------------------------IDs CHANGE
   // RAAAHHHHHHHHH------------------------------------------------------------------------------
 
@@ -209,7 +208,7 @@ public class Setup {
 
   public static final int CLIMB1_ID = 24;
   public static final int CLIMB2_ID = 23;
-  //public static final int SPIN_ID = 22;
+  // public static final int SPIN_ID = 22;
   public static final int GamePieceSensorID = 0;
 
 }

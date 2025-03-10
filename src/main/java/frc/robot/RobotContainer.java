@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
 import frc.robot.commands.ClimberMove;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.ElevatorSnap;
@@ -35,7 +34,7 @@ import frc.robot.commands.EndToAngle;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralEndEffector;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.util.drivers.Toggles;
 import swervelib.SwerveInputStream;
 
@@ -61,7 +60,7 @@ public class RobotContainer {
   private final Command m_manual = new ElevatorManual(m_elevator);
   private final Command m_climberMove = new ClimberMove(m_climber, m_secondary);
 
-  public double speed = 0;
+  // public double speed = 0;
   // commands
   ClimberMove m_climbMan = new ClimberMove(m_climber, m_secondary);
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
@@ -79,13 +78,42 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled
    * by angular velocity.
    */
-
+  public DoubleSupplier getPosTwist = () -> m_primaryJoystick.getRawAxis(5);
+  public double speed = 0.5, xtraSlow = 0.35, slow = 0.5, med = 0.75, fast = 0.8;
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> m_primaryJoystick.getY(), // CHECK FUNCTION
       () -> m_primaryJoystick.getX())// CHECK FUNCTION
-      .withControllerRotationAxis(m_primaryJoystick::getTwist)// CHECK FUNCTION
+      .withControllerRotationAxis(getPosTwist)// CHECK FUNCTION
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+  SwerveInputStream driveAngularVelocityXtraSlow = SwerveInputStream.of(drivebase.getSwerveDrive(),
+      () -> m_primaryJoystick.getY() * xtraSlow, // CHECK FUNCTION
+      () -> m_primaryJoystick.getX() * xtraSlow)// CHECK FUNCTION
+      .withControllerRotationAxis(getPosTwist)
+      .deadband(OperatorConstants.DEADBAND)
+      // .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+  SwerveInputStream driveAngularVelocitySlow = SwerveInputStream.of(drivebase.getSwerveDrive(),
+      () -> m_primaryJoystick.getY() * slow, // CHECK FUNCTION
+      () -> m_primaryJoystick.getX() * slow)// CHECK FUNCTION
+      .withControllerRotationAxis(getPosTwist)
+      .deadband(OperatorConstants.DEADBAND)
+      // .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+  SwerveInputStream driveAngularVelocityMed = SwerveInputStream.of(drivebase.getSwerveDrive(),
+      () -> m_primaryJoystick.getY() * med, // CHECK FUNCTION
+      () -> m_primaryJoystick.getX() * med)// CHECK FUNCTION
+      .withControllerRotationAxis(getPosTwist)
+      .deadband(OperatorConstants.DEADBAND)
+      // .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+  SwerveInputStream driveAngularVelocityFast = SwerveInputStream.of(drivebase.getSwerveDrive(),
+      () -> m_primaryJoystick.getY() * fast, // CHECK FUNCTION
+      () -> m_primaryJoystick.getX() * fast)// CHECK FUNCTION
+      .withControllerRotationAxis(getPosTwist)
+      .deadband(OperatorConstants.DEADBAND)
+      // .scaleTranslation(0.8)
       .allianceRelativeControl(true);
 
   /**
@@ -127,9 +155,11 @@ public class RobotContainer {
     // grabber right?)
 
     // default commands
-    /*m_endeff.setDefaultCommand(new ParallelCommandGroup(
-        m_endeff.stop(),
-        m_endeff.pistonMove(false)));// stops movement and closes claw*/
+    /*
+     * m_endeff.setDefaultCommand(new ParallelCommandGroup(
+     * m_endeff.stop(),
+     * m_endeff.pistonMove(false)));// stops movement and closes claw
+     */
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -182,7 +212,6 @@ public class RobotContainer {
     Trigger fakeVisionTrig = new Trigger(fakeVision);
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
-    
 
     // automatically bring elevator to 0 if left bumper pressed, first ensure
     // endeffector is in position
@@ -194,16 +223,27 @@ public class RobotContainer {
     Trigger spinNegTrig = new Trigger(spinIsNeg);
     BooleanSupplier climbSelf = () -> Setup.getInstance().getClimbasBool();
     Trigger climbSelfTrig = new Trigger(climbSelf);
+    BooleanSupplier xtraSlow = () -> Setup.getInstance().getPrimaryDriverYButton();
+    Trigger xtraSlowTrig = new Trigger(xtraSlow);
+    BooleanSupplier slow = () -> Setup.getInstance().getPrimaryDriverBButton();
+    Trigger slowTrig = new Trigger(slow);
+    BooleanSupplier medium = () -> Setup.getInstance().getPrimaryDriverAButton();
+    Trigger mediumTrig = new Trigger(medium);
+    BooleanSupplier fast = () -> Setup.getInstance().getPrimaryDriverXButton();
+    Trigger fastTrig = new Trigger(fast);
 
     BooleanSupplier climbNotSched = () -> !m_climberMove.isScheduled();
 
     // COMMAND/TRIGGER ASSIGNMENTS
     m_secondary.start().toggleOnTrue(new ParallelCommandGroup(m_climberMove,
-        new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST),new ElevatorSnap(m_elevator))));
+        new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST),
+            new ElevatorSnap(m_elevator))));
     climbSelfTrig.onTrue(m_climber.ClimbSelf());
 
     m_secondary.start().onTrue(new InstantCommand(new Runnable() {
-      public void run() {Toggles.toggleSecondary();};
+      public void run() {
+        Toggles.toggleSecondary();
+      };
     }));
 
     // Elevator
@@ -216,6 +256,10 @@ public class RobotContainer {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
     } else {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      xtraSlowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityXtraSlow));
+      slowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocitySlow));
+      mediumTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityMed));
+      fastTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityFast));
     }
 
     if (Robot.isSimulation()) {
@@ -254,7 +298,8 @@ public class RobotContainer {
     spinPosTrig.whileTrue(m_endeff.spinClockwise());
     spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
     m_secondary.leftBumper().and(climbNotSched)
-        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
+        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST),
+            new ElevatorSnap(m_elevator)));
 
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
@@ -298,7 +343,8 @@ public class RobotContainer {
     spinPosTrig.whileTrue(m_endeff.spinClockwise());
     spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
     m_secondary.leftBumper().and(climbNotSched)
-        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
+        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST),
+            new ElevatorSnap(m_elevator)));
 
   }
 
@@ -309,7 +355,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(drivebase);
+    return drivebase.getAutonomousCommand("New Auto");
   }
 
   public void setMotorBrake(boolean brake) {

@@ -18,7 +18,7 @@ public class ElevatorSnap extends Command {
   private PIDController pid;
   private final static double ALLOWANCE = 1; // inches
 
-  private final static double ELEVATOR_P = .025, ELEVATOR_I = 0.001, ELEVATOR_D = 0.00;
+  private final static double ELEVATOR_P = .05, ELEVATOR_I = 0.0025, ELEVATOR_D = 0.00;
 
   /**
    * 
@@ -35,7 +35,7 @@ public class ElevatorSnap extends Command {
   @Override
   public void initialize() {
     pid = new PIDController(ELEVATOR_P, ELEVATOR_I, ELEVATOR_D);
-    pid.setTolerance(1, 5);// values suggested by wpilib documentation
+    pid.setTolerance(2, 5);// values suggested by wpilib documentation
   }
 
   // Called every time the scheduler runs while the command is scheduled.

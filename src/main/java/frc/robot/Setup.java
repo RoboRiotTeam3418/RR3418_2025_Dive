@@ -146,9 +146,8 @@ public class Setup {
 
   // Xbox Controller (Secondary)
   private static CommandXboxController secondaryJoystick = new CommandXboxController(1);
-  /*public final Trigger toggleClimber = secondaryJoystick.start();
   public final Trigger POVUp = new POVButton(secondaryJoystick.getHID(), 0);
-  public final Trigger POVDown = new POVButton(secondaryJoystick.getHID(), 180);*/
+  public final Trigger POVDown = new POVButton(secondaryJoystick.getHID(), 180);
 
   public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;
@@ -175,13 +174,13 @@ public class Setup {
     return DeadbandUtils.isGreater(secondaryJoystick.getRightTriggerAxis(), 0.1);
   }
 
-  /*public boolean getSecondaryPOVUpasBool() {
+  public boolean getSecondaryPOVUpasBool() {
     return POVUp.getAsBoolean();
   }
 
   public boolean getSecondaryPOVDownasBool() {
     return POVDown.getAsBoolean();
-  }*/
+  }
 
   // ---------------------------------------------------------Hardware------------------------------------------------------------------------
 
@@ -209,7 +208,7 @@ public class Setup {
 
   public static final int CLIMB1_ID = 24;
   public static final int CLIMB2_ID = 23;
-  //public static final int SPIN_ID = 22;
+  public static final int SPIN_ID = 22;
   public static final int GamePieceSensorID = 0;
 
 }

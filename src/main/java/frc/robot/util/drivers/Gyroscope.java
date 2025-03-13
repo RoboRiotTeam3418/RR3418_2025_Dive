@@ -48,3 +48,4 @@ public abstract class Gyroscope {
 		return rate;
 	}
 }
+

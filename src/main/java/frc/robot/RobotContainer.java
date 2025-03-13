@@ -14,7 +14,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -81,12 +80,12 @@ public class RobotContainer {
    */
 
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-      () -> m_primaryJoystick.getY(), // CHECK FUNCTION
-      () -> m_primaryJoystick.getX())// CHECK FUNCTION
-      .withControllerRotationAxis(m_primaryJoystick::getTwist)// CHECK FUNCTION
-      .deadband(OperatorConstants.DEADBAND)
-      .scaleTranslation(0.8)
-      .allianceRelativeControl(true);
+                                                                () -> driverXbox.getLeftY(),
+                                                                () -> driverXbox.getLeftX())
+                                                            .withControllerRotationAxis(driverXbox::getRightX)
+                                                            .deadband(OperatorConstants.DEADBAND)
+                                                            .scaleTranslation(0.8)
+                                                            .allianceRelativeControl(true);
 
   /**
    * Clones the angular velocity input stream and converts it to a fieldRelative
@@ -96,6 +95,7 @@ public class RobotContainer {
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
       .withControllerHeadingAxis(m_primaryJoystick::getTwist, getNegTwist)// checkfunction
       .headingWhile(true);
+
 
   SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> -m_primaryJoystick.getY(),
@@ -150,12 +150,13 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {
-    // DRIVETRAIN COMMAND ASSIGNMENTS R
-    Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
-    Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-    Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-    Command driveFieldOrientedDirectAngleSim = drivebase.driveFieldOriented(driveDirectAngleSim);
+  private void configureBindings()
+  {
+
+    Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
+    Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);
+    Command driveSetpointGen                      = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
+    Command driveFieldOrientedDirectAngleSim      = drivebase.driveFieldOriented(driveDirectAngleSim);
     Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
     Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleSim);
@@ -307,9 +308,10 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  public Command getAutonomousCommand()
+  {
     // An example command will be run in autonomous
-    return Autos.exampleAuto(drivebase);
+    return drivebase.getAutonomousCommand("New Auto");
   }
 
   public void setMotorBrake(boolean brake) {

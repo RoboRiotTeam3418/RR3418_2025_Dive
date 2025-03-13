@@ -85,3 +85,4 @@ public final class NavX extends Gyroscope {
         YAW
     }
 }
+

@@ -37,6 +37,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.util.drivers.Toggles;
 import swervelib.SwerveInputStream;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -80,9 +81,9 @@ public class RobotContainer {
    */
 
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> driverXbox.getLeftY(),
-                                                                () -> driverXbox.getLeftX())
-                                                            .withControllerRotationAxis(driverXbox::getRightX)
+                                                                () -> m_primaryJoystick.getY(),
+                                                                () -> m_primaryJoystick.getX())
+                                                            .withControllerRotationAxis(()->m_primaryJoystick.getRawAxis(5))
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(0.8)
                                                             .allianceRelativeControl(true);
@@ -162,7 +163,7 @@ public class RobotContainer {
         driveDirectAngleSim);
     final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> new ChassisSpeeds(0, 0,
         drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
-    Command death = drivebase.drive(DEATH_SPEEDS);
+    Command death = drivebase.driveFieldOriented(DEATH_SPEEDS);
 
     // create triggers for primary buttons
     BooleanSupplier fullStop = () -> Setup.getInstance().getFullStop();

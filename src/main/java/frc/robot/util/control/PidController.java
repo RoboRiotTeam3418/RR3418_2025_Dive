@@ -1,6 +1,6 @@
 package frc.robot.util.control;
 
-import frc.robot.util.math.MathUtils;
+import frc.robot.util.MathUtils.*;
 
 public class PidController {
     private PidConstants constants;

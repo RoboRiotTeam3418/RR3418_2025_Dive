@@ -8,7 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Elevator;
-import frc.robot.util.math.DeadbandUtils;
+import frc.robot.util.MathUtils.DeadbandUtils;
 
 /** An example command that uses an example subsystem. */
 public class ElevatorSnap extends Command {

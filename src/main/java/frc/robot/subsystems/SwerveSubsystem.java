@@ -517,15 +517,10 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @param velocity Robot oriented {@link ChassisSpeeds}
    */
-  public void drive(ChassisSpeeds velocity)
-  {
-    swerveDrive.drive(velocity);
-  }
-
   public Command drive(ChassisSpeeds velocity){
     return run(
-      ()-> drive(velocity);
-    );
+      ()-> {swerveDrive.drive(velocity);}
+      );
   }
 
   /**

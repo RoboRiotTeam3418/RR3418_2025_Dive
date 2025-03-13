@@ -7,8 +7,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Setup;
 import frc.robot.subsystems.Elevator;
+import frc.robot.util.MathUtils.DeadbandUtils;
 import frc.robot.util.drivers.Toggles;
-import frc.robot.util.math.DeadbandUtils;
 
 /** An example command that uses an example subsystem. */
 public class ElevatorManual extends Command {

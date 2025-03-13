@@ -1,6 +1,6 @@
 package frc.robot.util.drivers;
 
-import frc.robot.util.math.Rotation2;
+import frc.robot.util.MathUtils.Rotation2;
 
 public abstract class Gyroscope {
 	private Rotation2 adjustmentAngle = Rotation2.ZERO;

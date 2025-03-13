@@ -1,4 +1,4 @@
-package frc.robot.util.math;
+package frc.robot.util.MathUtils;
 
 public class DeadbandUtils {
 

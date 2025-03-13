@@ -7,9 +7,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.util.MathUtils.DeadbandUtils;
 import frc.robot.util.drivers.Gyroscope;
 import frc.robot.util.drivers.NavX;
-import frc.robot.util.math.DeadbandUtils;
 
 public class Setup {
 

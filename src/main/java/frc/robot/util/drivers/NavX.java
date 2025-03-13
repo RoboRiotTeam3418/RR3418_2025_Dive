@@ -5,7 +5,7 @@ import com.studica.frc.AHRS.NavXComType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.SerialPort;
-import frc.robot.util.MathUtils.Rotation2;
+import frc.robot.util.math.Rotation2;
 
 public final class NavX extends Gyroscope {
     public final AHRS navX;

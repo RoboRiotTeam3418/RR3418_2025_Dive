@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Setup;
 import frc.robot.subsystems.Climber;
-import frc.robot.util.MathUtils.DeadbandUtils;
+import frc.robot.util.math.DeadbandUtils;
 
 /** An example command that uses an example subsystem. */
 public class ClimberMove extends Command {

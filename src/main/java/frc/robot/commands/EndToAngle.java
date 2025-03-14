@@ -32,6 +32,7 @@ public class EndToAngle extends Command {
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
+   * @param angle angle to go to in degrees
    */
   public EndToAngle(CoralEndEffector subsystem, Double angle) {
     m_subsystem = subsystem;

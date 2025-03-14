@@ -127,10 +127,6 @@ public class RobotContainer {
     // bit at the right angle, and opens grabby bit (we're using some sort of
     // grabber right?)
 
-    // default commands
-    /*m_endeff.setDefaultCommand(new ParallelCommandGroup(
-        m_endeff.stop(),
-        m_endeff.pistonMove(false)));// stops movement and closes claw*/
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -194,25 +190,17 @@ public class RobotContainer {
     Trigger spinPosTrig = new Trigger(spinIsPos);
     BooleanSupplier spinIsNeg = () -> Setup.getInstance().getSecondaryRX() < -0.1;
     Trigger spinNegTrig = new Trigger(spinIsNeg);
-    BooleanSupplier climbSelf = () -> Setup.getInstance().getClimbasBool();
-    Trigger climbSelfTrig = new Trigger(climbSelf);
-
-    BooleanSupplier climbNotSched = () -> !m_climberMove.isScheduled();
 
     // COMMAND/TRIGGER ASSIGNMENTS
-    m_secondary.start().toggleOnTrue(new ParallelCommandGroup(m_climberMove,
-        new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST),new ElevatorSnap(m_elevator))));
-    climbSelfTrig.onTrue(m_climber.ClimbSelf());
-
-    m_secondary.start().onTrue(new InstantCommand(new Runnable() {
-      public void run() {Toggles.toggleSecondary();};
-    }));
 
     // Elevator
     m_elevator.setDefaultCommand(m_manual);
     m_secondary.leftTrigger().whileTrue(new ElevatorSnap(m_elevator));
     m_secondary.pov(180).onTrue(m_elevator.snapDown());
     m_secondary.pov(0).onTrue(m_elevator.snapUp());
+    m_endeff.setDefaultCommand(new ParallelCommandGroup(
+        m_endeff.stop(),
+        m_endeff.pistonMove(false)));
 
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
@@ -255,53 +243,7 @@ public class RobotContainer {
     m_secondary.y().onTrue(new EndToAngle(m_endeff, 90.0));
     spinPosTrig.whileTrue(m_endeff.spinClockwise());
     spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
-    m_secondary.leftBumper().and(climbNotSched)
-        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
-
-    if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
-    } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    }
-
-    if (Robot.isSimulation()) {
-      primaryStartTrig.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      m_primaryJoystick.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
-
-    }
-    if (DriverStation.isTest()) {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
-
-      fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driveSetDistanceTrig.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      primaryBackTrig.whileTrue(drivebase.centerModulesCommand());
-      backIsNegTrig.onTrue(Commands.none());
-      backIsPosTrig.onTrue(Commands.none());
-    } else {
-      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      fakeVisionTrig.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driveSetDistanceTrig.whileTrue(
-          drivebase.driveToPose(
-              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-      primaryStartTrig.whileTrue(Commands.none());
-      primaryBackTrig.whileTrue(Commands.none());
-      backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      backIsPosTrig.onTrue(Commands.none());
-      deathModeTrig.whileTrue(death);
-
-    }
-    zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    deathModeTrig.whileTrue(death);
-
-    m_secondary.a().onTrue(new EndToAngle(m_endeff, 0.0));
-    m_secondary.b().onTrue(new EndToAngle(m_endeff, 35.0));
-    m_secondary.y().onTrue(new EndToAngle(m_endeff, 90.0));
-    spinPosTrig.whileTrue(m_endeff.spinClockwise());
-    spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
-    m_secondary.leftBumper().and(climbNotSched)
-        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
-
+    m_secondary.start().onTrue(m_endeff.pistonMove(!m_endeff.getClaw()));
   }
 
   /**

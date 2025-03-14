@@ -92,6 +92,9 @@ public class CoralEndEffector extends SubsystemBase {
           spinMotor.set(0);
         });
   }
+  public Boolean getClaw(){
+    return claw.get();
+  }
 
   public double getEncValDegrees(){
     return (spinEncoder.getPosition()+SPIN_OFFSET)*CONVERSION;

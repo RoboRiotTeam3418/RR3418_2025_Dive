@@ -27,11 +27,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.ClimberMove;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.ElevatorSnap;
 import frc.robot.commands.EndToAngle;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralEndEffector;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -53,22 +51,20 @@ public class RobotContainer {
 
   private final Elevator m_elevator = new Elevator();
   private final CoralEndEffector m_endeff = new CoralEndEffector();
-  private final Climber m_climber = new Climber();
-
+ 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
   // commands
   private final Command m_manual = new ElevatorManual(m_elevator);
-  private final Command m_climberMove = new ClimberMove(m_climber, m_secondary);
-
+  
   public double speed = 0;
   // commands
-  ClimberMove m_climbMan = new ClimberMove(m_climber, m_secondary);
+  /* 
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
       new ParallelCommandGroup(
           new ElevatorSnap(m_elevator),
           new EndToAngle(m_endeff, 0.0).withTimeout(20)),
-      m_endeff.pistonMove(true));
+      m_endeff.pistonMove(true));*/
 
   // Driver speeds
 
@@ -198,7 +194,7 @@ public class RobotContainer {
     m_secondary.leftTrigger().whileTrue(new ElevatorSnap(m_elevator));
     m_secondary.pov(180).onTrue(m_elevator.snapDown());
     m_secondary.pov(0).onTrue(m_elevator.snapUp());
-    m_endeff.setDefaultCommand(new ParallelCommandGroup(
+    m_endeff.setDefaultCommand(new SequentialCommandGroup(
         m_endeff.stop(),
         m_endeff.pistonMove(false)));
 

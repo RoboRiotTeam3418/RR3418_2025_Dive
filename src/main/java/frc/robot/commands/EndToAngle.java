@@ -60,8 +60,7 @@ public class EndToAngle extends Command {
       if (spinEncoder.getPosition() < m_angle - allowance) {
         spinMotor.set(-spinSpeed);
       }
-    }
-    else{
+    }else{
       m_subsystem.stop();
     }
   }

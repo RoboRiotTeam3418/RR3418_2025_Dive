@@ -42,6 +42,7 @@ public class CoralEndEffector extends SubsystemBase {
     spinMotor = new SparkMax(SPIN_ID, MotorType.kBrushless);
     spinEncoder = spinMotor.getAbsoluteEncoder();
     claw = new Solenoid(PneumaticsModuleType.REVPH, 0);
+    gamePieceSensor = new DigitalInput(0);
   }
 
   /**
@@ -101,6 +102,7 @@ public class CoralEndEffector extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Raw Endeff Angle", spinEncoder.getPosition());
     SmartDashboard.putNumber("Adjusted Endeff Angle", getEncValDegrees());
+    SmartDashboard.putBoolean("lazerboi", gamePieceSensor.get());  
   }
 
   @Override

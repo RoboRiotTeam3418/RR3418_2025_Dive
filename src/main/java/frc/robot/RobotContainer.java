@@ -195,8 +195,7 @@ public class RobotContainer {
     m_secondary.pov(180).onTrue(m_elevator.snapDown());
     m_secondary.pov(0).onTrue(m_elevator.snapUp());
     m_endeff.setDefaultCommand(new SequentialCommandGroup(
-        m_endeff.stop(),
-        m_endeff.pistonMove(false)));
+        m_endeff.pistonMove(false), m_endeff.stop()));
 
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);

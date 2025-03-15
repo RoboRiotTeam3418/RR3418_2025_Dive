@@ -73,8 +73,9 @@ public class AbsoluteDrive extends Command
 
     // Get the desired chassis speeds based on a 2 joystick module.
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
-                                                         headingHorizontal.getAsDouble(),
-                                                         headingVertical.getAsDouble());
+          new Rotation2d(
+            headingHorizontal.getAsDouble(),
+            headingVertical.getAsDouble()));
 
     // Prevent Movement After Auto
     if (initRotation)
@@ -85,7 +86,7 @@ public class AbsoluteDrive extends Command
         Rotation2d firstLoopHeading = swerve.getHeading();
 
         // Set the Current Heading to the desired Heading
-        desiredSpeeds = swerve.getTargetSpeeds(0, 0, firstLoopHeading.getSin(), firstLoopHeading.getCos());
+        desiredSpeeds = swerve.getTargetSpeeds(0, 0, new Rotation2d(firstLoopHeading.getSin(), firstLoopHeading.getCos()));
       }
       //Dont Init Rotation Again
       initRotation = false;

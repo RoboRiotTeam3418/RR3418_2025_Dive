@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -31,7 +32,8 @@ import frc.robot.commands.ElevatorSnap;
 import frc.robot.commands.EndToAngle;
 import frc.robot.subsystems.CoralEndEffector;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import frc.robot.util.drivers.Toggles;
 import swervelib.SwerveInputStream;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
@@ -55,7 +57,7 @@ public class RobotContainer {
   // commands
   private final Command m_manual = new ElevatorManual(m_elevator);
 
-  public double speed = 0;
+  // public double speed = 0;
   // commands
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
       new ParallelCommandGroup(
@@ -72,14 +74,43 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled
    * by angular velocity.
    */
-
+  public DoubleSupplier getPosTwist = () -> m_primaryJoystick.getRawAxis(5);
+  public double speed = 0.5, xtraSlow = 0.35, slow = 0.5, med = 0.75, fast = 0.8;
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-                                                                () -> m_primaryJoystick.getY(),
-                                                                () -> m_primaryJoystick.getX())
-                                                            .withControllerRotationAxis(()->m_primaryJoystick.getRawAxis(5))
-                                                            .deadband(OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(0.8)
-                                                            .allianceRelativeControl(true);
+      () -> m_primaryJoystick.getY(), // CHECK FUNCTION
+      () -> m_primaryJoystick.getX())// CHECK FUNCTION
+      .withControllerRotationAxis(()->m_primaryJoystick.getRawAxis(5))// CHECK FUNCTION
+      .deadband(OperatorConstants.DEADBAND)
+      .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+  SwerveInputStream driveAngularVelocityXtraSlow = SwerveInputStream.of(drivebase.getSwerveDrive(),
+      () -> m_primaryJoystick.getY() * xtraSlow, // CHECK FUNCTION
+      () -> m_primaryJoystick.getX() * xtraSlow)// CHECK FUNCTION
+      .withControllerRotationAxis(getPosTwist)
+      .deadband(OperatorConstants.DEADBAND)
+      // .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+  SwerveInputStream driveAngularVelocitySlow = SwerveInputStream.of(drivebase.getSwerveDrive(),
+      () -> m_primaryJoystick.getY() * slow, // CHECK FUNCTION
+      () -> m_primaryJoystick.getX() * slow)// CHECK FUNCTION
+      .withControllerRotationAxis(getPosTwist)
+      .deadband(OperatorConstants.DEADBAND)
+      // .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+  SwerveInputStream driveAngularVelocityMed = SwerveInputStream.of(drivebase.getSwerveDrive(),
+      () -> m_primaryJoystick.getY() * med, // CHECK FUNCTION
+      () -> m_primaryJoystick.getX() * med)// CHECK FUNCTION
+      .withControllerRotationAxis(getPosTwist)
+      .deadband(OperatorConstants.DEADBAND)
+      // .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
+  SwerveInputStream driveAngularVelocityFast = SwerveInputStream.of(drivebase.getSwerveDrive(),
+      () -> m_primaryJoystick.getY() * fast, // CHECK FUNCTION
+      () -> m_primaryJoystick.getX() * fast)// CHECK FUNCTION
+      .withControllerRotationAxis(getPosTwist)
+      .deadband(OperatorConstants.DEADBAND)
+      // .scaleTranslation(0.8)
+      .allianceRelativeControl(true);
 
   /**
    * Clones the angular velocity input stream and converts it to a fieldRelative
@@ -184,6 +215,15 @@ public class RobotContainer {
     Trigger m_elevDown = Setup.getInstance().elevDownTrig;
     Trigger m_coralRelease = Setup.getInstance().releaseCoral;
     Trigger m_elevGo = Setup.getInstance().snapGo;
+    //speed changer
+    BooleanSupplier xtraSlow = () -> Setup.getInstance().getPrimaryDriverYButton();
+    Trigger xtraSlowTrig = new Trigger(xtraSlow);
+    BooleanSupplier slow = () -> Setup.getInstance().getPrimaryDriverBButton();
+    Trigger slowTrig = new Trigger(slow);
+    BooleanSupplier medium = () -> Setup.getInstance().getPrimaryDriverAButton();
+    Trigger mediumTrig = new Trigger(medium);
+    BooleanSupplier fast = () -> Setup.getInstance().getPrimaryDriverXButton();
+    Trigger fastTrig = new Trigger(fast);
 
     // Default commands
     m_elevator.setDefaultCommand(m_manual);
@@ -195,8 +235,12 @@ public class RobotContainer {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
     } else {*/
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    /* }
-
+      xtraSlowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityXtraSlow));
+      slowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocitySlow));
+      mediumTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityMed));
+      fastTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityFast));
+    }
+    /*
     if (Robot.isSimulation()) {
       primaryStartTrig.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
       m_primaryJoystick.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());

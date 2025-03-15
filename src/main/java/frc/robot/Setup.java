@@ -187,8 +187,6 @@ public class Setup {
 
   // ---------------------------------------------------------Hardware------------------------------------------------------------------------
 
-  // Gyroscope
-  public final Gyroscope gyroscope = NavX.getInstance();
   // -----------------------------------------------------------IDs CHANGE
   // RAAAHHHHHHHHH------------------------------------------------------------------------------
 
@@ -211,7 +209,7 @@ public class Setup {
 
   public static final int CLIMB1_ID = 24;
   public static final int CLIMB2_ID = 23;
-  //public static final int SPIN_ID = 22;
+  // public static final int SPIN_ID = 22;
   public static final int GamePieceSensorID = 0;
 
 }

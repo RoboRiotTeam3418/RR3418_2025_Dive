@@ -27,7 +27,7 @@ public class CoralEndEffector extends SubsystemBase {
   public AbsoluteEncoder spinEncoder;
   public DigitalInput gamePieceSensor;
   public Solenoid claw;
-  public Double SPIN_OFFSET = 0., CONVERSION = 360.0, POS_ANGLE_LIMIT=15.0;
+  public Double SPIN_OFFSET = 0.0, CONVERSION = 360.0, POS_ANGLE_LIMIT=15.0;
   //0ffset = distance from 0, Conversion= multiplier to get degrees, 
   //POS_ANGLE_LIMIT = 1/2 of range aka max angle from center counterclockwise (positive direction)
 
@@ -55,7 +55,7 @@ public class CoralEndEffector extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
         () -> {
-          if(getEncValDegrees() > POS_ANGLE_LIMIT && getEncValDegrees()< 180){
+          if(getEncValDegrees() < 360-POS_ANGLE_LIMIT && getEncValDegrees()> 180){
             spinMotor.set(-spinSpeed);
           }else{
             stop();
@@ -68,7 +68,7 @@ public class CoralEndEffector extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
         () -> {
-          if(getEncValDegrees() < 360-POS_ANGLE_LIMIT&& getEncValDegrees()>180){
+          if(getEncValDegrees() > POS_ANGLE_LIMIT&& getEncValDegrees()<180){
             spinMotor.set(spinSpeed);
           }else{
             stop();

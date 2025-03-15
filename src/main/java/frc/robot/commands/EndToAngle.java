@@ -9,6 +9,7 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralEndEffector;
 import frc.robot.util.math.DeadbandUtils;
@@ -53,15 +54,21 @@ public class EndToAngle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SmartDashboard.putNumber("goal Angle", m_angle);  
     if (DeadbandUtils.isLess(m_subsystem.getEncValDegrees(), m_subsystem.POS_ANGLE_LIMIT)) {
-      if (spinEncoder.getPosition() > m_angle + allowance) {
-        spinMotor.set(spinSpeed);
-      }
-      if (spinEncoder.getPosition() < m_angle - allowance) {
+      if (m_subsystem.getEncValDegrees() > m_angle + allowance) {
         spinMotor.set(-spinSpeed);
+      }
+      if (m_subsystem.getEncValDegrees() < m_angle - allowance) {
+        spinMotor.set(spinSpeed);
       }
     }else{
       m_subsystem.stop();
+    }
+    if (DeadbandUtils.isWithin(m_subsystem.getEncValDegrees(),m_angle,allowance)){
+      SmartDashboard.putBoolean("at Angle?", true);  
+    }else{
+      SmartDashboard.putBoolean("at Angle?", false);  
     }
   }
 

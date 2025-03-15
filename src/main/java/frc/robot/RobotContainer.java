@@ -99,15 +99,15 @@ public class RobotContainer {
       .allianceRelativeControl(true);
   // Derive the heading axis with math!
   SwerveInputStream driveDirectAngleSim = driveAngularVelocitySim.copy()
-      .withControllerHeadingAxis(() -> Math.sin(
+      .withControllerHeadingAxis(
+        () -> Math.sin(
           m_primaryJoystick.getRawAxis(
               2) * Math.PI)
           * (Math.PI * 2),
-          () -> Math.cos(
-              m_primaryJoystick.getRawAxis(
-                  2) * Math.PI)
-              *
-              (Math.PI * 2))
+        () -> Math.cos(
+            m_primaryJoystick.getRawAxis(
+              2) * Math.PI)
+            *(Math.PI * 2))
       .headingWhile(true);
 
   /**
@@ -186,8 +186,6 @@ public class RobotContainer {
 
     // Default commands
     m_elevator.setDefaultCommand(m_manual);
-    //Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator));
-    //Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
 
     /* 
     if (RobotBase.isSimulation()) {

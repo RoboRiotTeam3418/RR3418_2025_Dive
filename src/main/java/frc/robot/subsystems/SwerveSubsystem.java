@@ -170,8 +170,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void simulationPeriodic() {
-  }
+  public void simulationPeriodic() {}
 
   /**
    * Setup AutoBuilder for PathPlanner.
@@ -751,10 +750,6 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public SwerveDrive getSwerveDrive() {
     return swerveDrive;
-  }
-
-  public ChassisSpeeds getDeath() {
-    return new ChassisSpeeds(0, 0, getSwerveDrive().getMaximumChassisAngularVelocity());
   }
 
 }

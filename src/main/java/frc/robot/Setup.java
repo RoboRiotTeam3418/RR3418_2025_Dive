@@ -148,7 +148,6 @@ public class Setup {
 
   // Xbox Controller (Secondary)
   private static CommandXboxController secondaryJoystick = new CommandXboxController(0);
-  public final Trigger toggleElevator = secondaryJoystick.back();
   public final Trigger POVUp = new POVButton(secondaryJoystick.getHID(), 0);
   public final Trigger POVDown = new POVButton(secondaryJoystick.getHID(), 180);
   public final Trigger releaseCoral = secondaryJoystick.rightTrigger(0.1);

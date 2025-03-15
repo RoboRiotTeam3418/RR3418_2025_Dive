@@ -198,7 +198,6 @@ public class Setup {
   public static final int DrivetrainSubsystem_BACK_LEFT_DRIVE_MOTOR = 12;
   public static final int DrivetrainSubsystem_BACK_LEFT_ANGLE_MOTOR = 13;
 
-  // wired wrong so bad
   public static final int DrivetrainSubsystem_BACK_RIGHT_DRIVE_MOTOR = 14;
   public static final int DrivetrainSubsystem_BACK_RIGHT_ANGLE_MOTOR = 15;
 
@@ -210,7 +209,7 @@ public class Setup {
 
   public static final int CLIMB1_ID = 24;
   public static final int CLIMB2_ID = 23;
-  //public static final int SPIN_ID = 22;
+  public static final int SPIN_ID = 22;
   public static final int GamePieceSensorID = 0;
 
 }

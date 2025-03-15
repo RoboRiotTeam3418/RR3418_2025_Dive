@@ -24,7 +24,7 @@ public class EndToAngle extends Command {
   public AbsoluteEncoder spinEncoder;
   public DigitalInput gamePieceSensor;
   public Solenoid claw;
-  public double allowance = 1.5;
+  public double allowance = 5;
 
   public double spinSpeed; // placeholder value
   public boolean isClockwise, isCounterClockwise;

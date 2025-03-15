@@ -28,7 +28,8 @@ public class CoralEndEffector extends SubsystemBase {
   public DigitalInput gamePieceSensor;
   public Solenoid claw;
   public Double SPIN_OFFSET = 0.0, CONVERSION = 360.0, POS_ANGLE_LIMIT=15.0;
-  //0ffset = distance from 0, Conversion= multiplier to get degrees, 
+  //0ffset = distance from 0, Conversion= multiplier to get degrees (should be unecessary with
+  //updated configs), 
   //POS_ANGLE_LIMIT = 1/2 of range aka max angle from center counterclockwise (positive direction)
 
   public double spinSpeed = 0.1; // placeholder value
@@ -94,7 +95,7 @@ public class CoralEndEffector extends SubsystemBase {
   }
 
   public double getEncValDegrees(){
-    return (spinEncoder.getPosition()+SPIN_OFFSET)*CONVERSION;
+    return spinEncoder.getPosition()+SPIN_OFFSET;
   }
 
   @Override

@@ -120,14 +120,8 @@ public class Elevator extends SubsystemBase {
     goalLevel = values[newIndex % values.length];
   }
 
-  private void decrementElevatorLevel(ElevatorLevel currentElevatorLevel) {
-    ElevatorLevel[] values = ElevatorLevel.values();
-
-    int newIndex = currentElevatorLevel.ordinal() - 1;
-    if (newIndex < 0) {
-      newIndex = values.length - 1;
-    }
-    goalLevel = values[newIndex % values.length];
+  private ElevatorLevel decrementElevatorLevel(ElevatorLevel currentElevatorLevel) {
+    return ElevatorLevel.values()[(currentElevatorLevel.ordinal() - 1) % ElevatorLevel.values().length];
   }
 
   @Override

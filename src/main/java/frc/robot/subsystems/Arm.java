@@ -18,15 +18,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Setup;
 import frc.robot.util.math.DeadbandUtils;
 
-public class CoralEndEffector extends SubsystemBase {
+public class Arm extends SubsystemBase {
 
 
   // variables
   public static final int SPIN_ID = 22;
   public SparkMax spinMotor;
   public AbsoluteEncoder spinEncoder;
-  public DigitalInput gamePieceSensor;
-  public Solenoid claw;
   public Double SPIN_OFFSET = 0.0, CONVERSION = 360.0, POS_ANGLE_LIMIT=15.0;
   //0ffset = distance from 0, Conversion= multiplier to get degrees (should be unecessary with
   //updated configs), 
@@ -35,53 +33,13 @@ public class CoralEndEffector extends SubsystemBase {
   public double spinSpeed = 0.1; // placeholder value
   public boolean isClockwise, isCounterClockwise;
 
-  public CoralEndEffector() {
+  public Arm() {
     initialize();
   }
 
   private void initialize() {
     spinMotor = new SparkMax(SPIN_ID, MotorType.kBrushless);
     spinEncoder = spinMotor.getAbsoluteEncoder();
-    claw = new Solenoid(PneumaticsModuleType.REVPH, 0);
-    gamePieceSensor = new DigitalInput(0);
-  }
-
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command spinClockwise() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return run(
-        () -> {
-          if(getEncValDegrees() < 360-POS_ANGLE_LIMIT && getEncValDegrees()> 180){
-            spinMotor.set(-spinSpeed);
-          }else{
-            stop();
-          }
-        });
-  }
-
-  public Command spinCounterClockwise() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return run(
-        () -> {
-          if(getEncValDegrees() > POS_ANGLE_LIMIT&& getEncValDegrees()<180){
-            spinMotor.set(spinSpeed);
-          }else{
-            stop();
-          }
-        });
-  }
-
-  public Command pistonMove(boolean state) {
-    return runOnce(
-        () -> {
-          claw.set(state);
-        });
   }
 
   public Command stop() {
@@ -90,20 +48,12 @@ public class CoralEndEffector extends SubsystemBase {
           spinMotor.set(0);
         });
   }
-  public Boolean getClaw(){
-    return claw.get();
-  }
-
-  public double getEncValDegrees(){
-    return spinEncoder.getPosition()+SPIN_OFFSET;
-  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    
     SmartDashboard.putNumber("Raw Endeff Angle", spinEncoder.getPosition());
-    SmartDashboard.putNumber("Adjusted Endeff Angle", getEncValDegrees());
-    SmartDashboard.putBoolean("lazerboi", gamePieceSensor.get());  
   }
 
   @Override

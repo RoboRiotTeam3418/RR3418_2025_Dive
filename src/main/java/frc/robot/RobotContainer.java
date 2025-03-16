@@ -26,13 +26,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ElevatorManual;
-import frc.robot.commands.ElevatorSnap;
-import frc.robot.commands.EndToAngle;
-import frc.robot.subsystems.CoralEndEffector;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import frc.robot.util.drivers.Toggles;
 import swervelib.SwerveInputStream;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -50,12 +45,16 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   private final Elevator m_elevator = new Elevator();
-  private final CoralEndEffector m_endeff = new CoralEndEffector();
+  private final Arm m_arm = new Arm();
+  private final Claw m_claw = new Claw();
  
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
   // commands
-  private final Command m_manual = new ElevatorManual(m_elevator);
+  private final Command m_elevManual = new ElevatorManual(m_elevator);
+  
+  private final Command m_armManual = new ArmManual(m_arm);
+  private final Command m_readyClaw = new ReadyClaw(m_claw);
   
   public double speed = 0;
   // commands
@@ -186,16 +185,18 @@ public class RobotContainer {
     Trigger spinPosTrig = new Trigger(spinIsPos);
     BooleanSupplier spinIsNeg = () -> Setup.getInstance().getSecondaryRX() < -0.1;
     Trigger spinNegTrig = new Trigger(spinIsNeg);
+    BooleanSupplier spinIsOn = () -> spinIsPos.getAsBoolean()|| spinIsNeg.getAsBoolean();
+    Trigger spinIsOnTrig = new Trigger(spinIsOn);
 
     // COMMAND/TRIGGER ASSIGNMENTS
 
     // Elevator
-    m_elevator.setDefaultCommand(m_manual);
+    m_elevator.setDefaultCommand(m_elevManual);
     m_secondary.leftTrigger().whileTrue(new ElevatorSnap(m_elevator));
     m_secondary.pov(180).onTrue(m_elevator.snapDown());
     m_secondary.pov(0).onTrue(m_elevator.snapUp());
-    m_endeff.setDefaultCommand(new SequentialCommandGroup(
-        m_endeff.pistonMove(false), m_endeff.stop()));
+    //m_endeff.setDefaultCommand(new SequentialCommandGroup(
+        //m_endeff.pistonMove(false), m_endeff.stop()));
 
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
@@ -233,12 +234,18 @@ public class RobotContainer {
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
     deathModeTrig.whileTrue(death);
 
-    m_secondary.a().onTrue(new EndToAngle(m_endeff, 0.0));
-    m_secondary.b().onTrue(new EndToAngle(m_endeff, 35.0));
-    m_secondary.y().onTrue(new EndToAngle(m_endeff, 90.0));
-    spinPosTrig.whileTrue(m_endeff.spinClockwise());
-    spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
-    m_secondary.start().onTrue(m_endeff.pistonMove(!m_endeff.getClaw()));
+    /* 
+    m_secondary.a().onTrue(new EndToAngle(m_arm, 180.0));
+    m_secondary.b().onTrue(new EndToAngle(m_arm, 215.0));
+    m_secondary.x().onTrue(new EndToAngle(m_arm, 145.0));
+    m_secondary.y().onTrue(new EndToAngle(m_arm, 225.0));
+    */
+    //m_arm.setDefaultCommand(new EndToAngle(m_arm, 180.0));
+    m_arm.setDefaultCommand(m_arm.stop());
+    spinIsOnTrig.whileTrue(m_armManual);
+    
+    m_secondary.rightTrigger(0.1).whileTrue(m_claw.pistonMove(true));
+    m_secondary.start().toggleOnTrue(new ToggleClaw(m_claw));
   }
 
   /**

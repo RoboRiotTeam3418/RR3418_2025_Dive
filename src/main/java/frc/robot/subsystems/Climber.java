@@ -16,13 +16,11 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Setup;
 
 public class Climber extends SubsystemBase {
 
@@ -42,11 +40,13 @@ public class Climber extends SubsystemBase {
   }
 
   private void initialize() {
-    mot1 = new SparkMax(Setup.CLIMB1_ID, MotorType.kBrushless);
-    enc1 = mot1.getAbsoluteEncoder();
-    mot2 = new SparkMax(Setup.CLIMB2_ID, MotorType.kBrushless);
-    enc2 = mot2.getAbsoluteEncoder();
-    //clamp = new Solenoid(0, null, 0);
+    /*
+     * mot1 = new SparkMax(Setup.CLIMB1_ID, MotorType.kBrushless);
+     * enc1 = mot1.getAbsoluteEncoder();
+     * mot2 = new SparkMax(Setup.CLIMB2_ID, MotorType.kBrushless);
+     * enc2 = mot2.getAbsoluteEncoder();
+     */
+    // clamp = new Solenoid(0, null, 0);
   }
 
   /**

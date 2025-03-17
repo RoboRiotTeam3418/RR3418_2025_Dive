@@ -11,17 +11,12 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Setup;
 
 public class CoralEndEffector extends SubsystemBase {
-  // get instance
-  static CoralEndEffector mInstance = new CoralEndEffector();
-
-  public static CoralEndEffector getInstance() {
-    return mInstance;
-  }
 
   // variables
   public SparkMax spinMotor;
@@ -37,9 +32,13 @@ public class CoralEndEffector extends SubsystemBase {
   }
 
   private void initialize() {
-    //spinMotor = new SparkMax(Setup.SPIN_ID, MotorType.kBrushless);
-    //spinEncoder = spinMotor.getAbsoluteEncoder();
-    //claw = new Solenoid(PneumaticsModuleType.REVPH, 0);
+    spinMotor = new SparkMax(Setup.SPIN_ID, MotorType.kBrushless);
+    spinEncoder = spinMotor.getAbsoluteEncoder();
+    claw = new Solenoid(PneumaticsModuleType.REVPH, 0);
+  }
+
+  public double getArmPosition() {
+    return (spinEncoder.getPosition() / 2048) * 360;
   }
 
   /**
@@ -47,27 +46,31 @@ public class CoralEndEffector extends SubsystemBase {
    *
    * @return a command
    */
-  public Command spinClockwise() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return run(
-        () -> {
-          spinMotor.set(spinSpeed);
-        });
-  }
 
-  public Command spinCounterClockwise() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return run(
-        () -> {
-          spinMotor.set(-spinSpeed);
-        });
-  }
+  /*
+   * public Command spinClockwise() {
+   * // Inline construction of command goes here.
+   * // Subsystem::RunOnce implicitly requires `this` subsystem.
+   * return run(
+   * () -> {
+   * spinMotor.set(spinSpeed);
+   * });
+   * }
+   * 
+   * public Command spinCounterClockwise() {
+   * // Inline construction of command goes here.
+   * // Subsystem::RunOnce implicitly requires `this` subsystem.
+   * return run(
+   * () -> {
+   * spinMotor.set(-spinSpeed);
+   * });
+   * }
+   */
 
   public Command pistonMove(boolean state) {
     return runOnce(
         () -> {
+          System.out.println(state);
           claw.set(state);
         });
   }
@@ -82,6 +85,7 @@ public class CoralEndEffector extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("angle", getArmPosition());
   }
 
   @Override

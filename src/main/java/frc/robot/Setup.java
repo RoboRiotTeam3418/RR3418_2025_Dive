@@ -206,9 +206,7 @@ public class Setup {
   public static final int ELEVMOT1ID = 20;
   public static final int ELEVMOT2ID = 21;
 
-  public static final int CLIMB1_ID = 24;
-  public static final int CLIMB2_ID = 23;
-  // public static final int SPIN_ID = 22;
+  public static final int SPIN_ID = 22;
   public static final int GamePieceSensorID = 0;
 
 }

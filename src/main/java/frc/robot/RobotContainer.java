@@ -28,11 +28,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.AutoOrientCmd;
-import frc.robot.commands.ClimberMove;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.ElevatorSnap;
 import frc.robot.commands.EndToAngle;
-import frc.robot.subsystems.Climber;
+import frc.robot.commands.autoClaw;
 import frc.robot.subsystems.CoralEndEffector;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
@@ -54,18 +53,15 @@ public class RobotContainer {
 
   private final Elevator m_elevator = new Elevator();
   private final CoralEndEffector m_endeff = new CoralEndEffector();
-  private final Climber m_climber = new Climber();
   private final Limelight m_Limelight = new Limelight();
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
   // commands
   private final Command m_manual = new ElevatorManual(m_elevator);
-  private final Command m_climberMove = new ClimberMove(m_climber, m_secondary);
 
   // public double speed = 0;
   // commands
-  ClimberMove m_climbMan = new ClimberMove(m_climber, m_secondary);
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
       m_elevator.setSnap(ElevatorLevel.LOWEST),
       new ParallelCommandGroup(
@@ -195,7 +191,6 @@ public class RobotContainer {
         driveDirectAngleSim);
     final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> new ChassisSpeeds(0, 0,
         drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
-    Command death = drivebase.drive(DEATH_SPEEDS);
 
     // create triggers for primary buttons
     BooleanSupplier fullStop = () -> Setup.getInstance().getFullStop();
@@ -226,7 +221,6 @@ public class RobotContainer {
     BooleanSupplier spinIsNeg = () -> Setup.getInstance().getSecondaryRX() < -0.1;
     Trigger spinNegTrig = new Trigger(spinIsNeg);
     BooleanSupplier climbSelf = () -> Setup.getInstance().getClimbasBool();
-    Trigger climbSelfTrig = new Trigger(climbSelf);
     BooleanSupplier xtraSlow = () -> Setup.getInstance().getPrimaryDriverYButton();
     Trigger xtraSlowTrig = new Trigger(xtraSlow);
     BooleanSupplier slow = () -> Setup.getInstance().getPrimaryDriverBButton();
@@ -235,14 +229,6 @@ public class RobotContainer {
     Trigger mediumTrig = new Trigger(medium);
     BooleanSupplier fast = () -> Setup.getInstance().getPrimaryDriverXButton();
     Trigger fastTrig = new Trigger(fast);
-
-    BooleanSupplier climbNotSched = () -> !m_climberMove.isScheduled();
-
-    // COMMAND/TRIGGER ASSIGNMENTS
-    m_secondary.start().toggleOnTrue(new ParallelCommandGroup(m_climberMove,
-        new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST),
-            new ElevatorSnap(m_elevator))));
-    climbSelfTrig.onTrue(m_climber.ClimbSelf());
 
     m_secondary.start().onTrue(new InstantCommand(new Runnable() {
       public void run() {
@@ -263,6 +249,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("pickup", m_pickup);
     NamedCommands.registerCommand("place left", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_TWO),
         new ParallelCommandGroup(new ElevatorSnap(m_elevator))));
+    NamedCommands.registerCommand("grab", new autoClaw(m_endeff));
+    NamedCommands.registerCommand("release", m_endeff.pistonMove(false));
     // Arm
     /*
      * m_endeff.setDefaultCommand(new EndManual(m_endeff));
@@ -308,17 +296,15 @@ public class RobotContainer {
       // backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
       // backIsPosTrig.onTrue(Commands.none());
-      deathModeTrig.whileTrue(death);
 
     }
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    deathModeTrig.whileTrue(death);
 
     /*
      * spinPosTrig.whileTrue(m_endeff.spinClockwise());
      * spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
      */
-    m_secondary.leftBumper().and(climbNotSched)
+    m_secondary.leftBumper()
         .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST),
             new ElevatorSnap(m_elevator)));
 
@@ -353,17 +339,15 @@ public class RobotContainer {
       // backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock,
       // drivebase).repeatedly());
       // backIsPosTrig.onTrue(Commands.none());
-      deathModeTrig.whileTrue(death);
 
     }
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    deathModeTrig.whileTrue(death);
 
     /*
      * spinPosTrig.whileTrue(m_endeff.spinClockwise());
      * spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
      */
-    m_secondary.leftBumper().and(climbNotSched)
+    m_secondary.leftBumper()
         .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST),
             new ElevatorSnap(m_elevator)));
 

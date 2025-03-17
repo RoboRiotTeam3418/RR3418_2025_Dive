@@ -52,7 +52,7 @@ public class Setup {
   // TO REFERENCE THE JOYSTICK OBJECT ITSELF EACH TIME
 
   // Flight Stick (Primary)
-  private static CommandJoystick primaryJoystick = new CommandJoystick(0);
+  private static CommandJoystick primaryJoystick = new CommandJoystick(1);
 
   public CommandJoystick getPrimaryJoystick() {
     return primaryJoystick;
@@ -142,12 +142,6 @@ public class Setup {
 
   // Xbox Controller (Secondary)
   private static CommandXboxController secondaryJoystick = new CommandXboxController(1);
-  /*
-   * public final Trigger toggleClimber = secondaryJoystick.start();
-   * public final Trigger POVUp = new POVButton(secondaryJoystick.getHID(), 0);
-   * public final Trigger POVDown = new POVButton(secondaryJoystick.getHID(),
-   * 180);
-   */
 
   public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;
@@ -174,21 +168,6 @@ public class Setup {
     return DeadbandUtils.isGreater(secondaryJoystick.getRightTriggerAxis(), 0.1);
   }
 
-  /*
-   * public boolean getSecondaryPOVUpasBool() {
-   * return POVUp.getAsBoolean();
-   * }
-   * 
-   * public boolean getSecondaryPOVDownasBool() {
-   * return POVDown.getAsBoolean();
-   * }
-   */
-
-  // ---------------------------------------------------------Hardware------------------------------------------------------------------------
-
-  // -----------------------------------------------------------IDs CHANGE
-  // RAAAHHHHHHHHH------------------------------------------------------------------------------
-
   // Swerve Drive
   public static final int DrivetrainSubsystem_FRONT_LEFT_DRIVE_MOTOR = 10;
   public static final int DrivetrainSubsystem_FRONT_LEFT_ANGLE_MOTOR = 11;
@@ -205,8 +184,6 @@ public class Setup {
 
   public static final int ELEVMOT1ID = 20;
   public static final int ELEVMOT2ID = 21;
-
-  public static final int SPIN_ID = 22;
   public static final int GamePieceSensorID = 0;
 
 }

@@ -70,11 +70,11 @@ public class SwerveSubsystem extends SubsystemBase {
    * Enable vision odometry updates while driving.
    */
   private final boolean visionDriveTest = false;
-
   /**
    * PhotonVision class to keep an accurate odometry.
    */
   // private Vision vision;
+
   /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
@@ -133,29 +133,11 @@ public class SwerveSubsystem extends SubsystemBase {
             Rotation2d.fromDegrees(0)));
   }
 
-  // /**
-  // * Setup the photon vision class.
-  // */
-  // public void setupPhotonVision()
-  // {
-  // vision = new Vision(swerveDrive::getPose, swerveDrive.field);
-  // }
-
   @Override
   public void periodic() {
     // When vision is enabled we must manually update odometry in SwerveDrive
     if (visionDriveTest) {
       swerveDrive.updateOdometry();
-      // vision.updatePoseEstimation(swerveDrive);
-
-      // swerveDrive.drive(new ChassisSpeeds());
-
-      // Display swerve drive angle encoders onto the Smartdashboard
-      // super.periodic();
-      // SmartDashboard.putNumber("flAngle",swerveDrive.getModules()[0].getAbsolutePosition());
-      // SmartDashboard.putNumber("frAngle",swerveDrive.getModules()[1].getAbsolutePosition());
-      // SmartDashboard.putNumber("blAngle",swerveDrive.getModules()[2].getAbsolutePosition());
-      // SmartDashboard.putNumber("brAngle",swerveDrive.getModules()[3].getAbsolutePosition());
     }
   }
 
@@ -450,7 +432,8 @@ public class SwerveSubsystem extends SubsystemBase {
           translationY.getAsDouble()), 0.8);
 
       // Make the robot move
-      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(), scaledInputs.getY(),
+      driveFieldOriented(swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(),
+          scaledInputs.getY(),
           headingX.getAsDouble(),
           headingY.getAsDouble(),
           swerveDrive.getOdometryHeading().getRadians(),
@@ -482,10 +465,13 @@ public class SwerveSubsystem extends SubsystemBase {
    *                      robot-relative.
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
+    // fieldRelative = false; //Force robot-relative for testing
+    // ********************************MUST CHANGE BACK***********************
     swerveDrive.drive(translation,
         rotation,
         fieldRelative,
-        false); // Open loop is disabled since it shouldn't be used most of the time.
+        false);// Open loop is disabled since it shouldn't be used most of the time.
+
   }
 
   /**
@@ -513,14 +499,11 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @param velocity Robot oriented {@link ChassisSpeeds}
    */
-  public void drive(ChassisSpeeds velocity) {
-    swerveDrive.drive(velocity);
-  }
-
-  public Command drive(Supplier<ChassisSpeeds> velocity) {
-    return run(() -> {
-      swerveDrive.drive(velocity.get());
-    });
+  public Command drive(ChassisSpeeds velocity) {
+    return run(
+        () -> {
+          swerveDrive.drive(velocity);
+        });
   }
 
   /**
@@ -640,6 +623,7 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param headingY Y joystick which controls the angle of the robot.
    * @return {@link ChassisSpeeds} which can be sent to the Swerve Drive.
    */
+
   public ChassisSpeeds getTargetSpeeds(double xInput, double yInput, double headingX, double headingY) {
     Translation2d scaledInputs = SwerveMath.cubeTranslation(new Translation2d(xInput, yInput));
     return swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(),
@@ -741,5 +725,4 @@ public class SwerveSubsystem extends SubsystemBase {
   public ChassisSpeeds getDeath() {
     return new ChassisSpeeds(0, 0, getSwerveDrive().getMaximumChassisAngularVelocity());
   }
-
 }

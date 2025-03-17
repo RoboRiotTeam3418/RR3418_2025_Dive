@@ -7,27 +7,28 @@ package frc.robot.commands;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkMax;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.CoralEndEffector;
+import frc.robot.subsystems.Arm;
 import frc.robot.util.math.DeadbandUtils;
 
 /** An example command that uses an example subsystem. */
 public class EndToAngle extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-  private final CoralEndEffector m_subsystem;
+  private final Arm m_subsystem;
   private double m_angle;
   // variables
   public SparkMax spinMotor;
   public AbsoluteEncoder spinEncoder;
-  public DigitalInput gamePieceSensor;
   public Solenoid claw;
-  public double allowance = 5;
+  public double allowance = 10;
 
-  public double spinSpeed; // placeholder value
-  public boolean isClockwise, isCounterClockwise;
+  public double setval; // placeholder value
+  private PIDController pid;
+  private final static double SPIN_P = .0004, SPIN_I = 0.000000, SPIN_D = 0.00;
 
   /**
    * Creates a new ExampleCommand.
@@ -35,38 +36,38 @@ public class EndToAngle extends Command {
    * @param subsystem The subsystem used by this command.
    * @param angle angle to go to in degrees
    */
-  public EndToAngle(CoralEndEffector subsystem, Double angle) {
+  public EndToAngle(Arm subsystem, Double angle) {
     m_subsystem = subsystem;
     m_angle = angle;
     // Use addRequirements() here to declare subsystem dependencies.
-    spinSpeed = m_subsystem.spinSpeed;
     addRequirements(subsystem);
     spinMotor = m_subsystem.spinMotor;
     spinEncoder = m_subsystem.spinEncoder;
-    claw = m_subsystem.claw;
+    pid = new PIDController(SPIN_P, SPIN_I, SPIN_D);
+    pid.setTolerance(2, 5);// values suggested by wpilib documentation
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    pid.setSetpoint(m_angle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     SmartDashboard.putNumber("goal Angle", m_angle);  
-    if (DeadbandUtils.isLess(m_subsystem.getEncValDegrees(), m_subsystem.POS_ANGLE_LIMIT)) {
-      if (m_subsystem.getEncValDegrees() > m_angle + allowance) {
-        spinMotor.set(-spinSpeed);
-      }
-      if (m_subsystem.getEncValDegrees() < m_angle - allowance) {
-        spinMotor.set(spinSpeed);
-      }
-    }else{
-      m_subsystem.stop();
-    }
-    if (DeadbandUtils.isWithin(m_subsystem.getEncValDegrees(),m_angle,allowance)){
+    //if (DeadbandUtils.isLess(m_subsystem.getEncValDegrees(), m_subsystem.POS_ANGLE_LIMIT)) {
+      setval = pid.calculate(m_subsystem.spinEncoder.getPosition(), pid.getSetpoint());
+      //if (m_subsystem.spinEncoder.getPosition()>)
+      //SmartDashboard.putNumber("set Speed", setval);
+      spinMotor.set(-setval);
+    //}else{
+     // m_subsystem.stop();
+    //}
+    if (DeadbandUtils.isWithin(m_subsystem.spinEncoder.getPosition(),m_angle,allowance)){
       SmartDashboard.putBoolean("at Angle?", true);  
+      spinMotor.set(0);
     }else{
       SmartDashboard.putBoolean("at Angle?", false);  
     }
@@ -75,13 +76,15 @@ public class EndToAngle extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    spinMotor.set(0);
+    //spinMotor.set(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    return false;
+    /* 
     return (DeadbandUtils.isWithin(spinEncoder.getPosition(), m_angle, allowance)
-            ||DeadbandUtils.isGreater(m_subsystem.getEncValDegrees(), m_subsystem.POS_ANGLE_LIMIT));
+            ||DeadbandUtils.isGreater(m_subsystem.getEncValDegrees(), m_subsystem.POS_ANGLE_LIMIT));*/
   }
 }

@@ -1,57 +1,50 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-/* 
+
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Solenoid;
+import frc.robot.Setup;
+import frc.robot.subsystems.Claw;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.CoralEndEffector;
 
-/** An example command that uses an example subsystem. *
-public class autoClaw extends Command {
-  @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
-  private final CoralEndEffector m_subsystem;
-  private double m_angle;
-  // variables
-  public DigitalInput gamePieceSensor;
-  public Solenoid claw;
+/** An example command that uses an example subsystem. */
+public class ReadyClaw extends Command {
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  private final Claw m_subsystem;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
-   *
-  public autoClaw(CoralEndEffector subsystem) {
+   */
+  public ReadyClaw(Claw subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
-    claw = m_subsystem.claw;
-    gamePieceSensor = m_subsystem.gamePieceSensor;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    claw.set(false);
+    if(!m_subsystem.gamePieceSensor.get()){
+          m_subsystem.claw.set(false);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    claw.set(true);
+    m_subsystem.claw.set(false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return gamePieceSensor.get();
+    return false;
   }
 }
-*/

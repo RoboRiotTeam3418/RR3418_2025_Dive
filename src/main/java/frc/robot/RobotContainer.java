@@ -27,16 +27,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.AutoOrientCmd;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ElevatorManual;
-import frc.robot.commands.ElevatorSnap;
-import frc.robot.commands.EndToAngle;
-import frc.robot.commands.autoClaw;
-import frc.robot.subsystems.CoralEndEffector;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.SwerveSubsystem;
-import frc.robot.util.drivers.Limelight;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import frc.robot.util.drivers.Toggles;
 import swervelib.SwerveInputStream;
 
@@ -53,15 +45,19 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
   private final Elevator m_elevator = new Elevator();
-  private final CoralEndEffector m_endeff = new CoralEndEffector();
+  private final Arm m_arm = new Arm();
+  private final Claw m_claw = new Claw();
   private final Limelight m_Limelight = new Limelight();
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
   // commands
-  private final Command m_manual = new ElevatorManual(m_elevator);
-
-  // public double speed = 0;
+  private final Command m_elevManual = new ElevatorManual(m_elevator);
+  
+  private final Command m_armManual = new ArmManual(m_arm);
+  private final Command m_readyClaw = new ReadyClaw(m_claw);
+  
+  //public double speed = 0;
   // commands
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
       m_elevator.setSnap(ElevatorLevel.LOWEST),
@@ -150,15 +146,6 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-
-    // the below command makes elevator move to grabbing position, puts the grabby
-    // bit at the right angle, and opens grabby bit (we're using some sort of
-    // grabber right?)
-
-    // default commands
-    m_endeff.setDefaultCommand(new ParallelCommandGroup(
-        m_endeff.pistonMove(false), m_endeff.stop()));// stops movement and closes claw
-
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
@@ -225,6 +212,12 @@ public class RobotContainer {
     Trigger mediumTrig = new Trigger(medium);
     BooleanSupplier fast = () -> Setup.getInstance().getPrimaryDriverXButton();
     Trigger fastTrig = new Trigger(fast);
+    BooleanSupplier spinIsPos = () -> Setup.getInstance().getSecondaryRX() > 0.1;
+    Trigger spinPosTrig = new Trigger(spinIsPos);
+    BooleanSupplier spinIsNeg = () -> Setup.getInstance().getSecondaryRX() < -0.1;
+    Trigger spinNegTrig = new Trigger(spinIsNeg);
+    BooleanSupplier spinIsOn = () -> spinIsPos.getAsBoolean()|| spinIsNeg.getAsBoolean();
+    Trigger spinIsOnTrig = new Trigger(spinIsOn);
 
     // Default commands
     //WHAT DOES THIS DO?
@@ -235,10 +228,13 @@ public class RobotContainer {
     }));*/
 
     // Elevator
-    m_elevator.setDefaultCommand(m_manual);
-    //Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator));
-    //Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
-
+    m_elevator.setDefaultCommand(m_elevManual);
+    m_secondary.leftTrigger().whileTrue(new ElevatorSnap(m_elevator));
+    m_secondary.pov(180).onTrue(m_elevator.snapDown());
+    m_secondary.pov(0).onTrue(m_elevator.snapUp());
+    //m_endeff.setDefaultCommand(new SequentialCommandGroup(
+        //m_claw.pistonMove(false), m_arm.stop()));
+    m_elevator.setDefaultCommand(m_elevManual);
     /* 
     // Auto Orient
     m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_Limelight, 2, 18, 4.2, 2));
@@ -270,7 +266,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("release", m_endeff.pistonMove(false));
     // Arm
     /*
-     * m_endeff.setDefaultCommand(new EndManual(m_endeff));
      * m_secondary.rightTrigger().whileTrue(m_endeff.pistonMove(true));
      * m_secondary.rightTrigger().whileFalse(m_endeff.pistonMove(false));
      * m_secondary.a().whileTrue(new EndToAngle(m_endeff, 0.0));
@@ -324,22 +319,27 @@ public class RobotContainer {
     fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
     //Secondary
-    m_secondary.a().onTrue(new EndToAngle(m_endeff, 180.0));//vertical
-    m_secondary.b().onTrue(new EndToAngle(m_endeff, 215.0));//ready to drop on mid levels
-    m_secondary.x().onTrue(new EndToAngle(m_endeff, 145.0));//ready to drop on mid levels
-    m_secondary.y().onTrue(new EndToAngle(m_endeff, 225.0));//ready to drop on top level and trough
-    m_spinPos.whileTrue(m_endeff.spinClockwise());
-    m_spinNeg.whileTrue(m_endeff.spinCounterClockwise());
-    m_coralRelease.whileTrue(m_endeff.pistonMove(true));
-    m_coralRelease.onFalse(m_endeff.pistonMove(false));
     m_secondary.leftBumper()
-        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 180.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
+        .onTrue(new SequentialCommandGroup(new EndToAngle(m_arm, 180.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
     // automatically bring elevator to 0 if left bumper pressed, first ensure
     // endeffector is in position
     m_elevUp.onTrue(m_elevator.snapUp());
     m_elevDown.onTrue(m_elevator.snapDown());
     m_elevGo.whileTrue(new ElevatorSnap(m_elevator));
     
+    /* END TO ANGLE COMMANDS, UNTESTED
+    m_secondary.a().onTrue(new EndToAngle(m_arm, 180.0));
+    m_secondary.b().onTrue(new EndToAngle(m_arm, 215.0));
+    m_secondary.x().onTrue(new EndToAngle(m_arm, 145.0));
+    m_secondary.y().onTrue(new EndToAngle(m_arm, 225.0));
+    */
+    //m_arm.setDefaultCommand(new EndToAngle(m_arm, 180.0));
+    m_arm.setDefaultCommand(m_arm.stop());
+    spinIsOnTrig.whileTrue(m_armManual);
+    
+    m_coralRelease.whileTrue(m_claw.pistonMove(true));
+    m_coralRelease.onFalse(m_claw.pistonMove(false));
+    m_secondary.start().toggleOnTrue(new ToggleClaw(m_claw));
   }
 
   /**

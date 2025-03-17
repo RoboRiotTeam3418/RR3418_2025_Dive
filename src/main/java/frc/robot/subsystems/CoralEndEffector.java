@@ -11,23 +11,24 @@ import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Setup;
 
 public class CoralEndEffector extends SubsystemBase {
-  // get instance
-  static CoralEndEffector mInstance = new CoralEndEffector();
-
-  public static CoralEndEffector getInstance() {
-    return mInstance;
-  }
 
   // variables
+  public static final int SPIN_ID = 22;
   public SparkMax spinMotor;
   public AbsoluteEncoder spinEncoder;
   public DigitalInput gamePieceSensor;
   public Solenoid claw;
+  public Double SPIN_OFFSET = 0.0, CONVERSION = 360.0, POS_ANGLE_LIMIT = 15.0;
+  // 0ffset = distance from 0, Conversion= multiplier to get degrees (should be
+  // unecessary with
+  // updated configs),
+  // POS_ANGLE_LIMIT = 1/2 of range aka max angle from center counterclockwise
+  // (positive direction)
 
   public double spinSpeed = 0.1; // placeholder value
   public boolean isClockwise, isCounterClockwise;
@@ -37,9 +38,10 @@ public class CoralEndEffector extends SubsystemBase {
   }
 
   private void initialize() {
-    //spinMotor = new SparkMax(Setup.SPIN_ID, MotorType.kBrushless);
-    //spinEncoder = spinMotor.getAbsoluteEncoder();
-    //claw = new Solenoid(PneumaticsModuleType.REVPH, 0);
+    spinMotor = new SparkMax(SPIN_ID, MotorType.kBrushless);
+    spinEncoder = spinMotor.getAbsoluteEncoder();
+    claw = new Solenoid(PneumaticsModuleType.REVPH, 0);
+    gamePieceSensor = new DigitalInput(0);
   }
 
   /**
@@ -52,7 +54,11 @@ public class CoralEndEffector extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
         () -> {
-          spinMotor.set(spinSpeed);
+          if (getEncValDegrees() < 360 - POS_ANGLE_LIMIT && getEncValDegrees() > 180) {
+            spinMotor.set(-spinSpeed);
+          } else {
+            stop();
+          }
         });
   }
 
@@ -61,13 +67,18 @@ public class CoralEndEffector extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return run(
         () -> {
-          spinMotor.set(-spinSpeed);
+          if (getEncValDegrees() > POS_ANGLE_LIMIT && getEncValDegrees() < 180) {
+            spinMotor.set(spinSpeed);
+          } else {
+            stop();
+          }
         });
   }
 
   public Command pistonMove(boolean state) {
     return runOnce(
         () -> {
+          System.out.println(state);
           claw.set(state);
         });
   }
@@ -79,9 +90,20 @@ public class CoralEndEffector extends SubsystemBase {
         });
   }
 
+  public Boolean getClaw() {
+    return claw.get();
+  }
+
+  public double getEncValDegrees() {
+    return spinEncoder.getPosition() + SPIN_OFFSET;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Raw Endeff Angle", spinEncoder.getPosition());
+    SmartDashboard.putNumber("Adjusted Endeff Angle", getEncValDegrees());
+    SmartDashboard.putBoolean("lazerboi", gamePieceSensor.get());
   }
 
   @Override

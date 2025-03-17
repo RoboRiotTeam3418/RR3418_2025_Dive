@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -26,16 +27,18 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoOrientCmd;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ElevatorManual;
 import frc.robot.commands.ElevatorSnap;
 import frc.robot.commands.EndToAngle;
+import frc.robot.commands.autoClaw;
 import frc.robot.subsystems.CoralEndEffector;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.util.drivers.Limelight;
 import frc.robot.util.drivers.Toggles;
 import swervelib.SwerveInputStream;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -51,6 +54,7 @@ public class RobotContainer {
 
   private final Elevator m_elevator = new Elevator();
   private final CoralEndEffector m_endeff = new CoralEndEffector();
+  private final Limelight m_Limelight = new Limelight();
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
@@ -60,10 +64,11 @@ public class RobotContainer {
   // public double speed = 0;
   // commands
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
+      m_elevator.setSnap(ElevatorLevel.LOWEST),
       new ParallelCommandGroup(
-          new ElevatorSnap(m_elevator),
-          new EndToAngle(m_endeff, 0.0).withTimeout(20)),
-      m_endeff.pistonMove(true));
+          new ElevatorSnap(m_elevator)));
+  // new EndToAngle(m_endeff, 0.0).withTimeout(20)),
+  // m_endeff.pistonMove(true));
 
   // Driver speeds
 
@@ -121,7 +126,6 @@ public class RobotContainer {
       .withControllerHeadingAxis(m_primaryJoystick::getTwist, getNegTwist)// checkfunction
       .headingWhile(true);
 
-
   SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> -m_primaryJoystick.getY(),
       () -> -m_primaryJoystick.getX())
@@ -174,19 +178,17 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings()
-  {
-
-    Command driveFieldOrientedDirectAngle         = drivebase.driveFieldOriented(driveDirectAngle);
-    Command driveFieldOrientedAnglularVelocity    = drivebase.driveFieldOriented(driveAngularVelocity);
-    Command driveSetpointGen                      = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-    Command driveFieldOrientedDirectAngleSim      = drivebase.driveFieldOriented(driveDirectAngleSim);
+  private void configureBindings() {
+    // DRIVETRAIN COMMAND ASSIGNMENTS R
+    Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
+    Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+    Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
+    Command driveFieldOrientedDirectAngleSim = drivebase.driveFieldOriented(driveDirectAngleSim);
     Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
     Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleSim);
     final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> new ChassisSpeeds(0, 0,
         drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
-    Command death = drivebase.driveFieldOriented(DEATH_SPEEDS);
 
     // create triggers for primary buttons
     BooleanSupplier fullStop = () -> Setup.getInstance().getFullStop();
@@ -226,11 +228,57 @@ public class RobotContainer {
     Trigger fastTrig = new Trigger(fast);
 
     // Default commands
+    //WHAT DOES THIS DO?
+    /*m_secondary.start().onTrue(new InstantCommand(new Runnable() {
+      public void run() {
+        Toggles.toggleSecondary();
+      };
+    }));*/
+
+    // Elevator
     m_elevator.setDefaultCommand(m_manual);
     //Setup.getInstance().toggleElevator.toggleOnTrue(new ElevatorSnap(m_elevator));
     //Setup.getInstance().toggleElevator.toggleOnFalse(m_manual);
 
     /* 
+    // Auto Orient
+    m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_Limelight, 2, 18, 4.2, 2));
+
+    // Auto Commands
+    NamedCommands.registerCommand("pickup", m_pickup);
+    NamedCommands.registerCommand("place left", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_TWO),
+        new ParallelCommandGroup(new ElevatorSnap(m_elevator))));
+    NamedCommands.registerCommand("grab", new autoClaw(m_endeff));
+    NamedCommands.registerCommand("release", m_endeff.pistonMove(false));
+    // Arm
+    /*
+     * m_endeff.setDefaultCommand(new EndManual(m_endeff));
+     * m_secondary.rightTrigger().whileTrue(m_endeff.pistonMove(true));
+     * m_secondary.rightTrigger().whileFalse(m_endeff.pistonMove(false));
+     * m_secondary.a().whileTrue(new EndToAngle(m_endeff, 0.0));
+     * m_secondary.b().whileTrue(new EndToAngle(m_endeff, 35.0));
+     * m_secondary.y().whileTrue(new EndToAngle(m_endeff, 90.0));
+     
+
+    // Auto Orient
+    m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_Limelight, 2, 18, 4.2, 2));
+
+    // Auto Commands
+    NamedCommands.registerCommand("pickup", m_pickup);
+    NamedCommands.registerCommand("place left", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_TWO),
+        new ParallelCommandGroup(new ElevatorSnap(m_elevator))));
+    NamedCommands.registerCommand("grab", new autoClaw(m_endeff));
+    NamedCommands.registerCommand("release", m_endeff.pistonMove(false));
+    // Arm
+    /*
+     * m_endeff.setDefaultCommand(new EndManual(m_endeff));
+     * m_secondary.rightTrigger().whileTrue(m_endeff.pistonMove(true));
+     * m_secondary.rightTrigger().whileFalse(m_endeff.pistonMove(false));
+     * m_secondary.a().whileTrue(new EndToAngle(m_endeff, 0.0));
+     * m_secondary.b().whileTrue(new EndToAngle(m_endeff, 35.0));
+     * m_secondary.y().whileTrue(new EndToAngle(m_endeff, 90.0));
+     *
+
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
     } else {*/
@@ -253,8 +301,8 @@ public class RobotContainer {
       driveSetDistanceTrig.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
       zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
       primaryBackTrig.whileTrue(drivebase.centerModulesCommand());
-      backIsNegTrig.onTrue(Commands.none());
-      backIsPosTrig.onTrue(Commands.none());
+      // backIsNegTrig.onTrue(Commands.none());
+      // backIsPosTrig.onTrue(Commands.none());
     } else {
       zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
       fakeVisionTrig.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
@@ -263,9 +311,9 @@ public class RobotContainer {
               new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
       primaryStartTrig.whileTrue(Commands.none());
       primaryBackTrig.whileTrue(Commands.none());
-      backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      backIsPosTrig.onTrue(Commands.none());
-      deathModeTrig.whileTrue(death);
+      // backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock,
+      // drivebase).repeatedly());
+      // backIsPosTrig.onTrue(Commands.none());
 
   }*/
     //zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
@@ -277,15 +325,16 @@ public class RobotContainer {
     fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
     //Secondary
-    m_secondary.a().onTrue(new EndToAngle(m_endeff, 0.0));//vertical
-    m_secondary.b().onTrue(new EndToAngle(m_endeff, 35.0));//ready to drop on mid levels
-    m_secondary.y().onTrue(new EndToAngle(m_endeff, 90.0));//ready to drop on top level and trough
+    m_secondary.a().onTrue(new EndToAngle(m_endeff, 180.0));//vertical
+    m_secondary.b().onTrue(new EndToAngle(m_endeff, 215.0));//ready to drop on mid levels
+    m_secondary.x().onTrue(new EndToAngle(m_endeff, 145.0));//ready to drop on mid levels
+    m_secondary.y().onTrue(new EndToAngle(m_endeff, 225.0));//ready to drop on top level and trough
     m_spinPos.whileTrue(m_endeff.spinClockwise());
     m_spinNeg.whileTrue(m_endeff.spinCounterClockwise());
     m_coralRelease.whileTrue(m_endeff.pistonMove(true));
     m_coralRelease.onFalse(m_endeff.pistonMove(false));
     m_secondary.leftBumper()
-        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
+        .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 180.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
     // automatically bring elevator to 0 if left bumper pressed, first ensure
     // endeffector is in position
     m_elevUp.onTrue(m_elevator.snapUp());
@@ -299,8 +348,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand()
-  {
+  public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return drivebase.getAutonomousCommand("New Auto");
   }

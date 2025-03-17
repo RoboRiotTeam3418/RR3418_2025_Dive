@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,7 +48,7 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    // Compressor m_Compressor = new Compressor(2, PneumaticsModuleType.REVPH);
+    Compressor m_Compressor = new Compressor(2, PneumaticsModuleType.REVPH);
 
     // Create a timer to disable motor brake a few seconds after disable. This will
     // let the robot stop

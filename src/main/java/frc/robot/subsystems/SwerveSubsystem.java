@@ -756,4 +756,13 @@ public class SwerveSubsystem extends SubsystemBase {
     return new ChassisSpeeds(0, 0, getSwerveDrive().getMaximumChassisAngularVelocity());
   }
 
+  public Command driveCmd(Supplier<ChassisSpeeds> speeds){
+    return run(
+      ()-> {
+        drive(speeds);
+      }
+    );
+
+  }
+
 }

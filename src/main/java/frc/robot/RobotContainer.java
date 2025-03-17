@@ -187,8 +187,7 @@ public class RobotContainer {
     Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
     Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleSim);
-    final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> new ChassisSpeeds(0, 0,
-        drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
+    final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> drivebase.getDeath();
 
     // create triggers for primary buttons
     BooleanSupplier fullStop = () -> Setup.getInstance().getFullStop();
@@ -321,7 +320,7 @@ public class RobotContainer {
     // COMMAND/TRIGGER ASSIGNMENTS
 
     //Primary Driver 
-    deathModeTrig.whileTrue(death);
+    deathModeTrig.whileTrue(drivebase.drive(DEATH_SPEEDS));
     fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
     //Secondary

@@ -28,7 +28,7 @@ public class EndToAngle extends Command {
 
   public double setval; // placeholder value
   private PIDController pid;
-  private final static double SPIN_P = .0004, SPIN_I = 0.000000, SPIN_D = 0.00;
+  private final static double SPIN_P = .002, SPIN_I = 0.000000, SPIN_D = 0.00;
 
   /**
    * Creates a new ExampleCommand.
@@ -82,7 +82,7 @@ public class EndToAngle extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (DeadbandUtils.isWithin(m_subsystem.spinEncoder.getPosition(),m_angle,allowance));
     /* 
     return (DeadbandUtils.isWithin(spinEncoder.getPosition(), m_angle, allowance)
             ||DeadbandUtils.isGreater(m_subsystem.getEncValDegrees(), m_subsystem.POS_ANGLE_LIMIT));*/

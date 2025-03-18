@@ -29,6 +29,7 @@ public class ElevatorManual extends Command {
     addRequirements(subsystem);
   }
 
+  
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {

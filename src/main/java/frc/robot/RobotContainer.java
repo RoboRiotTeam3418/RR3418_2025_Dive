@@ -77,12 +77,12 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled
    * by angular velocity.
    */
-  public DoubleSupplier getPosTwist = () -> m_primaryJoystick.getRawAxis(5);
+  public DoubleSupplier getPosTwist = () -> -m_primaryJoystick.getRawAxis(5);
   public double speed = 0.5, xtraSlow = 0.35, slow = 0.5, med = 0.75, fast = 0.8;
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> m_primaryJoystick.getY(), // CHECK FUNCTION
       () -> m_primaryJoystick.getX())// CHECK FUNCTION
-      .withControllerRotationAxis(()->m_primaryJoystick.getRawAxis(5))// CHECK FUNCTION
+      .withControllerRotationAxis(()->-m_primaryJoystick.getRawAxis(5))// CHECK FUNCTION
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
@@ -127,7 +127,7 @@ public class RobotContainer {
   SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> -m_primaryJoystick.getY(),
       () -> -m_primaryJoystick.getX())
-      .withControllerRotationAxis(() -> m_primaryJoystick.getRawAxis(2))
+      .withControllerRotationAxis(() -> -m_primaryJoystick.getRawAxis(2))
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
@@ -215,12 +215,12 @@ public class RobotContainer {
     BooleanSupplier fast = () -> Setup.getInstance().getPrimaryDriverXButton();
     Trigger fastTrig = new Trigger(fast);
     BooleanSupplier spinIsPos = () -> Setup.getInstance().getSecondaryRX() > 0.1;
-    Trigger POVUp = new POVButton(m_secondary.getHID(), 0);
-    Trigger POVDown = new POVButton(m_secondary.getHID(), 180);
-    BooleanSupplier elevDown = ()-> POVDown.getAsBoolean();
-    Trigger elevDownTrig = new Trigger(elevDown);
-    BooleanSupplier elevUp = ()-> POVUp.getAsBoolean();
-    Trigger elevUpTrig = new Trigger(elevUp);
+    //Trigger POVUp = new POVButton(m_secondary.getHID(), 0);
+    //Trigger POVDown = new POVButton(m_secondary.getHID(), 180);
+    //BooleanSupplier elevDown = ()-> POVDown.getAsBoolean();
+    //Trigger elevDownTrig = new Trigger(elevDown);
+    //BooleanSupplier elevUp = ()-> POVUp.getAsBoolean();
+    //Trigger elevUpTrig = new Trigger(elevUp);
     // Default commands
     //WHAT DOES THIS DO?
     /*m_secondary.start().onTrue(new InstantCommand(new Runnable() {
@@ -251,10 +251,11 @@ public class RobotContainer {
     /*
      * m_endeff.setDefaultCommand(new EndManual(m_endeff));
      * m_secondary.rightTrigger().whileTrue(m_endeff.pistonMove(true));
-     * m_secondary.rightTrigger().whileFalse(m_endeff.pistonMove(false));
-     * m_secondary.a().whileTrue(new EndToAngle(m_endeff, 0.0));
-     * m_secondary.b().whileTrue(new EndToAngle(m_endeff, 35.0));
-     * m_secondary.y().whileTrue(new EndToAngle(m_endeff, 90.0));
+     * m_secondary.rightTrigger().whileFalse(m_arm.pistonMove(false));*/
+    m_secondary.y().whileTrue(new EndToAngle(m_arm, 180.0));
+    m_secondary.b().whileTrue(new EndToAngle(m_arm, 140.0));
+    m_secondary.x().whileTrue(new EndToAngle(m_arm, 220.0));
+     /* m_secondary.y().whileTrue(new EndToAngle(m_endeff, 90.0));
      
 
     // Auto Orient
@@ -322,12 +323,12 @@ public class RobotContainer {
 
     //Secondary
     m_secondary.leftBumper()
-        .onTrue(new SequentialCommandGroup(new EndToAngle(m_arm, 180.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
+        .whileTrue(new SequentialCommandGroup(new EndToAngle(m_arm, 180.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
     // automatically bring elevator to 0 if left bumper pressed, first ensure
     // endeffector is in position
-    elevUpTrig.onTrue(m_elevator.snapUp());
+    /*elevUpTrig.onTrue(m_elevator.snapUp());
     elevDownTrig.onTrue(m_elevator.snapDown());
-    elevGoTrig.whileTrue(new ElevatorSnap(m_elevator));
+    elevGoTrig.whileTrue(new ElevatorSnap(m_elevator));*/
     
     /* END TO ANGLE COMMANDS, UNTESTED
     m_secondary.a().onTrue(new EndToAngle(m_arm, 180.0));
@@ -336,8 +337,9 @@ public class RobotContainer {
     m_secondary.y().onTrue(new EndToAngle(m_arm, 225.0));
     */
     //m_arm.setDefaultCommand(new EndToAngle(m_arm, 180.0));
-    m_arm.setDefaultCommand(m_arm.stop());
-    spinIsOnTrig.whileTrue(m_armManual);
+    //m_arm.setDefaultCommand(m_arm.stop());
+    //spinIsOnTrig.whileTrue(m_armManual);
+    m_arm.setDefaultCommand(m_armManual);
     
     //m_secondary.rightTrigger(0.1).whileTrue(m_claw.pistonMove(true));
     m_secondary.start().toggleOnTrue(new ToggleClaw(m_claw));

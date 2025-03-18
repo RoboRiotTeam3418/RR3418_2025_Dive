@@ -71,9 +71,12 @@ public class ArmManual extends Command {
     if (( m_subsystem.spinEncoder.getPosition()>= MAX_VAL && getRX()>0.1) || ( m_subsystem.spinEncoder.getPosition()<= NEG_MAX_VAL && getRX()<-0.1)) {
       speed=0;
     }
+    if (Math.abs(Setup.getInstance().getSecondaryRX())<.25) {
+      speed=0;
+    }
     m_subsystem.spinMotor.set(-speed);
     SmartDashboard.putNumber("spin speed", speed);
-    
+    //System.out.println("I want to spin");
   }
 
   // Called once the command ends or is interrupted.

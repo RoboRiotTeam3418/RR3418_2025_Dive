@@ -149,17 +149,6 @@ public class Setup {
   // Xbox Controller (Secondary)
   private static CommandXboxController secondaryJoystick = new CommandXboxController(0);
   public final Trigger toggleElevator = secondaryJoystick.back();
-  public final Trigger POVUp = new POVButton(secondaryJoystick.getHID(), 0);
-  public final Trigger POVDown = new POVButton(secondaryJoystick.getHID(), 180);
-  public final Trigger releaseCoral = secondaryJoystick.rightTrigger(0.1);
-  public final BooleanSupplier elevDown = ()-> getSecondaryPOVDownasBool();
-  public final Trigger elevDownTrig = new Trigger(elevDown);
-  public final BooleanSupplier elevUp = ()-> getSecondaryPOVUpasBool();
-  public final Trigger elevUpTrig = new Trigger(elevUp);
-  public final Trigger spinNegTrig = secondaryJoystick.axisLessThan(4,0.1);
-  public final Trigger spinPosTrig = secondaryJoystick.axisGreaterThan(4,0.1);
-  public final Trigger snapGo = secondaryJoystick.leftTrigger(0.1);
-
   public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;
   }
@@ -175,14 +164,6 @@ public class Setup {
 
   public Double getSecondaryLY() {
     return secondaryJoystick.getLeftY();
-  }
-
-  public boolean getSecondaryPOVUpasBool() {
-    return POVUp.getAsBoolean();
-  }
-
-  public boolean getSecondaryPOVDownasBool() {
-    return POVDown.getAsBoolean();
   }
 
   // ---------------------------------------------------------Hardware------------------------------------------------------------------------

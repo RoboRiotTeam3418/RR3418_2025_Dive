@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.*;
@@ -198,12 +199,12 @@ public class RobotContainer {
     Trigger deathModeTrig = new Trigger(deathMode);
 
     // create secondary triggers
-    Trigger m_spinPos = Setup.getInstance().spinPosTrig;
-    Trigger m_spinNeg = Setup.getInstance().spinNegTrig;
-    Trigger m_elevUp = Setup.getInstance().elevUpTrig;
-    Trigger m_elevDown = Setup.getInstance().elevDownTrig;
-    Trigger m_coralRelease = Setup.getInstance().releaseCoral;
-    Trigger m_elevGo = Setup.getInstance().snapGo;
+    Trigger releaseCoral = m_secondary.rightTrigger(0.1);
+    Trigger spinNegTrig = m_secondary.axisLessThan(4,0.1);
+    Trigger spinPosTrig = m_secondary.axisGreaterThan(4,0.1);
+    Trigger elevGoTrig = m_secondary.leftTrigger(0.1);
+    BooleanSupplier spinIsOn = () -> spinPosTrig.getAsBoolean()|| spinNegTrig.getAsBoolean();
+    Trigger spinIsOnTrig = new Trigger(spinIsOn);
     //speed changer
     BooleanSupplier xtraSlow = () -> Setup.getInstance().getPrimaryDriverYButton();
     Trigger xtraSlowTrig = new Trigger(xtraSlow);
@@ -214,12 +215,12 @@ public class RobotContainer {
     BooleanSupplier fast = () -> Setup.getInstance().getPrimaryDriverXButton();
     Trigger fastTrig = new Trigger(fast);
     BooleanSupplier spinIsPos = () -> Setup.getInstance().getSecondaryRX() > 0.1;
-    Trigger spinPosTrig = new Trigger(spinIsPos);
-    BooleanSupplier spinIsNeg = () -> Setup.getInstance().getSecondaryRX() < -0.1;
-    Trigger spinNegTrig = new Trigger(spinIsNeg);
-    BooleanSupplier spinIsOn = () -> spinIsPos.getAsBoolean()|| spinIsNeg.getAsBoolean();
-    Trigger spinIsOnTrig = new Trigger(spinIsOn);
-
+    Trigger POVUp = new POVButton(m_secondary.getHID(), 0);
+    Trigger POVDown = new POVButton(m_secondary.getHID(), 180);
+    BooleanSupplier elevDown = ()-> POVDown.getAsBoolean();
+    Trigger elevDownTrig = new Trigger(elevDown);
+    BooleanSupplier elevUp = ()-> POVUp.getAsBoolean();
+    Trigger elevUpTrig = new Trigger(elevUp);
     // Default commands
     //WHAT DOES THIS DO?
     /*m_secondary.start().onTrue(new InstantCommand(new Runnable() {
@@ -324,9 +325,9 @@ public class RobotContainer {
         .onTrue(new SequentialCommandGroup(new EndToAngle(m_arm, 180.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
     // automatically bring elevator to 0 if left bumper pressed, first ensure
     // endeffector is in position
-    m_elevUp.onTrue(m_elevator.snapUp());
-    m_elevDown.onTrue(m_elevator.snapDown());
-    m_elevGo.whileTrue(new ElevatorSnap(m_elevator));
+    elevUpTrig.onTrue(m_elevator.snapUp());
+    elevDownTrig.onTrue(m_elevator.snapDown());
+    elevGoTrig.whileTrue(new ElevatorSnap(m_elevator));
     
     /* END TO ANGLE COMMANDS, UNTESTED
     m_secondary.a().onTrue(new EndToAngle(m_arm, 180.0));
@@ -338,8 +339,8 @@ public class RobotContainer {
     m_arm.setDefaultCommand(m_arm.stop());
     spinIsOnTrig.whileTrue(m_armManual);
     
-    m_coralRelease.whileTrue(m_claw.pistonMove(true));
-    m_coralRelease.onFalse(m_claw.pistonMove(false));
+    releaseCoral.whileTrue(m_claw.pistonMove(true));
+    releaseCoral.onFalse(m_claw.pistonMove(false));
     m_secondary.start().toggleOnTrue(new ToggleClaw(m_claw));
   }
 

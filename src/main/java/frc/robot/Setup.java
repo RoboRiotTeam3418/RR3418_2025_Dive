@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.util.math.DeadbandUtils;
 import frc.robot.util.drivers.Gyroscope;
-import frc.robot.util.drivers.NavX;
 
 public class Setup {
 
@@ -124,15 +123,18 @@ public class Setup {
     return getPrimaryHID().getRawButtonPressed(12);
   }
 
-  public boolean getBackIsPos() {
-    // clears command
+  /**public boolean getBackIsPos() {
+     clears command
     return getPrimaryHID().getRawAxis(6) > 0.1;
   }
+*/
 
+/**
   public boolean getBackIsNeg() {
     // stops driver, clears command
     return getPrimaryHID().getRawAxis(6) < -0.1;
   }
+    */
 
   public boolean getDriveSetDistance() {
     return getPrimaryHID().getRawButtonPressed(15);
@@ -140,6 +142,14 @@ public class Setup {
 
   public boolean getFakeVision() {
     return getPrimaryHID().getRawButtonPressed(13);
+  }
+
+  public boolean axis6IsActive(){
+    return getPrimaryHID().getRawAxis(6) > 0.5 || getPrimaryHID().getRawAxis(6) < -0.5;
+  }
+
+  public double axis6Value(){
+   return getPrimaryHID().getRawAxis(6);
   }
 
   // -----------------------------------------------------secondary--------------------------------------------------------------------
@@ -186,7 +196,7 @@ public class Setup {
   // ---------------------------------------------------------Hardware------------------------------------------------------------------------
 
   // Gyroscope
-  public final Gyroscope gyroscope = NavX.getInstance();
+ // public final Gyroscope gyroscope = NavX.getInstance();
   // -----------------------------------------------------------IDs CHANGE
   // RAAAHHHHHHHHH------------------------------------------------------------------------------
 
@@ -207,9 +217,7 @@ public class Setup {
   public static final int ELEVMOT1ID = 20;
   public static final int ELEVMOT2ID = 21;
 
-  public static final int CLIMB1_ID = 24;
-  public static final int CLIMB2_ID = 23;
-  //public static final int SPIN_ID = 22;
+  public static final int SPIN_ID = 22;
   public static final int GamePieceSensorID = 0;
 
 }

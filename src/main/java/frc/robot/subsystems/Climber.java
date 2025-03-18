@@ -42,10 +42,10 @@ public class Climber extends SubsystemBase {
   }
 
   private void initialize() {
-    mot1 = new SparkMax(Setup.CLIMB1_ID, MotorType.kBrushless);
-    enc1 = mot1.getAbsoluteEncoder();
-    mot2 = new SparkMax(Setup.CLIMB2_ID, MotorType.kBrushless);
-    enc2 = mot2.getAbsoluteEncoder();
+    //mot1 = new SparkMax(Setup.CLIMB1_ID, MotorType.kBrushless);
+    //enc1 = mot1.getAbsoluteEncoder();
+    //mot2 = new SparkMax(Setup.CLIMB2_ID, MotorType.kBrushless);
+    //enc2 = mot2.getAbsoluteEncoder();
     //clamp = new Solenoid(0, null, 0);
   }
 

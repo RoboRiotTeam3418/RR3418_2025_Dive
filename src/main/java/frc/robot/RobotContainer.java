@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AutoOrientCmd;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ClimberMove;
 import frc.robot.commands.ElevatorManual;
@@ -35,6 +36,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CoralEndEffector;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.util.drivers.Limelight;
 import frc.robot.util.drivers.Toggles;
 import swervelib.SwerveInputStream;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -54,6 +56,7 @@ public class RobotContainer {
   private final Elevator m_elevator = new Elevator();
   private final CoralEndEffector m_endeff = new CoralEndEffector();
   private final Climber m_climber = new Climber();
+  private final Limelight m_limelight = new Limelight();
 
   CommandJoystick m_primaryJoystick = Setup.getInstance().getPrimaryJoystick();
   CommandXboxController m_secondary = Setup.getInstance().getSecondaryJoystick();
@@ -174,10 +177,14 @@ public class RobotContainer {
     Trigger primaryStartTrig = new Trigger(primaryStart);
     BooleanSupplier primaryBack = () -> Setup.getInstance().getPrimaryBack();
     Trigger primaryBackTrig = new Trigger(primaryBack);
+
+    /*
     BooleanSupplier backIsPos = () -> Setup.getInstance().getBackIsPos();
     Trigger backIsPosTrig = new Trigger(backIsPos);
     BooleanSupplier backIsNeg = () -> Setup.getInstance().getBackIsNeg();
     Trigger backIsNegTrig = new Trigger(backIsNeg);
+    */
+
     BooleanSupplier driveSetDistance = () -> Setup.getInstance().getDriveSetDistance();
     Trigger driveSetDistanceTrig = new Trigger(driveSetDistance);
     BooleanSupplier fakeVision = () -> Setup.getInstance().getFakeVision();
@@ -208,6 +215,11 @@ public class RobotContainer {
       public void run() {Toggles.toggleSecondary();};
     }));
 
+    /* AutoOrient
+    m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_limelight, 2, 5, 1, 0.5, 1));
+    m_primaryJoystick.axisLessThan(6, -.5).whileTrue(new AutoOrientCmd(drivebase, m_limelight, 3, 5, 1, 0.5, -1));
+    */
+
     // Elevator
     m_elevator.setDefaultCommand(m_manual);
     m_secondary.leftTrigger().whileTrue(new ElevatorSnap(m_elevator));
@@ -232,8 +244,8 @@ public class RobotContainer {
       driveSetDistanceTrig.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
       zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
       primaryBackTrig.whileTrue(drivebase.centerModulesCommand());
-      backIsNegTrig.onTrue(Commands.none());
-      backIsPosTrig.onTrue(Commands.none());
+      // backIsNegTrig.onTrue(Commands.none());
+      // backIsPosTrig.onTrue(Commands.none());
     } else {
       zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
       fakeVisionTrig.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
@@ -242,8 +254,8 @@ public class RobotContainer {
               new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
       primaryStartTrig.whileTrue(Commands.none());
       primaryBackTrig.whileTrue(Commands.none());
-      backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      backIsPosTrig.onTrue(Commands.none());
+      // backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      // backIsPosTrig.onTrue(Commands.none());
       deathModeTrig.whileTrue(death);
 
     }
@@ -276,8 +288,8 @@ public class RobotContainer {
       driveSetDistanceTrig.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
       zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
       primaryBackTrig.whileTrue(drivebase.centerModulesCommand());
-      backIsNegTrig.onTrue(Commands.none());
-      backIsPosTrig.onTrue(Commands.none());
+      //backIsNegTrig.onTrue(Commands.none());
+      //backIsPosTrig.onTrue(Commands.none());
     } else {
       zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
       fakeVisionTrig.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
@@ -286,8 +298,8 @@ public class RobotContainer {
               new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
       primaryStartTrig.whileTrue(Commands.none());
       primaryBackTrig.whileTrue(Commands.none());
-      backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      backIsPosTrig.onTrue(Commands.none());
+      //backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+      // backIsPosTrig.onTrue(Commands.none());
       deathModeTrig.whileTrue(death);
 
     }
@@ -301,6 +313,13 @@ public class RobotContainer {
     spinNegTrig.whileTrue(m_endeff.spinCounterClockwise());
     m_secondary.leftBumper().and(climbNotSched)
         .onTrue(new SequentialCommandGroup(new EndToAngle(m_endeff, 0.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
+
+    //AutoOrient
+
+    // keep distance at 1 rn
+    m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_limelight, 2, 5, 1, 0.5, 1));
+    m_primaryJoystick.axisLessThan(6, -.5).whileTrue(new AutoOrientCmd(drivebase, m_limelight, 3, 5, 1, 0.5, 1));
+
 
   }
 

@@ -148,7 +148,6 @@ public class Setup {
 
   // Xbox Controller (Secondary)
   private static CommandXboxController secondaryJoystick = new CommandXboxController(0);
-  public final Trigger toggleElevator = secondaryJoystick.back();
   public CommandXboxController getSecondaryJoystick() {
     return secondaryJoystick;
   }

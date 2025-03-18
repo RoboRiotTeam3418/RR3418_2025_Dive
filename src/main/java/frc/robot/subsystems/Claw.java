@@ -58,6 +58,7 @@ public class Claw extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("lazerboi", gamePieceSensor.get());  
     SmartDashboard.putBoolean("clawOpen", getClaw());
+    SmartDashboard.putBoolean("clawOpen", gamePieceSensor.get());
   }
 
   @Override

@@ -38,7 +38,6 @@ public class ToggleClaw extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
     if(!buttondown&&!ready && Setup.getInstance().getSecondaryJoystick().back().getAsBoolean()){
       ready = true;
       buttondown=true;
@@ -49,7 +48,7 @@ public class ToggleClaw extends Command {
     if (!Setup.getInstance().getSecondaryJoystick().back().getAsBoolean()){
       buttondown=false;
     }
-    if(ready && !m_subsystem.gamePieceSensor.get()){
+    if(!m_subsystem.gamePieceSensor.get()&& Setup.getInstance().getSecondaryJoystick().getRightTriggerAxis()<0.1){
       m_subsystem.claw.set(false);
       
     }

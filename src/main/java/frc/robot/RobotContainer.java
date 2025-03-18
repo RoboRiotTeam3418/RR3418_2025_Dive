@@ -57,7 +57,7 @@ public class RobotContainer {
   private final Command m_elevManual = new ElevatorManual(m_elevator);
   
   private final Command m_armManual = new ArmManual(m_arm);
-  private final Command m_readyClaw = new ReadyClaw(m_claw);
+  //private final Command m_readyClaw = new ReadyClaw(m_claw);
   
   //public double speed = 0;
   // commands
@@ -339,8 +339,7 @@ public class RobotContainer {
     m_arm.setDefaultCommand(m_arm.stop());
     spinIsOnTrig.whileTrue(m_armManual);
     
-    releaseCoral.whileTrue(m_claw.pistonMove(true));
-    releaseCoral.onFalse(m_claw.pistonMove(false));
+    //m_secondary.rightTrigger(0.1).whileTrue(m_claw.pistonMove(true));
     m_secondary.start().toggleOnTrue(new ToggleClaw(m_claw));
   }
 

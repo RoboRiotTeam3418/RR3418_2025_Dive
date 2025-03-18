@@ -164,9 +164,9 @@ public class RobotContainer {
     Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
     Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleSim);
-    final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> new ChassisSpeeds(0, 0,
-        drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
-    Command death = drivebase.driveFieldOriented(DEATH_SPEEDS);
+    //final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> new ChassisSpeeds(0, 0,
+       // drivebase.getSwerveDrive().getMaximumChassisAngularVelocity());
+    //Command death = drivebase.driveFieldOriented(DEATH_SPEEDS);
 
     // create triggers for primary buttons
     BooleanSupplier fullStop = () -> Setup.getInstance().getFullStop();
@@ -256,11 +256,11 @@ public class RobotContainer {
       primaryBackTrig.whileTrue(Commands.none());
       // backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       // backIsPosTrig.onTrue(Commands.none());
-      deathModeTrig.whileTrue(death);
+    //  deathModeTrig.whileTrue(death);
 
     }
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    deathModeTrig.whileTrue(death);
+   // deathModeTrig.whileTrue(death);
 
     m_secondary.a().onTrue(new EndToAngle(m_endeff, 0.0));
     m_secondary.b().onTrue(new EndToAngle(m_endeff, 35.0));
@@ -300,11 +300,11 @@ public class RobotContainer {
       primaryBackTrig.whileTrue(Commands.none());
       //backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       // backIsPosTrig.onTrue(Commands.none());
-      deathModeTrig.whileTrue(death);
+     // deathModeTrig.whileTrue(death);
 
     }
     zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-    deathModeTrig.whileTrue(death);
+    //deathModeTrig.whileTrue(death);
 
     m_secondary.a().onTrue(new EndToAngle(m_endeff, 0.0));
     m_secondary.b().onTrue(new EndToAngle(m_endeff, 35.0));
@@ -317,8 +317,8 @@ public class RobotContainer {
     //AutoOrient
 
     // keep distance at 1 rn
-    m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_limelight, 2, 5, 1, 0.5, 1));
-    m_primaryJoystick.axisLessThan(6, -.5).whileTrue(new AutoOrientCmd(drivebase, m_limelight, 3, 5, 1, 0.5, 1));
+    m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_limelight, 2, 5, 1, 0.5));
+    m_primaryJoystick.axisLessThan(6, -.5).whileTrue(new AutoOrientCmd(drivebase, m_limelight, 3, 5, 1, 0.5));
 
 
   }

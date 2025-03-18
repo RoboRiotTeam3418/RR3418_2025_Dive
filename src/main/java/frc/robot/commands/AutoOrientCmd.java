@@ -23,21 +23,21 @@ public class AutoOrientCmd extends Command {
   private double XTarget; // Target on X Axis / tx
   private double DB; // XTarget deadband
   private int chosenSide = 1; // Which limelight is active
-  private double Direction; // Left or right, depending on slider value listed in 'RobotContainer'
+  //private double Direction; // Left or right, depending on slider value listed in 'RobotContainer'
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public AutoOrientCmd(SwerveSubsystem Veer, Limelight limejuice, int SelPipeline, double distance, double traget, double TargetDB, double chosenDirection) { // Sets everything up
+  public AutoOrientCmd(SwerveSubsystem Veer, Limelight limejuice, int SelPipeline, double distance, double traget, double TargetDB) { // Sets everything up
     this.m_Swerve = Veer; // Drivetrain Subsystem
     this.m_Limelight = limejuice; // Limelight
     this.pipenum = SelPipeline;
     this.desiredDistance = distance;
     this.XTarget = traget;
     this.DB = TargetDB;
-    this.Direction = chosenDirection;
+    //this.Direction = chosenDirection;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Veer);
@@ -57,16 +57,20 @@ public class AutoOrientCmd extends Command {
   public void execute() {
     System.out.println("Start Orienting");
 
+    m_Swerve.drive(new ChassisSpeeds(0, 0.0, 2));
+
     double limelightSees;
     double limelightArea;
     double limelightX;
 
     // ----- Print out important values ----- //
-    if (chosenSide == 1) {
+    /*if (chosenSide == 1) {
+    */
       System.out.println("L1 chosen");
       limelightSees = m_Limelight.l1_tv.getDouble(0);
       limelightArea = m_Limelight.l1_ta.getDouble(0);
       limelightX = m_Limelight.l1_tx.getDouble(0);
+      /* 
     }
     else if (chosenSide == -1) {
       System.out.println("L2 chosen");
@@ -87,17 +91,21 @@ public class AutoOrientCmd extends Command {
     System.out.println("desiredDistance: " + this.desiredDistance);
     System.out.println("xTarget: " + this.XTarget);
     System.out.println("DB: " + this.DB);
-    System.out.println("Direction: " + this.Direction);
-
+    //System.out.println("Direction: " + this.Direction);
+*/
+    System.out.println(limelightArea);
+    System.out.println(limelightX);
+    System.out.println(limelightSees);
+    
     // ----- Actual Code ----- //
     if (limelightArea < desiredDistance) { // Executes this code if limelight is far enough away from apriltag.
       System.out.println("Far away");
       if (limelightX > XTarget + DB) { // Executes this code if limelight is to the right and in bounds
         System.out.println("Rightdrive");
-        m_Swerve.drive(new ChassisSpeeds(0.75*Direction, .6, 0.0)); // higher value to test if speed really is the problem
+        m_Swerve.drive(new ChassisSpeeds(0.75, .6, 0.0)); 
       } else if (limelightX < XTarget - DB) { // executes this code if limelight is to the left and in bounds
         System.out.println("Leftdrive");
-        m_Swerve.drive(new ChassisSpeeds(-0.75*Direction, .6, 0.0));
+        m_Swerve.drive(new ChassisSpeeds(-0.75, .6, 0.0));
       } else { // Move forwards
         System.out.println("Forwarddrive");
         m_Swerve.drive(new ChassisSpeeds(0, .75, 0));
@@ -106,10 +114,10 @@ public class AutoOrientCmd extends Command {
       System.out.println("Close");
       if (limelightX > XTarget + DB) { // Executes this code if limelight is to the right and inbounds
         System.out.println("CloseRight");
-        m_Swerve.drive(new ChassisSpeeds(0.5*Direction, 0, 0.0));
+        m_Swerve.drive(new ChassisSpeeds(0.5, 0, 0.0));
       } else if (limelightX < XTarget - DB) { // executes this code if limelight is to the left and in bounds
         System.out.println("CloseLeft");
-        m_Swerve.drive(new ChassisSpeeds((-0.5*Direction), 0, 0.0));
+        m_Swerve.drive(new ChassisSpeeds((-0.5), 0, 0.0));
       }
     }
 

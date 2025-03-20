@@ -30,7 +30,7 @@ public class Arm extends SubsystemBase {
   //updated configs), 
   //POS_ANGLE_LIMIT = 1/2 of range aka max angle from center counterclockwise (positive direction)
 
-  public double spinSpeed = 0.1; // placeholder value
+  public double spinSpeed = 0.05; // placeholder value
   public boolean isClockwise, isCounterClockwise;
 
   public Arm() {

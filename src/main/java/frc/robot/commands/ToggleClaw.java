@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import frc.robot.Setup;
 import frc.robot.subsystems.Claw;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
@@ -55,6 +56,7 @@ public class ToggleClaw extends Command {
     if(!ready){
       m_subsystem.claw.set(true);
     }
+    SmartDashboard.putBoolean("Armed",ready);
   }
 
   // Called once the command ends or is interrupted.

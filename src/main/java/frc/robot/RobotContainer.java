@@ -62,10 +62,7 @@ public class RobotContainer {
   //public double speed = 0;
   // commands
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
-      m_elevator.setSnap(ElevatorLevel.LOWEST),
-      new ParallelCommandGroup(
-          new ElevatorSnap(m_elevator)));
-  // new EndToAngle(m_endeff, 0.0).withTimeout(20)),
+      m_elevator.setSnap(ElevatorLevel.LOWEST), new EndToAngle(m_arm, 180.0), new ElevatorSnap(m_elevator));
   // m_endeff.pistonMove(true));
 
   // Driver speeds
@@ -119,7 +116,7 @@ public class RobotContainer {
    * Clones the angular velocity input stream and converts it to a fieldRelative
    * input stream.
    */
-  public DoubleSupplier getNegTwist = () -> m_primaryJoystick.getTwist() * -1;
+  public DoubleSupplier getNegTwist = () -> m_primaryJoystick.getTwist() ;
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
       .withControllerHeadingAxis(m_primaryJoystick::getTwist, getNegTwist)// checkfunction
       .headingWhile(true);
@@ -179,11 +176,11 @@ public class RobotContainer {
     final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> drivebase.getDeath();
 
     // create triggers for primary buttons
-    BooleanSupplier fullStop = () -> Setup.getInstance().getFullStop();
-    Trigger fullStopTrig = new Trigger(fullStop);
-    /*BooleanSupplier zeroGyro = () -> Setup.getInstance().getZeroGyro();
+    //BooleanSupplier fullStop = () -> Setup.getInstance().getFullStop();
+    //Trigger fullStopTrig = new Trigger(fullStop);
+    BooleanSupplier zeroGyro = () -> Setup.getInstance().getZeroGyro();
     Trigger zeroGyroTrig = new Trigger(zeroGyro);
-    BooleanSupplier primaryStart = () -> Setup.getInstance().getPrimaryStart();
+    /*BooleanSupplier primaryStart = () -> Setup.getInstance().getPrimaryStart();
     Trigger primaryStartTrig = new Trigger(primaryStart);
     BooleanSupplier primaryBack = () -> Setup.getInstance().getPrimaryBack();
     Trigger primaryBackTrig = new Trigger(primaryBack);
@@ -215,12 +212,6 @@ public class RobotContainer {
     BooleanSupplier fast = () -> Setup.getInstance().getPrimaryDriverXButton();
     Trigger fastTrig = new Trigger(fast);
     BooleanSupplier spinIsPos = () -> Setup.getInstance().getSecondaryRX() > 0.1;
-    Trigger POVUp = new POVButton(m_secondary.getHID(), 0);
-    Trigger POVDown = new POVButton(m_secondary.getHID(), 180);
-    BooleanSupplier elevDown = ()-> POVDown.getAsBoolean();
-    Trigger elevDownTrig = new Trigger(elevDown);
-    BooleanSupplier elevUp = ()-> POVUp.getAsBoolean();
-    Trigger elevUpTrig = new Trigger(elevUp);
     // Default commands
     //WHAT DOES THIS DO?
     /*m_secondary.start().onTrue(new InstantCommand(new Runnable() {
@@ -232,21 +223,25 @@ public class RobotContainer {
     // Elevator
     m_elevator.setDefaultCommand(m_elevManual);
     m_secondary.leftTrigger().whileTrue(new ElevatorSnap(m_elevator));
-    m_secondary.pov(180).onTrue(m_elevator.snapDown());
-    m_secondary.pov(0).onTrue(m_elevator.snapUp());
+    m_secondary.povDown().onTrue(m_elevator.snapDown());
+    m_secondary.povUp().onTrue(m_elevator.snapUp());
     //m_endeff.setDefaultCommand(new SequentialCommandGroup(
         //m_claw.pistonMove(false), m_arm.stop()));
     m_elevator.setDefaultCommand(m_elevManual);
     /* 
     // Auto Orient
     m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_Limelight, 2, 18, 4.2, 2));
-
+    */
     // Auto Commands
     NamedCommands.registerCommand("pickup", m_pickup);
     NamedCommands.registerCommand("place left", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_TWO),
-        new ParallelCommandGroup(new ElevatorSnap(m_elevator))));
-    NamedCommands.registerCommand("grab", new autoClaw(m_endeff));
-    NamedCommands.registerCommand("release", m_endeff.pistonMove(false));
+        new ParallelCommandGroup(new ElevatorSnap(m_elevator)),
+        new EndToAngle(m_arm, 140.0)));
+    NamedCommands.registerCommand("place right", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_TWO),
+        new ParallelCommandGroup(new ElevatorSnap(m_elevator)),
+        new EndToAngle(m_arm, 220.0)));
+    NamedCommands.registerCommand("release", m_claw.pistonMove(true));
+
     // Arm
     /*
      * m_endeff.setDefaultCommand(new EndManual(m_endeff));
@@ -312,35 +307,33 @@ public class RobotContainer {
       // backIsPosTrig.onTrue(Commands.none());
 
   }*/
-    //zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
     // COMMAND/TRIGGER ASSIGNMENTS
 
     //Primary Driver 
     deathModeTrig.whileTrue(drivebase.drive(DEATH_SPEEDS));
-    fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+    //fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
     //Secondary
     m_secondary.leftBumper()
         .onTrue(new SequentialCommandGroup(new EndToAngle(m_arm, 180.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
     // automatically bring elevator to 0 if left bumper pressed, first ensure
     // endeffector is in position
-    elevUpTrig.onTrue(m_elevator.snapUp());
-    elevDownTrig.onTrue(m_elevator.snapDown());
     elevGoTrig.whileTrue(new ElevatorSnap(m_elevator));
     
-    /* END TO ANGLE COMMANDS, UNTESTED
-    m_secondary.a().onTrue(new EndToAngle(m_arm, 180.0));
-    m_secondary.b().onTrue(new EndToAngle(m_arm, 215.0));
-    m_secondary.x().onTrue(new EndToAngle(m_arm, 145.0));
-    m_secondary.y().onTrue(new EndToAngle(m_arm, 225.0));
-    */
+    // END TO ANGLE COMMANDS, UNTESTED
+    m_secondary.b().whileTrue(new EndToAngle(m_arm, 250.0));
+    m_secondary.x().whileTrue(new EndToAngle(m_arm, 110.0));
+    m_secondary.y().whileTrue(new EndToAngle(m_arm, 180.0));
+    
     //m_arm.setDefaultCommand(new EndToAngle(m_arm, 180.0));
-    m_arm.setDefaultCommand(m_arm.stop());
-    spinIsOnTrig.whileTrue(m_armManual);
+    m_arm.setDefaultCommand(m_armManual);
     
     //m_secondary.rightTrigger(0.1).whileTrue(m_claw.pistonMove(true));
     m_secondary.start().toggleOnTrue(new ToggleClaw(m_claw));
+    //m_claw.setDefaultCommand(new ClawControl(m_claw));
+    //m_secondary.rightTrigger().whileTrue(m_claw.pistonMove(true));
   }
 
   /**

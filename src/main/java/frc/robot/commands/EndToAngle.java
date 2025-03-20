@@ -28,7 +28,7 @@ public class EndToAngle extends Command {
 
   public double setval; // placeholder value
   private PIDController pid;
-  private final static double SPIN_P = .0004, SPIN_I = 0.000000, SPIN_D = 0.00;
+  private final static double SPIN_P = .004, SPIN_I = 0.00005, SPIN_D = 0.00;
 
   /**
    * Creates a new ExampleCommand.
@@ -56,7 +56,7 @@ public class EndToAngle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putNumber("goal Angle", m_angle);  
+    SmartDashboard.putNumber("goal Angle", m_angle); 
     //if (DeadbandUtils.isLess(m_subsystem.getEncValDegrees(), m_subsystem.POS_ANGLE_LIMIT)) {
       setval = pid.calculate(m_subsystem.spinEncoder.getPosition(), pid.getSetpoint());
       //if (m_subsystem.spinEncoder.getPosition()>)
@@ -65,24 +65,19 @@ public class EndToAngle extends Command {
     //}else{
      // m_subsystem.stop();
     //}
-    if (DeadbandUtils.isWithin(m_subsystem.spinEncoder.getPosition(),m_angle,allowance)){
-      SmartDashboard.putBoolean("at Angle?", true);  
-      spinMotor.set(0);
-    }else{
-      SmartDashboard.putBoolean("at Angle?", false);  
-    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //spinMotor.set(0);
+    spinMotor.set(0);
+    System.out.println("this works I guess");
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return DeadbandUtils.isWithin(m_subsystem.spinEncoder.getPosition(),m_angle,allowance);
     /* 
     return (DeadbandUtils.isWithin(spinEncoder.getPosition(), m_angle, allowance)
             ||DeadbandUtils.isGreater(m_subsystem.getEncValDegrees(), m_subsystem.POS_ANGLE_LIMIT));*/

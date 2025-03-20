@@ -52,7 +52,7 @@ public class Elevator extends SubsystemBase {
   private void initializeDictionary() {
     elevatorLeveltoHeightDictionary = new Hashtable<>();
     // Adding key-value pairs
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.LOWEST, 0.0); // very small, home state
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.LOWEST, 1.0); // very small, home state
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.TROUGH, 13.0); // trough + 3in
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_ONE, 25.0); // pole 1
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO, 40.0);// pole 2
@@ -117,8 +117,13 @@ public class Elevator extends SubsystemBase {
     goalLevel = values[newIndex % values.length];
   }
 
-  private ElevatorLevel decrementElevatorLevel(ElevatorLevel currentElevatorLevel) {
-    return ElevatorLevel.values()[(currentElevatorLevel.ordinal() - 1) % ElevatorLevel.values().length];
+  private void decrementElevatorLevel(ElevatorLevel currentElevatorLevel) {
+    ElevatorLevel[] values = ElevatorLevel.values();
+    int newIndex = currentElevatorLevel.ordinal()-1;
+    if (newIndex<0){
+      newIndex = values.length-1;
+    }
+    goalLevel = values[newIndex];
   }
 
   @Override

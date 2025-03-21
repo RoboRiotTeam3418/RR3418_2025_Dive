@@ -17,7 +17,7 @@ public class ArmManual extends Command {
   private final Arm m_subsystem;
 
   public final double SPIN_SPEED;
-  public static final double MAX_VAL = 250,NEG_MAX_VAL = 180-(MAX_VAL-180), SLOW_VAL = 215, NEG_SLOW_VAL=180-(SLOW_VAL-180);
+  public static final double MAX_VAL = 225,NEG_MAX_VAL = 180-(MAX_VAL-180), SLOW_VAL = 200, NEG_SLOW_VAL=180-(SLOW_VAL-180);
   private double speed;
 
   /**
@@ -66,7 +66,7 @@ public class ArmManual extends Command {
     //scale down the speed 
 
     if (( m_subsystem.spinEncoder.getPosition()>= SLOW_VAL && getRX()>0.1) || ( m_subsystem.spinEncoder.getPosition()<= NEG_SLOW_VAL && getRX()<-0.1)) {
-      speed/=10;
+      speed/=2;
     }
     if (( m_subsystem.spinEncoder.getPosition()>= MAX_VAL && getRX()>0.1) || ( m_subsystem.spinEncoder.getPosition()<= NEG_MAX_VAL && getRX()<-0.1)) {
       speed=0;

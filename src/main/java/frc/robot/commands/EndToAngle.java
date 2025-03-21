@@ -28,7 +28,7 @@ public class EndToAngle extends Command {
 
   public double setval; // placeholder value
   private PIDController pid;
-  private final static double SPIN_P = .004, SPIN_I = 0.00005, SPIN_D = 0.00;
+  private final static double SPIN_P = .002, SPIN_I = 0.00005, SPIN_D = 0.00;
 
   /**
    * Creates a new ExampleCommand.

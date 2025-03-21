@@ -71,6 +71,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   private final boolean visionDriveTest = false;
 
+  private boolean flip= false;
   /**
    * PhotonVision class to keep an accurate odometry.
    */
@@ -517,6 +518,12 @@ public class SwerveSubsystem extends SubsystemBase {
       swerveDrive.driveFieldOriented(velocity.get());
     });
   }
+  public Command driveFieldOrientedReversed(Supplier<ChassisSpeeds> velocity) {
+    return run(() -> {
+      swerveDrive.driveFieldOriented(velocity.get().times(-1));
+    });
+  }
+
 
   /**
    * Drive according to the chassis robot oriented velocity.
@@ -617,7 +624,19 @@ public class SwerveSubsystem extends SubsystemBase {
       zeroGyro();
     }
   }
-
+  public Command flipGyro() {
+    return runOnce(
+      ()-> {
+        zeroGyro();
+        if (flip) {
+          resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
+        } else {
+          resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(0)));
+        }
+        flip = !flip;
+      }
+    );
+  }
   /**
    * Sets the drive motors to brake/coast mode.
    *

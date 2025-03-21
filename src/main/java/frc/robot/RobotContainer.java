@@ -74,12 +74,12 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled
    * by angular velocity.
    */
-  public DoubleSupplier getPosTwist = () -> m_primaryJoystick.getRawAxis(5);
-  public double speed = 0.5, xtraSlow = 0.35, slow = 0.5, med = 0.75, fast = 0.8;
+  public DoubleSupplier getPosTwist = () -> m_primaryJoystick.getRawAxis(5)*-1;
+  public double speed = 0.5, xtraSlow = -0.35, slow = -0.5, med = -0.75, fast = -0.8;
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-      () -> m_primaryJoystick.getY(), // CHECK FUNCTION
-      () -> m_primaryJoystick.getX())// CHECK FUNCTION
-      .withControllerRotationAxis(()->m_primaryJoystick.getRawAxis(5))// CHECK FUNCTION
+      () -> m_primaryJoystick.getY()*-1, // CHECK FUNCTION
+      () -> m_primaryJoystick.getX()*-1)// CHECK FUNCTION
+      .withControllerRotationAxis(()->m_primaryJoystick.getRawAxis(5)*-1)// CHECK FUNCTION
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
@@ -116,12 +116,12 @@ public class RobotContainer {
    * Clones the angular velocity input stream and converts it to a fieldRelative
    * input stream.
    */
-  public DoubleSupplier getNegTwist = () -> m_primaryJoystick.getTwist() ;
+  public DoubleSupplier getNegTwist = () -> m_primaryJoystick.getTwist();
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy()
       .withControllerHeadingAxis(m_primaryJoystick::getTwist, getNegTwist)// checkfunction
       .headingWhile(true);
 
-  SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
+  /*SwerveInputStream driveAngularVelocitySim = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> -m_primaryJoystick.getY(),
       () -> -m_primaryJoystick.getX())
       .withControllerRotationAxis(() -> m_primaryJoystick.getRawAxis(2))
@@ -139,7 +139,7 @@ public class RobotContainer {
                   2) * Math.PI)
               *
               (Math.PI * 2))
-      .headingWhile(true);
+      .headingWhile(true);*/
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -169,10 +169,10 @@ public class RobotContainer {
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-    Command driveFieldOrientedDirectAngleSim = drivebase.driveFieldOriented(driveDirectAngleSim);
+    /*Command driveFieldOrientedDirectAngleSim = drivebase.driveFieldOriented(driveDirectAngleSim);
     Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
     Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngleSim);
+        driveDirectAngleSim);*/
     final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> drivebase.getDeath();
 
     // create triggers for primary buttons
@@ -194,6 +194,7 @@ public class RobotContainer {
     Trigger fakeVisionTrig = new Trigger(fakeVision);*/
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
+    zeroGyroTrig.onTrue(drivebase.flipGyro());
 
     // create secondary triggers
     Trigger releaseCoral = m_secondary.rightTrigger(0.1);
@@ -234,10 +235,10 @@ public class RobotContainer {
     */
     // Auto Commands
     NamedCommands.registerCommand("pickup", m_pickup);
-    NamedCommands.registerCommand("place left", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_TWO),
+    NamedCommands.registerCommand("place left", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_ONE),
         new ParallelCommandGroup(new ElevatorSnap(m_elevator)),
         new EndToAngle(m_arm, 140.0)));
-    NamedCommands.registerCommand("place right", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_TWO),
+    NamedCommands.registerCommand("place right", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_ONE),
         new ParallelCommandGroup(new ElevatorSnap(m_elevator)),
         new EndToAngle(m_arm, 220.0)));
     NamedCommands.registerCommand("release", m_claw.pistonMove(true));
@@ -278,7 +279,7 @@ public class RobotContainer {
       slowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocitySlow));
       mediumTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityMed));
       fastTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityFast));
-    
+
     /*
     if (Robot.isSimulation()) {
       primaryStartTrig.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
@@ -307,7 +308,7 @@ public class RobotContainer {
       // backIsPosTrig.onTrue(Commands.none());
 
   }*/
-    zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    //zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
     // COMMAND/TRIGGER ASSIGNMENTS
 
@@ -344,6 +345,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     return drivebase.getAutonomousCommand("New Auto");
+  }
+  public Command getGyroReset() {
+    // An example command will be run in autonomous
+    return drivebase.flipGyro();
   }
 
   public void setMotorBrake(boolean brake) {

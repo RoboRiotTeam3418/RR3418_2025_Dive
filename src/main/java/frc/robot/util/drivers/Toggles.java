@@ -1,12 +1,12 @@
 package frc.robot.util.drivers;
 
 public class Toggles{
-    static boolean secondaryToggle=true;
+    static boolean backToggle=true;
 
-    public static boolean getSecondaryToggle() {
-        return secondaryToggle;
+    public static boolean getBackwards() {
+        return backToggle;
     }
-    public static void toggleSecondary() {
-        secondaryToggle=!secondaryToggle;
+    public static void toggleBackwards() {
+        backToggle=!backToggle;
     }
 }

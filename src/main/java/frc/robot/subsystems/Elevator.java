@@ -54,8 +54,8 @@ public class Elevator extends SubsystemBase {
     // Adding key-value pairs
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.LOWEST, 1.0); // very small, home state
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.TROUGH, 13.0); // trough + 3in
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_ONE, 25.0); // pole 1
-    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO, 40.0);// pole 2
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_ONE, 4.0); // pole 1
+    elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_TWO, 25.0);// pole 2
     elevatorLeveltoHeightDictionary.put(ElevatorLevel.POLE_THREE, 49.0); // pole 3 + 3in
   }
 

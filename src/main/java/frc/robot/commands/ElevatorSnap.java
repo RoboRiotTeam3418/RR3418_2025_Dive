@@ -15,6 +15,7 @@ public class ElevatorSnap extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final Elevator m_subsystem;
   private double setval;
+  private Boolean m_shouldEnd = true;
   private PIDController pid;
   private final static double ALLOWANCE = 1; // inches
 
@@ -25,8 +26,9 @@ public class ElevatorSnap extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ElevatorSnap(Elevator subsystem) {
+  public ElevatorSnap(Elevator subsystem, Boolean shouldEnd) {
     m_subsystem = subsystem;
+    m_shouldEnd = shouldEnd;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
   }
@@ -69,6 +71,10 @@ public class ElevatorSnap extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return pid.atSetpoint();
+    if (m_shouldEnd){
+      return pid.atSetpoint();
+    }else{
+      return false;
+    }
   }
 }

@@ -62,7 +62,7 @@ public class RobotContainer {
   //public double speed = 0;
   // commands
   private final SequentialCommandGroup m_pickup = new SequentialCommandGroup(
-      m_elevator.setSnap(ElevatorLevel.LOWEST), new EndToAngle(m_arm, 180.0), new ElevatorSnap(m_elevator));
+      m_elevator.setSnap(ElevatorLevel.LOWEST), new EndToAngle(m_arm, 180.0), new ElevatorSnap(m_elevator,true));
   // m_endeff.pistonMove(true));
 
   // Driver speeds
@@ -223,11 +223,8 @@ public class RobotContainer {
 
     // Elevator
     m_elevator.setDefaultCommand(m_elevManual);
-    m_secondary.leftTrigger().whileTrue(new ElevatorSnap(m_elevator));
     m_secondary.povDown().onTrue(m_elevator.snapDown());
     m_secondary.povUp().onTrue(m_elevator.snapUp());
-    //m_endeff.setDefaultCommand(new SequentialCommandGroup(
-        //m_claw.pistonMove(false), m_arm.stop()));
     m_elevator.setDefaultCommand(m_elevManual);
     /* 
     // Auto Orient
@@ -236,11 +233,11 @@ public class RobotContainer {
     // Auto Commands
     NamedCommands.registerCommand("pickup", m_pickup);
     NamedCommands.registerCommand("place left", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_ONE),
-        new ParallelCommandGroup(new ElevatorSnap(m_elevator)),
+        new ParallelCommandGroup(new ElevatorSnap(m_elevator, true)),
         new EndToAngle(m_arm, 140.0)));
     NamedCommands.registerCommand("place right", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_ONE),
-        new ParallelCommandGroup(new ElevatorSnap(m_elevator)),
-        new EndToAngle(m_arm, 220.0)));
+        new ParallelCommandGroup(new ElevatorSnap(m_elevator,true )),
+        new EndToAngle(m_arm, 210.0)));
     NamedCommands.registerCommand("release", m_claw.pistonMove(true));
 
     // Arm
@@ -318,10 +315,10 @@ public class RobotContainer {
 
     //Secondary
     m_secondary.leftBumper()
-        .onTrue(new SequentialCommandGroup(new EndToAngle(m_arm, 180.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator)));
+        .onTrue(new SequentialCommandGroup(new EndToAngle(m_arm, 180.0), m_elevator.setSnap(ElevatorLevel.LOWEST), new ElevatorSnap(m_elevator,true)));
     // automatically bring elevator to 0 if left bumper pressed, first ensure
     // endeffector is in position
-    elevGoTrig.whileTrue(new ElevatorSnap(m_elevator));
+    elevGoTrig.whileTrue(new ElevatorSnap(m_elevator,false));
     
     // END TO ANGLE COMMANDS, UNTESTED
     m_secondary.b().whileTrue(new EndToAngle(m_arm, 250.0));

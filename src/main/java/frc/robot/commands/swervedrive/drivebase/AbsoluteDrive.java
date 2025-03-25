@@ -25,7 +25,7 @@ public class AbsoluteDrive extends Command {
   private final SwerveSubsystem swerve;
   private final DoubleSupplier vX, vY;
   private final DoubleSupplier headingHorizontal, headingVertical;
-  private boolean initRotation = false;
+  private boolean initRotation = false, fieldOriented = true;
 
   /**
    * Used to drive a swerve robot in full field-centric mode. vX and vY supply
@@ -59,14 +59,16 @@ public class AbsoluteDrive extends Command {
    *                          as vX. Should range from -1 to 1
    *                          with no deadband. Positive is away from the alliance
    *                          wall.
+   * @param fieldOriented     true if field oriented, false if robot relative.
    */
   public AbsoluteDrive(SwerveSubsystem swerve, DoubleSupplier vX, DoubleSupplier vY, DoubleSupplier headingHorizontal,
-      DoubleSupplier headingVertical) {
+      DoubleSupplier headingVertical, Boolean fieldOriented) {
     this.swerve = swerve;
     this.vX = vX;
     this.vY = vY;
     this.headingHorizontal = headingHorizontal;
     this.headingVertical = headingVertical;
+    this.fieldOriented = fieldOriented;
 
     addRequirements(swerve);
   }
@@ -109,7 +111,7 @@ public class AbsoluteDrive extends Command {
     SmartDashboard.putString("Translation", translation.toString());
 
     // Make the robot move
-    swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true);
+    swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, fieldOriented);
 
   }
 

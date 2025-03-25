@@ -29,6 +29,8 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
+import frc.robot.commands.swervedrive.drivebase.RobotRelative;
 import frc.robot.subsystems.*;
 import frc.robot.util.drivers.Limelight;
 import frc.robot.util.drivers.Toggles;
@@ -180,6 +182,8 @@ public class RobotContainer {
     //Trigger fullStopTrig = new Trigger(fullStop);
     BooleanSupplier zeroGyro = () -> Setup.getInstance().getZeroGyro();
     Trigger zeroGyroTrig = new Trigger(zeroGyro);
+    DoubleSupplier primaryXSupplier = ()-> m_primaryJoystick.getX();
+    DoubleSupplier primaryYSupplier = ()-> m_primaryJoystick.getY();
     /*BooleanSupplier primaryStart = () -> Setup.getInstance().getPrimaryStart();
     Trigger primaryStartTrig = new Trigger(primaryStart);
     BooleanSupplier primaryBack = () -> Setup.getInstance().getPrimaryBack();
@@ -272,6 +276,7 @@ public class RobotContainer {
       drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
     } else {*/
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      m_primaryJoystick.button(2).toggleOnTrue(new RobotRelative(drivebase, primaryXSupplier, primaryYSupplier,driveAngularVelocity.get().omegaRadiansPerSecond));
       xtraSlowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityXtraSlow));
       slowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocitySlow));
       mediumTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityMed));

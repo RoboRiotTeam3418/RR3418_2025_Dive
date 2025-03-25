@@ -37,9 +37,11 @@ public class RobotRelative extends Command{
   public void execute()
   {
     swerve.drive(new Translation2d(tX.getAsDouble(),tY.getAsDouble()),rot,false);
+    SmartDashboard.putBoolean("supposed to be robot oriented", true);
   }
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putBoolean("supposed to be robot oriented", false);
   }
 
   // Returns true when the command should end.

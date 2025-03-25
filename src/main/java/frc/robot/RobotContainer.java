@@ -171,34 +171,17 @@ public class RobotContainer {
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-    /*Command driveFieldOrientedDirectAngleSim = drivebase.driveFieldOriented(driveDirectAngleSim);
-    Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
-    Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngleSim);*/
+    
     final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> drivebase.getDeath();
 
     // create triggers for primary buttons
-    //BooleanSupplier fullStop = () -> Setup.getInstance().getFullStop();
-    //Trigger fullStopTrig = new Trigger(fullStop);
-    BooleanSupplier zeroGyro = () -> Setup.getInstance().getZeroGyro();
-    Trigger zeroGyroTrig = new Trigger(zeroGyro);
+    //BooleanSupplier zeroGyro = () -> Setup.getInstance().getZeroGyro();
+    //Trigger zeroGyroTrig = new Trigger(zeroGyro);
     DoubleSupplier primaryXSupplier = ()-> m_primaryJoystick.getX();
     DoubleSupplier primaryYSupplier = ()-> m_primaryJoystick.getY();
-    /*BooleanSupplier primaryStart = () -> Setup.getInstance().getPrimaryStart();
-    Trigger primaryStartTrig = new Trigger(primaryStart);
-    BooleanSupplier primaryBack = () -> Setup.getInstance().getPrimaryBack();
-    Trigger primaryBackTrig = new Trigger(primaryBack);
-    BooleanSupplier backIsPos = () -> Setup.getInstance().getBackIsPos();
-    Trigger backIsPosTrig = new Trigger(backIsPos);
-    BooleanSupplier backIsNeg = () -> Setup.getInstance().getBackIsNeg();
-    Trigger backIsNegTrig = new Trigger(backIsNeg);
-    BooleanSupplier driveSetDistance = () -> Setup.getInstance().getDriveSetDistance();
-    Trigger driveSetDistanceTrig = new Trigger(driveSetDistance);
-    BooleanSupplier fakeVision = () -> Setup.getInstance().getFakeVision();
-    Trigger fakeVisionTrig = new Trigger(fakeVision);*/
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
-    zeroGyroTrig.onTrue(drivebase.flipGyro());
+    //zeroGyroTrig.onTrue(drivebase.flipGyro());
 
     // create secondary triggers
     Trigger releaseCoral = m_secondary.rightTrigger(0.1);
@@ -244,18 +227,9 @@ public class RobotContainer {
         new EndToAngle(m_arm, 210.0)));
     NamedCommands.registerCommand("release", m_claw.pistonMove(true));
 
-    // Arm
-    /*
-     * m_endeff.setDefaultCommand(new EndManual(m_endeff));
-     * m_secondary.rightTrigger().whileTrue(m_endeff.pistonMove(true));
-     * m_secondary.rightTrigger().whileFalse(m_endeff.pistonMove(false));
-     * m_secondary.a().whileTrue(new EndToAngle(m_endeff, 0.0));
-     * m_secondary.b().whileTrue(new EndToAngle(m_endeff, 35.0));
-     * m_secondary.y().whileTrue(new EndToAngle(m_endeff, 90.0));
-     
 
     // Auto Orient
-    m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_Limelight, 2, 18, 4.2, 2));
+    /*m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_Limelight, 2, 18, 4.2, 2));
 
     // Auto Commands
     NamedCommands.registerCommand("pickup", m_pickup);
@@ -263,21 +237,15 @@ public class RobotContainer {
         new ParallelCommandGroup(new ElevatorSnap(m_elevator))));
     NamedCommands.registerCommand("grab", new autoClaw(m_endeff));
     NamedCommands.registerCommand("release", m_endeff.pistonMove(false));
-    // Arm
-    /*
-     * m_secondary.rightTrigger().whileTrue(m_endeff.pistonMove(true));
-     * m_secondary.rightTrigger().whileFalse(m_endeff.pistonMove(false));
-     * m_secondary.a().whileTrue(new EndToAngle(m_endeff, 0.0));
-     * m_secondary.b().whileTrue(new EndToAngle(m_endeff, 35.0));
-     * m_secondary.y().whileTrue(new EndToAngle(m_endeff, 90.0));
-     */
-     //DRIVE COMMANDS
+    */ 
+
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
       //m_primaryJoystick.button(2).toggleOnTrue(new RobotRelative(drivebase, primaryXSupplier, primaryYSupplier,driveAngularVelocity.get().omegaRadiansPerSecond));
       xtraSlowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityXtraSlow));
       slowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocitySlow));
       mediumTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityMed));
       fastTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityFast));
+
     //zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
     // COMMAND/TRIGGER ASSIGNMENTS

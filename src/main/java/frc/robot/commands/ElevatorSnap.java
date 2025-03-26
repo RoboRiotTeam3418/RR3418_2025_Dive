@@ -17,7 +17,7 @@ public class ElevatorSnap extends Command {
   private double setval;
   private Boolean m_shouldEnd = true;
   private PIDController pid;
-  private final static double ALLOWANCE = 1; // inches
+  private final static double ALLOWANCE = .25; // inches
 
   private final static double ELEVATOR_P = .05, ELEVATOR_I = 0.0025, ELEVATOR_D = 0.00;
 
@@ -55,8 +55,13 @@ public class ElevatorSnap extends Command {
       // ACCOUNT FOR CHASSIS HEIGHT LATER
       pid.setSetpoint(m_subsystem.getHeightFromElevatorLevel(m_subsystem.goalLevel));
       setval = pid.calculate(m_subsystem.getElevPosition(), pid.getSetpoint());
-      m_subsystem.mot1.set(-setval);
-      m_subsystem.mot2.set(-setval);
+      if (pid.atSetpoint()) {
+        m_subsystem.mot1.set(0);
+        m_subsystem.mot2.set(0);
+      } else {
+        m_subsystem.mot1.set(-setval);
+        m_subsystem.mot2.set(-setval);
+      }
       SmartDashboard.putNumber("targetSpeed", -setval);
     }
   }

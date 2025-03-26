@@ -251,7 +251,7 @@ public class RobotContainer {
     // COMMAND/TRIGGER ASSIGNMENTS
 
     //Primary Driver 
-    deathModeTrig.whileTrue(drivebase.drive(DEATH_SPEEDS));
+    //deathModeTrig.whileTrue(drivebase.drive(DEATH_SPEEDS));
     //fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
     //Secondary

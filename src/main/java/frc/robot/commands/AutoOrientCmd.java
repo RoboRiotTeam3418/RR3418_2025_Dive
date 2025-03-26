@@ -21,7 +21,7 @@ public class AutoOrientCmd extends Command {
   private double desiredDistance;
   private double XTarget;
   private double DB;
-  private int chosenSide;
+  private int chosenSide = 1;
 
   /**
    * Creates a new ExampleCommand.
@@ -36,7 +36,7 @@ public class AutoOrientCmd extends Command {
     this.desiredDistance = distance;
     this.XTarget = traget;
     this.DB = TargetDB;
-    this.chosenSide = limejuice.whichLimelightSees();
+    // this.chosenSide = limejuice.whichLimelightSees();
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Veer);
@@ -154,14 +154,17 @@ public class AutoOrientCmd extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
-    // return (m_Limelight.l1_tx.getDouble(0) <= XTarget + DB&&
-    // m_Limelight.l1_tx.getDouble(0) >= XTarget - DB&&
-    // m_Limelight.l1_ta.getDouble(0) >= desiredDistance/* L1 end */|| /* L2 begin
-    // */ m_Limelight.l2_tx.getDouble(0) <= XTarget + DB&&
-    // m_Limelight.l2_tx.getDouble(0) >= XTarget - DB&&
-    // m_Limelight.l2_ta.getDouble(0) >= desiredDistance /* L2 end */)||
-    // (m_Limelight.l1_tv.getDouble(0) == 0 && m_Limelight.l2_tv.getDouble(0) == 0);
+    // return false;
+    return (m_Limelight.l1_tx.getDouble(0) <= XTarget + DB &&
+        m_Limelight.l1_tx.getDouble(0) >= XTarget - DB &&
+        m_Limelight.l1_ta.getDouble(0) >= desiredDistance
+        /* L1 end */ || /*
+                         * L2 begin
+                         */ m_Limelight.l2_tx.getDouble(0) <= XTarget + DB &&
+            m_Limelight.l2_tx.getDouble(0) >= XTarget - DB &&
+            m_Limelight.l2_ta.getDouble(0) >= desiredDistance /* L2 end */)
+        ||
+        (m_Limelight.l1_tv.getDouble(0) == 0 && m_Limelight.l2_tv.getDouble(0) == 0);
 
     // return (m_Limelight.l1_tv.getDouble(0) == 0 && m_Limelight.l2_tv.getDouble(0)
     // == 0);

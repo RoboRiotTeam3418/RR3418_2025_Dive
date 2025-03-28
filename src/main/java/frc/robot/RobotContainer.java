@@ -240,6 +240,7 @@ public class RobotContainer {
     */ 
 
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      m_primaryJoystick.button(2).toggleOnTrue(drivebase.drive(driveAngularVelocityXtraSlow));
       //m_primaryJoystick.button(2).toggleOnTrue(new RobotRelative(drivebase, primaryXSupplier, primaryYSupplier,driveAngularVelocity.get().omegaRadiansPerSecond));
       xtraSlowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityXtraSlow));
       slowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocitySlow));

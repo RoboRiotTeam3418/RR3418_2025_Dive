@@ -29,6 +29,8 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.swervedrive.drivebase.AbsoluteDrive;
+import frc.robot.commands.swervedrive.drivebase.RobotRelative;
 import frc.robot.subsystems.*;
 import frc.robot.util.drivers.Limelight;
 import frc.robot.util.drivers.Toggles;
@@ -74,12 +76,12 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled
    * by angular velocity.
    */
-  public DoubleSupplier getPosTwist = () -> m_primaryJoystick.getRawAxis(5)*-1;
+  public DoubleSupplier getPosTwist = () -> m_primaryJoystick.getRawAxis(3)*-1;
   public double speed = 0.5, xtraSlow = -0.35, slow = -0.5, med = -0.75, fast = -0.8;
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> m_primaryJoystick.getY()*-1, // CHECK FUNCTION
       () -> m_primaryJoystick.getX()*-1)// CHECK FUNCTION
-      .withControllerRotationAxis(()->m_primaryJoystick.getRawAxis(5)*-1)// CHECK FUNCTION
+      .withControllerRotationAxis(()->m_primaryJoystick.getRawAxis(3)*-1)// CHECK FUNCTION
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
@@ -169,32 +171,17 @@ public class RobotContainer {
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-    /*Command driveFieldOrientedDirectAngleSim = drivebase.driveFieldOriented(driveDirectAngleSim);
-    Command driveFieldOrientedAnglularVelocitySim = drivebase.driveFieldOriented(driveAngularVelocitySim);
-    Command driveSetpointGenSim = drivebase.driveWithSetpointGeneratorFieldRelative(
-        driveDirectAngleSim);*/
+    
     final Supplier<ChassisSpeeds> DEATH_SPEEDS = () -> drivebase.getDeath();
 
     // create triggers for primary buttons
-    //BooleanSupplier fullStop = () -> Setup.getInstance().getFullStop();
-    //Trigger fullStopTrig = new Trigger(fullStop);
-    BooleanSupplier zeroGyro = () -> Setup.getInstance().getZeroGyro();
-    Trigger zeroGyroTrig = new Trigger(zeroGyro);
-    /*BooleanSupplier primaryStart = () -> Setup.getInstance().getPrimaryStart();
-    Trigger primaryStartTrig = new Trigger(primaryStart);
-    BooleanSupplier primaryBack = () -> Setup.getInstance().getPrimaryBack();
-    Trigger primaryBackTrig = new Trigger(primaryBack);
-    BooleanSupplier backIsPos = () -> Setup.getInstance().getBackIsPos();
-    Trigger backIsPosTrig = new Trigger(backIsPos);
-    BooleanSupplier backIsNeg = () -> Setup.getInstance().getBackIsNeg();
-    Trigger backIsNegTrig = new Trigger(backIsNeg);
-    BooleanSupplier driveSetDistance = () -> Setup.getInstance().getDriveSetDistance();
-    Trigger driveSetDistanceTrig = new Trigger(driveSetDistance);
-    BooleanSupplier fakeVision = () -> Setup.getInstance().getFakeVision();
-    Trigger fakeVisionTrig = new Trigger(fakeVision);*/
+    //BooleanSupplier zeroGyro = () -> Setup.getInstance().getZeroGyro();
+    //Trigger zeroGyroTrig = new Trigger(zeroGyro);
+    DoubleSupplier primaryXSupplier = ()-> m_primaryJoystick.getX();
+    DoubleSupplier primaryYSupplier = ()-> m_primaryJoystick.getY();
     BooleanSupplier deathMode = () -> Setup.getInstance().getDeathMode();
     Trigger deathModeTrig = new Trigger(deathMode);
-    zeroGyroTrig.onTrue(drivebase.flipGyro());
+    //zeroGyroTrig.onTrue(drivebase.flipGyro());
 
     // create secondary triggers
     Trigger releaseCoral = m_secondary.rightTrigger(0.1);
@@ -240,18 +227,9 @@ public class RobotContainer {
         new EndToAngle(m_arm, 210.0)));
     NamedCommands.registerCommand("release", m_claw.pistonMove(true));
 
-    // Arm
-    /*
-     * m_endeff.setDefaultCommand(new EndManual(m_endeff));
-     * m_secondary.rightTrigger().whileTrue(m_endeff.pistonMove(true));
-     * m_secondary.rightTrigger().whileFalse(m_endeff.pistonMove(false));
-     * m_secondary.a().whileTrue(new EndToAngle(m_endeff, 0.0));
-     * m_secondary.b().whileTrue(new EndToAngle(m_endeff, 35.0));
-     * m_secondary.y().whileTrue(new EndToAngle(m_endeff, 90.0));
-     
 
     // Auto Orient
-    m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_Limelight, 2, 18, 4.2, 2));
+    /*m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_Limelight, 2, 18, 4.2, 2));
 
     // Auto Commands
     NamedCommands.registerCommand("pickup", m_pickup);
@@ -259,58 +237,22 @@ public class RobotContainer {
         new ParallelCommandGroup(new ElevatorSnap(m_elevator))));
     NamedCommands.registerCommand("grab", new autoClaw(m_endeff));
     NamedCommands.registerCommand("release", m_endeff.pistonMove(false));
-    // Arm
-    /*
-     * m_secondary.rightTrigger().whileTrue(m_endeff.pistonMove(true));
-     * m_secondary.rightTrigger().whileFalse(m_endeff.pistonMove(false));
-     * m_secondary.a().whileTrue(new EndToAngle(m_endeff, 0.0));
-     * m_secondary.b().whileTrue(new EndToAngle(m_endeff, 35.0));
-     * m_secondary.y().whileTrue(new EndToAngle(m_endeff, 90.0));
-     *
+    */ 
 
-    if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleSim);
-    } else {*/
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+      m_primaryJoystick.button(2).toggleOnTrue(drivebase.drive(driveAngularVelocityXtraSlow));
+      //m_primaryJoystick.button(2).toggleOnTrue(new RobotRelative(drivebase, primaryXSupplier, primaryYSupplier,driveAngularVelocity.get().omegaRadiansPerSecond));
       xtraSlowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityXtraSlow));
       slowTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocitySlow));
       mediumTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityMed));
       fastTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityFast));
 
-    /*
-    if (Robot.isSimulation()) {
-      primaryStartTrig.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
-      m_primaryJoystick.button(1).whileTrue(drivebase.sysIdDriveMotorCommand());
-
-    }
-    if (DriverStation.isTest()) {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
-
-      fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driveSetDistanceTrig.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      primaryBackTrig.whileTrue(drivebase.centerModulesCommand());
-      // backIsNegTrig.onTrue(Commands.none());
-      // backIsPosTrig.onTrue(Commands.none());
-    } else {
-      zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      fakeVisionTrig.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driveSetDistanceTrig.whileTrue(
-          drivebase.driveToPose(
-              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-      primaryStartTrig.whileTrue(Commands.none());
-      primaryBackTrig.whileTrue(Commands.none());
-      // backIsNegTrig.whileTrue(Commands.runOnce(drivebase::lock,
-      // drivebase).repeatedly());
-      // backIsPosTrig.onTrue(Commands.none());
-
-  }*/
     //zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
     // COMMAND/TRIGGER ASSIGNMENTS
 
     //Primary Driver 
-    deathModeTrig.whileTrue(drivebase.drive(DEATH_SPEEDS));
+    //deathModeTrig.whileTrue(drivebase.drive(DEATH_SPEEDS));
     //fullStopTrig.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
     //Secondary
@@ -330,7 +272,6 @@ public class RobotContainer {
     
     //m_secondary.rightTrigger(0.1).whileTrue(m_claw.pistonMove(true));
     m_secondary.start().toggleOnTrue(new ToggleClaw(m_claw));
-    //m_claw.setDefaultCommand(new ClawControl(m_claw));
     //m_secondary.rightTrigger().whileTrue(m_claw.pistonMove(true));
   }
 

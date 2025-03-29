@@ -111,10 +111,10 @@ public class Setup {
   public boolean getFullStop() {
     return getPrimaryHID().getRawButtonPressed(3);
   }
-
+  /* 
   public boolean getZeroGyro() {
     return getPrimaryHID().getRawButtonPressed(2);
-  }
+  }*/
 
   public boolean getPrimaryBack() {
     // center modules in test, nothing in Teleop

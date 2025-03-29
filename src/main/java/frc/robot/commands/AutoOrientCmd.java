@@ -61,54 +61,25 @@ public class AutoOrientCmd extends Command {
         if (m_Limelight.l1_tx.getDouble(0) > XTarget + DB) { // Executes this code if limelight is to the right and in
           // bounds
           System.out.println("it drive pls");
-          m_Swerve.drive(new ChassisSpeeds(.5, .4, 0.0));
+          m_Swerve.drive(new ChassisSpeeds(-.5, -.4, 0.0));
         } else if (m_Limelight.l1_tx.getDouble(0) < XTarget - DB) { // executes this code if limelight is to the left
           // and
           // in bounds
           System.out.println("it drive pls other way");
-          m_Swerve.drive(new ChassisSpeeds(-.5, .4, 0.0));
+          m_Swerve.drive(new ChassisSpeeds(.5, -.4, 0.0));
         } else { // Move forwards
           System.out.println("drive forward you flurmping robot");
-          m_Swerve.drive(new ChassisSpeeds(00, .75, 0));
+          m_Swerve.drive(new ChassisSpeeds(0, -.75,0));
         }
       } else {
         if (m_Limelight.l1_tx.getDouble(0) > XTarget + DB) { // Executes this code if limelight is to the right and in
           // bounds
-          System.out.println("it drive pls");
-          m_Swerve.drive(new ChassisSpeeds(.25, 0, 0.0));
+          System.out.println("it drive pls no closer");
+          m_Swerve.drive(new ChassisSpeeds(-.25, 0, 0.0));
         } else if (m_Limelight.l1_tx.getDouble(0) < XTarget - DB) { // executes this code if limelight is to the left
           // and in bounds
-          System.out.println("it drive pls other way");
-          m_Swerve.drive(new ChassisSpeeds((-.25), 0, 0.0));
-        }
-      }
-    } else if (m_Limelight.l2_tv.getDouble(0) == 1 && chosenSide == -1) {
-      if (m_Limelight.l2_ta.getDouble(0) < desiredDistance) { // Executes this code if limelight is far enough away from
-                                                              // apriltag.
-        System.out.println("far enough");
-        if (m_Limelight.l2_tx.getDouble(0) > XTarget + DB) { // Executes this code if limelight is to the right and in
-          // bounds
-          System.out.println("it drive pls");
-          m_Swerve.drive(new ChassisSpeeds(.5, .4, 0.0));
-        } else if (m_Limelight.l2_tx.getDouble(0) < XTarget - DB) { // executes this code if limelight is to the left
-          // and in bounds
-          System.out.println("it drive pls other way");
-          m_Swerve.drive(new ChassisSpeeds(-.5, .4, 0.0));
-        } else { // Move forwards
-          System.out.println("drive forward you flurmping robot");
-          m_Swerve.drive(new ChassisSpeeds(0, 0.75, 0));
-        }
-
-      } else {
-        if (m_Limelight.l2_tx.getDouble(0) > XTarget + DB) { // Executes this code if limelight is to the right and in
-          // bounds
-          System.out.println("it drive pls");
-          m_Swerve.drive(new ChassisSpeeds(.25, 0, 0.0));
-        } else if (m_Limelight.l2_tx.getDouble(0) < XTarget - DB) { // executes this code if limelight is to the left
-          // and
-          // in bounds
-          System.out.println("it drive pls other way");
-          m_Swerve.drive(new ChassisSpeeds(-.25, 0, 0.0));
+          System.out.println("it drive pls other way no closer");
+          m_Swerve.drive(new ChassisSpeeds((.25), 0, 0.0));
         }
       }
     } else {
@@ -146,9 +117,9 @@ public class AutoOrientCmd extends Command {
   @Override
   public void end(boolean interrupted) {
     m_Swerve.drive(new ChassisSpeeds(0, 0, 0));
-
-    System.out.println("Lost Target");
-    System.out.println(m_Limelight.l1_tx.getDouble(0));
+    SmartDashboard.putBoolean("Aligned", (m_Limelight.l1_tx.getDouble(0) <= XTarget + DB &&
+    m_Limelight.l1_tx.getDouble(0) >= XTarget - DB)); //&&
+    //m_Limelight.l1_ta.getDouble(0) >= desiredDistance));
   }
 
   // Returns true when the command should end.

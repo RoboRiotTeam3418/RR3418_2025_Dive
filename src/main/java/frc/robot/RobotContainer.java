@@ -75,12 +75,12 @@ public class RobotContainer {
    * Converts driver input into a field-relative ChassisSpeeds that is controlled
    * by angular velocity.
    */
-  public DoubleSupplier getPosTwist = () -> m_primaryJoystick.getRawAxis(3)*-1;
+  public DoubleSupplier getPosTwist = () -> m_primaryJoystick.getRawAxis(5)*-1;
   public double speed = 0.5, xtraSlow = -0.35, slow = -0.5, med = -0.75, fast = -0.8;
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> m_primaryJoystick.getY()*-1, // CHECK FUNCTION
       () -> m_primaryJoystick.getX()*-1)// CHECK FUNCTION
-      .withControllerRotationAxis(()->m_primaryJoystick.getRawAxis(3)*-1)// CHECK FUNCTION
+      .withControllerRotationAxis(()->m_primaryJoystick.getRawAxis(5)*-1)// CHECK FUNCTION
       .deadband(OperatorConstants.DEADBAND)
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
@@ -212,10 +212,11 @@ public class RobotContainer {
     m_secondary.povDown().onTrue(m_elevator.snapDown());
     m_secondary.povUp().onTrue(m_elevator.snapUp());
     m_elevator.setDefaultCommand(m_elevManual);
-    /* 
+    
     // Auto Orient
-    m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_Limelight, 2, 18, 4.2, 2));
-    */
+    m_primaryJoystick.axisLessThan(6, -.5).whileTrue(/*new AlignToReefTagRelative(true, drivebase));*/new AutoOrientCmd(drivebase, m_Limelight, 2, 6, 12, 2));
+    m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(/*new AlignToReefTagRelative(true, drivebase));*/new AutoOrientCmd(drivebase, m_Limelight, 2, 2, -7, 2));
+    
     // Auto Commands
     NamedCommands.registerCommand("pickup", m_pickup);
     NamedCommands.registerCommand("place left", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_ONE),
@@ -227,17 +228,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("release", m_claw.pistonMove(true));
 
 
-    // Auto Orient
-    /*m_primaryJoystick.axisGreaterThan(6, .5).whileTrue(new AutoOrientCmd(drivebase, m_Limelight, 2, 18, 4.2, 2));
-
-    // Auto Commands
-    NamedCommands.registerCommand("pickup", m_pickup);
-    NamedCommands.registerCommand("place left", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_TWO),
-        new ParallelCommandGroup(new ElevatorSnap(m_elevator))));
-    NamedCommands.registerCommand("grab", new autoClaw(m_endeff));
-    NamedCommands.registerCommand("release", m_endeff.pistonMove(false));
-    */ 
-
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
       //m_primaryJoystick.button(2).toggleOnTrue(drivebase.drive(driveAngularVelocityXtraSlow));
       //m_primaryJoystick.button(2).toggleOnTrue(new RobotRelative(drivebase, primaryXSupplier, primaryYSupplier,driveAngularVelocity.get().omegaRadiansPerSecond));
@@ -246,7 +236,7 @@ public class RobotContainer {
       mediumTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityMed));
       fastTrig.onTrue(drivebase.driveFieldOriented(driveAngularVelocityFast));
 
-    //zeroGyroTrig.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+    m_primaryJoystick.button(2).onTrue((Commands.runOnce(drivebase::zeroGyro)));
 
     // COMMAND/TRIGGER ASSIGNMENTS
 

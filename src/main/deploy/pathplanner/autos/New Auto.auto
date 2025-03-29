@@ -13,20 +13,21 @@
                 "data": {
                   "pathName": "straight to reef left"
                 }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "place right"
-                }
               }
             ]
           }
         },
         {
-          "type": "path",
+          "type": "sequential",
           "data": {
-            "pathName": "to pickup left"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "pickup"
+                }
+              }
+            ]
           }
         }
       ]

@@ -44,4 +44,19 @@ public final class Constants {
   public static final double MAX_SPEED = Units.feetToMeters(14.5);
   // Maximum speed of the robot in meters per second, used to limit acceleration.
   public static final double ARM_ANGLE = 53.0; // angle between straight up arm and placing arm
+
+  //limelight
+  public static final double X_REEF_ALIGNMENT_P = 3.3;
+  public static final double Y_REEF_ALIGNMENT_P = 3.3;
+  public static final double ROT_REEF_ALIGNMENT_P = .058;
+
+  public static final double ROT_SETPOINT_REEF_ALIGNMENT=0;
+  public static final double ROT_TOLERANCE_REEF_ALIGNMENT=1;
+  public static final double X_SETPOINT_REEF_ALIGNMENT = -.34;
+  public static final double X_TOLERANCE_REEF_ALIGNMENT = .02;
+  public static final double Y_SETPOINT_REEF_ALIGNMENT = .16;
+  public static final double Y_TOLERANCE_REEF_ALIGNMENT = .02;
+
+  public static final double DONT_SEE_TAG_WAIT_TIME = 1;
+  public static final double POSE_VALIDATION_TIME = .3;
 }

@@ -221,11 +221,12 @@ public class RobotContainer {
     NamedCommands.registerCommand("pickup", m_pickup);
     NamedCommands.registerCommand("place left", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_ONE),
         new ParallelCommandGroup(new ElevatorSnap(m_elevator, true)),
-        new EndToAngle(m_arm, 140.0)));
+        new EndToAngle(m_arm, 110.0)));
     NamedCommands.registerCommand("place right", new SequentialCommandGroup(m_elevator.setSnap(ElevatorLevel.POLE_ONE),
         new ParallelCommandGroup(new ElevatorSnap(m_elevator,true )),
-        new EndToAngle(m_arm, 210.0)));
+        new EndToAngle(m_arm, 225.0)));
     NamedCommands.registerCommand("release", m_claw.pistonMove(true));
+    NamedCommands.registerCommand("align", new AutoOrientCmd(drivebase, m_Limelight, 2, 5, 6, 2));
 
 
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);

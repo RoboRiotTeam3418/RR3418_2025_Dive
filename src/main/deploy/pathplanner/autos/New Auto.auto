@@ -24,6 +24,30 @@
               {
                 "type": "named",
                 "data": {
+                  "name": "align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "place right"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "release"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
                   "name": "pickup"
                 }
               }

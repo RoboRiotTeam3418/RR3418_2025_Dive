@@ -4,8 +4,10 @@
 
 package frc.robot.commands;
 
+
 //import swervelib.SwerveDrive;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -22,6 +24,7 @@ public class AutoOrientCmd extends Command {
   private double XTarget;
   private double DB;
   private int chosenSide = 1;
+  private edu.wpi.first.wpilibj.Timer notSeen;
 
   /**
    * Creates a new ExampleCommand.
@@ -36,6 +39,7 @@ public class AutoOrientCmd extends Command {
     this.desiredDistance = distance;
     this.XTarget = traget;
     this.DB = TargetDB;
+    this.notSeen=new Timer();
     // this.chosenSide = limejuice.whichLimelightSees();
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -86,6 +90,11 @@ public class AutoOrientCmd extends Command {
       System.out.println("unseen");
     }
 
+    if ((m_Limelight.l1_tv.getDouble(0) == 0 && m_Limelight.l2_tv.getDouble(0) == 0)) {
+      notSeen.start();
+    } else {
+      notSeen.reset();
+    }
     /*
      * System.out.println("Orient Left");
      * 
@@ -135,7 +144,7 @@ public class AutoOrientCmd extends Command {
             m_Limelight.l2_tx.getDouble(0) >= XTarget - DB &&
             m_Limelight.l2_ta.getDouble(0) >= desiredDistance /* L2 end */)
         ||
-        (m_Limelight.l1_tv.getDouble(0) == 0 && m_Limelight.l2_tv.getDouble(0) == 0);
+        (notSeen.get()>2);
 
     // return (m_Limelight.l1_tv.getDouble(0) == 0 && m_Limelight.l2_tv.getDouble(0)
     // == 0);
